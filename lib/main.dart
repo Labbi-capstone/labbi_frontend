@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'authentication/register/register.dart';
+
 
 void main() {
-  runApp(const MyApp());
+  runApp(MaterialApp(
+    home: RegisterUI()
+  ));
 }
 
 class MyApp extends StatelessWidget {
