@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'authentication/login/login.dart';
 import 'authentication/register/register.dart';
 import 'dart:io';
 
@@ -14,8 +13,7 @@ class MyHttpOverrides extends HttpOverrides{
 void main() {
   HttpOverrides.global = MyHttpOverrides();
   runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: LoginUI()
+    home: RegisterUI()
   ));
 }
 

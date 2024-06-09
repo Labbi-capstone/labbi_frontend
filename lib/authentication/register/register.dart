@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:labbi_frontend/authentication/login/login.dart';
 import 'package:labbi_frontend/component/textfield.dart';
 import 'package:labbi_frontend/component/button.dart';
 
@@ -93,12 +92,7 @@ class RegisterUI extends StatelessWidget {
                                 const Text('Already have an account? '),
                                 const SizedBox(width: 4),
                                 MyButton(
-                                    onTap: (){
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => LoginUI()));
-                                    }, 
+                                    onTap: (){}, 
                                   text: const Text('Sign in', 
                                     style: TextStyle(
                                       color: Colors.blue,
