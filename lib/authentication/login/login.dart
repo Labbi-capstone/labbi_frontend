@@ -7,10 +7,53 @@ import 'package:labbi_frontend/component/textfield.dart';
 import 'package:labbi_frontend/component/button.dart';
 import 'package:labbi_frontend/models/User.dart';
 import 'package:http/http.dart' as http;
+import 'package:labbi_frontend/config/config.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class LoginUI extends StatelessWidget {
-  LoginUI({super.key});
-  User user = User("", "", "");
+class LoginUI extends StatefulWidget {
+  @override
+  _LoginUIState createState() => _LoginUIState();
+}
+
+class _LoginUIState extends State<LoginUI> {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  bool _isNotValid = false;
+  late SharedPreferences prefs;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    initSharedPref();
+  }
+
+  void initSharedPref() async {
+    prefs = await SharedPreferences.getInstance();
+  }
+
+  void loginUser() async {
+    if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
+      var regBody = {
+        "email": emailController.text,
+        "password": passwordController.text
+      };
+
+      var res = await http.post(Uri.parse(signin),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(regBody)
+      );
+
+      var jsonRes = jsonDecode(res.body);
+      if(jsonRes['status']){
+        var myToken = jsonRes['token'];
+        prefs.setString('token', myToken);
+        Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard(token: myToken)));
+      } else {
+        print('Something went wrong');
+      }
+    }
+  }
 
   @override 
   Widget build(BuildContext context) {
@@ -49,10 +92,7 @@ class LoginUI extends StatelessWidget {
 
                       // username textfield
                       MyTextField(
-                        controller: TextEditingController(text: user.email),
-                        onChanged: (value) {
-                          user.email = value;
-                        },
+                        controller: emailController,
                         hintText: 'Email',
                         obscureText: false,
                       ),
@@ -61,7 +101,7 @@ class LoginUI extends StatelessWidget {
 
                       // password textfield
                       MyTextField(
-                        controller: TextEditingController(text: user.password),
+                        controller: passwordController,
                         hintText: 'Password',
                         obscureText: true,
                       ),
@@ -101,19 +141,7 @@ class LoginUI extends StatelessWidget {
                         ),
                         child: MyButton(
                           onTap: () async {
-                                var res = await http.post(Uri.parse("https://localhost:8080/signin"),
-                                    headers: <String, String>{
-                                      'Content-Type': 'application/json; charSet=UTF-8'
-                                    },
-                                    body: jsonEncode(<String, String>{
-                                      'email': user.email,
-                                      'password': user.password
-                                    })
-                                );
-                                print(res.body);
-                                Navigator.push(
-                                    context, MaterialPageRoute(builder: (context) => Dashboard()));
-                              
+                                loginUser();
                           },
                           text: const Text(
                             'Sign in',
