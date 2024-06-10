@@ -33,7 +33,8 @@ dependencies:
   google_fonts: ^6.2.1
   velocity_x:
   http:
-
+  shared_preferences:
+  jwt_decoder:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

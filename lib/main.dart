@@ -1,25 +1,28 @@
 import 'package:flutter/material.dart';
-import 'authentication/register/register.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:labbi_frontend/authentication/start_page/start_page.dart';
+import 'authentication/login/login.dart';
+// import 'authentication/register/register.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
 
-void main() {
-  runApp(MaterialApp(
-    home: RegisterUI()
-  ));
+  dynamic token = prefs.getString('token'); 
+
+  runApp(MyApp(token: token)); 
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final dynamic token; 
+  const MyApp({@required this.token, Key? key}) : super(key: key); 
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.red,
-          title: const Text("My App"),
-        ),
-      ),
+      home: token != null && !JwtDecoder.isExpired(token!) ? Dashboard(token: token!) : LoginUI(), // Check for null and use token safely
     );
   }
 }
+
