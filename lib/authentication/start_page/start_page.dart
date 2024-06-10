@@ -19,7 +19,6 @@ class _DashboardState extends State<Dashboard> {
     Map<String,dynamic> jwtDecodedToken = JwtDecoder.decode(widget.token);
     email = jwtDecodedToken['email'];
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

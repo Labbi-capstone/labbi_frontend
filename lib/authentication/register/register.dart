@@ -1,17 +1,64 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:labbi_frontend/authentication/login/login.dart';
 import 'package:labbi_frontend/component/textfield.dart';
 import 'package:labbi_frontend/component/button.dart';
+import 'package:http/http.dart' as http;
+import 'package:labbi_frontend/config/config.dart';
 
-class RegisterUI extends StatelessWidget {
-  RegisterUI({super.key});
+class RegisterUI extends StatefulWidget {
+  @override
+  _RegisterState createState() => _RegisterState();
+}
+
+class _RegisterState extends State<RegisterUI> {
 
    // text editing controllers
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmedPasswordController = TextEditingController();
+  bool isNotMatch = false;
+  bool isNotValid = false;
+
+  void register() async {
+    if (nameController.text.isNotEmpty && emailController.text.isNotEmpty && passwordController.text.isNotEmpty && confirmedPasswordController.text.isNotEmpty) {
+      if (confirmedPasswordController.text != passwordController.text) {
+        setState(() {
+          isNotMatch = true;
+        });
+          print("Password not match");
+      } else {
+        var reqBody = {
+          "fullname": nameController.text,
+          "email": emailController.text,
+          "password": passwordController.text
+        };
+
+        var res = await http.post(Uri.parse(registration),
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: jsonEncode(reqBody)
+        );
+
+        var jsonRes = jsonDecode(res.body);
+
+        print(jsonRes['status']);
+
+        if (jsonRes['status']) {
+          // Navigator.push(context, MaterialPageRoute(builder: (context) => LoginUI()));
+          print("success");
+        } else {
+          print("Something wrong");
+        }
+      }
+    } else {
+      setState((){
+        isNotValid = true;
+      });
+    }
+  }
 
   @override 
   Widget build(BuildContext context) {
@@ -121,7 +168,9 @@ class RegisterUI extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: MyButton(
-                          onTap: (){},
+                          onTap: () => {
+                            register()
+                          },
                           text: const Text(
                             'Sign up',
                             style: TextStyle(
@@ -150,7 +199,6 @@ class RegisterUI extends StatelessWidget {
                               padding: EdgeInsets.symmetric(horizontal: 10),
                               child: Text("Or", style: TextStyle(
                                 color: Colors.white, 
-                                fontFamily: 'Lemonada',
                                 fontWeight: FontWeight.w900,
                                 fontSize: 18.0
                               ))
@@ -183,7 +231,16 @@ class RegisterUI extends StatelessWidget {
                                     height: 50
                                   ),
                                   const SizedBox(width: 10),
-                                  const Text('Sign up with Google'),
+                                  GestureDetector(
+                                    onTap: (){
+                                      print('Sign up with Google');
+                                    },
+                                    child: const Text('Sign up with Google', 
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold
+                                      ),
+                                    )
+                                  ),
                                 ],)
                               )
                             ],
