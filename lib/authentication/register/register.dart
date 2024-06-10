@@ -5,6 +5,7 @@ import 'package:labbi_frontend/component/textfield.dart';
 import 'package:labbi_frontend/component/button.dart';
 import 'package:http/http.dart' as http;
 import 'package:labbi_frontend/config/config.dart';
+import 'package:labbi_frontend/authentication/login/login.dart';
 
 class RegisterUI extends StatefulWidget {
   @override
