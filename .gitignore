@@ -1,43 +1,83 @@
-# Miscellaneous
-*.class
+# General
 *.log
 *.pyc
 *.swp
 .DS_Store
 .atom/
-.buildlog/
-.history
-.svn/
-migrate_working_dir/
-
-# IntelliJ related
-*.iml
-*.ipr
-*.iws
 .idea/
-
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
+.vscode/
+.history/
+.svn/
 
 # Flutter/Dart/Pub related
-**/doc/api/
-**/ios/Flutter/.last_build_id
 .dart_tool/
+.packages
+.pub-cache/
+build/
+flutter_*.png
+.generated/
 .flutter-plugins
 .flutter-plugins-dependencies
-.pub-cache/
-.pub/
-/build/
 
-# Symbolication related
+# Flutter generated files
+**/generated_plugin_registrant.*
+**/generated_plugins.cmake
+
+
+# Android related
+**/android/**/*.gradle
+android/.gradle
+android/captures/
+android/gradlew
+android/gradlew.bat
+android/local.properties
+
+# Temporary Files created by Android Studio
+**/android/**/GeneratedPluginRegistrant.*
+
+# iOS related
+**/ios/**/*.generated.dart
+**/ios/**/*.xcworkspace
+**/ios/**/*.xcuserstate
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
+ios/Pods/
+ios/Runner.xcodeproj/project.xcworkspace/
+ios/Runner.xcodeproj/xcshareddata/
+ios/Runner.xcodeproj/xcuserdata/
+
+# macOS
+**/macos/**/*.generated.dart
+macos/Pods/
+macos/Flutter/ephemeral/
+**/GeneratedPluginRegistrant.swift
+
+
+# Windows
+**/windows/flutter/generated_plugin_registrant.cc
+**/windows/flutter/generated_plugin_registrant.h
+**/windows/flutter/generated_plugins.cmake
+
+# Linux
+**/linux/flutter/generated_plugin_registrant.cc
+**/linux/flutter/generated_plugin_registrant.h
+**/linux/flutter/generated_plugins.cmake
+
+# Coverage
+coverage/
+
+# Symbols
 app.*.symbols
 
-# Obfuscation related
-app.*.map.json
+# Exceptions to general rules.
+!.vscode/settings.json 
 
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
+# Lock files
+**/Podfile.lock
+
+# Personal configurations
+.key.properties
+*.jks
+*.keystore
