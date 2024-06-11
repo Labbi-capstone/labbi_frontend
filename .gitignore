@@ -16,10 +16,13 @@
 build/
 flutter_*.png
 .generated/
+.flutter-plugins
+.flutter-plugins-dependencies
 
 # Flutter generated files
 **/generated_plugin_registrant.*
 **/generated_plugins.cmake
+
 
 # Android related
 **/android/**/*.gradle
@@ -49,6 +52,8 @@ ios/Runner.xcodeproj/xcuserdata/
 **/macos/**/*.generated.dart
 macos/Pods/
 macos/Flutter/ephemeral/
+**/GeneratedPluginRegistrant.swift
+
 
 # Windows
 **/windows/flutter/generated_plugin_registrant.cc
