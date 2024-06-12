@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import 'package:labbi_frontend/user_profile/user_profile.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:labbi_frontend/authentication/start_page/start_page.dart';
 import 'authentication/login/login.dart';
@@ -14,6 +16,22 @@ void main() async {
   runApp(MyApp(token: token)); 
 }
 
+// class MyApp extends StatelessWidget {
+//   const MyApp({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       home: Scaffold(
+//         appBar: AppBar(
+//           backgroundColor: Colors.red,
+//           title: const Text("My App"),
+//         ),
+//       ),
+//     );
+//   }
+// }
+ 
 class MyApp extends StatelessWidget {
   final dynamic token; 
   const MyApp({@required this.token, Key? key}) : super(key: key); 
