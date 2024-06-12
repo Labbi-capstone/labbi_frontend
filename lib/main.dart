@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:labbi_frontend/authentication/start_page/start_page.dart';
 import 'authentication/login/login.dart';
-// import 'authentication/register/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
@@ -21,7 +20,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: token != null && !JwtDecoder.isExpired(token!) ? Dashboard(token: token!) : LoginUI(), // Check for null and use token safely
+      home: token != '' && !JwtDecoder.isExpired(token!) ? Dashboard(token: token!) : LoginUI(), // Check for null and use token safely
     );
   }
 }

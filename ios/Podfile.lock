@@ -12,7 +12,6 @@ DEPENDENCIES:
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
 
-
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter

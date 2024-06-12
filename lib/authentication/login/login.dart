@@ -5,7 +5,6 @@ import 'package:labbi_frontend/authentication/register/register.dart';
 import 'package:labbi_frontend/authentication/start_page/start_page.dart';
 import 'package:labbi_frontend/component/textfield.dart';
 import 'package:labbi_frontend/component/button.dart';
-import 'package:labbi_frontend/models/User.dart';
 import 'package:http/http.dart' as http;
 import 'package:labbi_frontend/config/config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,7 +17,11 @@ class LoginUI extends StatefulWidget {
 class _LoginUIState extends State<LoginUI> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  bool _isNotValid = false;
+
+  //check if not filled
+  bool emptyEmail = false;
+  bool emptyPassword = false;
+
   late SharedPreferences prefs;
 
   @override
@@ -33,6 +36,17 @@ class _LoginUIState extends State<LoginUI> {
   }
 
   void loginUser() async {
+    if (emailController.text.isNotEmpty) {
+      setState(() {
+        emptyEmail = false;
+      });
+    }
+    if (passwordController.text.isNotEmpty) {
+      setState(() {
+        emptyPassword = false;
+      });
+    }
+    
     if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
       var regBody = {
         "email": emailController.text,
@@ -53,6 +67,18 @@ class _LoginUIState extends State<LoginUI> {
         print('Something went wrong');
       }
     }
+    else {
+      if (emailController.text.isEmpty) {
+        setState(() {
+          emptyEmail = true;
+        });
+      } 
+      if (passwordController.text.isEmpty) {
+        setState(() {
+          emptyPassword = true;
+        });
+      }
+    } 
   }
 
   @override 
@@ -95,6 +121,7 @@ class _LoginUIState extends State<LoginUI> {
                         controller: emailController,
                         hintText: 'Email',
                         obscureText: false,
+                        errorText: emptyEmail ? 'Please enter email' : '',
                       ),
 
                       const SizedBox(height: 30),
@@ -104,6 +131,7 @@ class _LoginUIState extends State<LoginUI> {
                         controller: passwordController,
                         hintText: 'Password',
                         obscureText: true,
+                        errorText: emptyPassword ? 'Please enter password' : '',
                       ),
 
                       const SizedBox(height: 20),
