@@ -8,6 +8,8 @@ import 'package:labbi_frontend/config/config.dart';
 import 'package:labbi_frontend/authentication/login/login.dart';
 
 class RegisterUI extends StatefulWidget {
+  const RegisterUI({super.key});
+
   @override
   _RegisterState createState() => _RegisterState();
 }
@@ -145,7 +147,7 @@ class _RegisterState extends State<RegisterUI> {
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                              builder: (context) => LoginUI()));
+                                              builder: (context) => const LoginUI()));
                                     }, 
                                   text: const Text('Sign in', 
                                     style: TextStyle(

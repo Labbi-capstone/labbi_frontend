@@ -5,12 +5,13 @@ import 'package:labbi_frontend/authentication/register/register.dart';
 import 'package:labbi_frontend/authentication/start_page/start_page.dart';
 import 'package:labbi_frontend/component/textfield.dart';
 import 'package:labbi_frontend/component/button.dart';
-import 'package:labbi_frontend/models/User.dart';
 import 'package:http/http.dart' as http;
 import 'package:labbi_frontend/config/config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginUI extends StatefulWidget {
+  const LoginUI({super.key});
+
   @override
   _LoginUIState createState() => _LoginUIState();
 }
@@ -18,7 +19,7 @@ class LoginUI extends StatefulWidget {
 class _LoginUIState extends State<LoginUI> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  bool _isNotValid = false;
+  final bool _isNotValid = false;
   late SharedPreferences prefs;
 
   @override
@@ -229,7 +230,7 @@ class _LoginUIState extends State<LoginUI> {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) => RegisterUI()));
+                                            builder: (context) => const RegisterUI()));
                                   },
                                   text: const Text(
                                     'Register',

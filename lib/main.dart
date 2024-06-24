@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:labbi_frontend/authentication/start_page/start_page.dart';
-import 'authentication/login/login.dart';
-// import 'authentication/register/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'menu/nav_bar.dart';
+import 'user/edit_user_profile.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,13 +14,43 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   final dynamic token; 
-  const MyApp({@required this.token, Key? key}) : super(key: key); 
+  const MyApp({@required this.token, super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: token != null && !JwtDecoder.isExpired(token!) ? Dashboard(token: token!) : LoginUI(), // Check for null and use token safely
+    return const MaterialApp(
+      // home: token != null && !JwtDecoder.isExpired(token!) ? Dashboard(token: token!) : const LoginUI(), // Check for null and use token safely
+      // home: Dashboard(token: 'token',), // Testing
+      home: UserProfileUpdate(),
     );
   }
 }
 
+class Dashboard extends StatelessWidget {
+  final String token;
+  const Dashboard({required this.token, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Dashboard'),
+
+        // Icon button
+        leading: IconButton(
+          icon: const Icon(Icons.menu, color: Colors.blue),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const  MenuTaskbar()),
+            );
+          },
+        ),
+      ),
+
+      body: const Center(
+        child: Text('Dashboard Content Here'),
+      ),
+    );
+  }
+}

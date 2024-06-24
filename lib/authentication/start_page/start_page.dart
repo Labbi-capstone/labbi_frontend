@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
 class Dashboard extends StatefulWidget {
   final token;
-  const Dashboard({@required this.token, Key? key}) : super(key: key);
+  const Dashboard({@required this.token, super.key});
 
   @override
   _DashboardState createState() => _DashboardState();
