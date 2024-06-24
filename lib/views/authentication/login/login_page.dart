@@ -1,21 +1,21 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:labbi_frontend/authentication/register/register.dart';
-import 'package:labbi_frontend/authentication/start_page/start_page.dart';
-import 'package:labbi_frontend/component/textfield.dart';
-import 'package:labbi_frontend/component/button.dart';
+import 'package:labbi_frontend/views/authentication/register/register_page.dart';
+import 'package:labbi_frontend/views/start_page/start_page.dart';
+import 'package:labbi_frontend/components/textfield.dart';
+import 'package:labbi_frontend/components/button.dart';
 import 'package:labbi_frontend/models/User.dart';
 import 'package:http/http.dart' as http;
 import 'package:labbi_frontend/config/config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class LoginUI extends StatefulWidget {
+class LoginPage extends StatefulWidget {
   @override
-  _LoginUIState createState() => _LoginUIState();
+  _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginUIState extends State<LoginUI> {
+class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   bool _isNotValid = false;
@@ -229,7 +229,7 @@ class _LoginUIState extends State<LoginUI> {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) => RegisterUI()));
+                                            builder: (context) => RegisterPage()));
                                   },
                                   text: const Text(
                                     'Register',
