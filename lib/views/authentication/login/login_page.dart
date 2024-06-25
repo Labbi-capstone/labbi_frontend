@@ -18,7 +18,11 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  bool _isNotValid = false;
+
+  //check if not filled
+  bool emptyEmail = false;
+  bool emptyPassword = false;
+
   late SharedPreferences prefs;
 
   @override
@@ -33,6 +37,17 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void loginUser() async {
+    if (emailController.text.isNotEmpty) {
+      setState(() {
+        emptyEmail = false;
+      });
+    }
+    if (passwordController.text.isNotEmpty) {
+      setState(() {
+        emptyPassword = false;
+      });
+    }
+    
     if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
       var regBody = {
         "email": emailController.text,
@@ -53,6 +68,18 @@ class _LoginPageState extends State<LoginPage> {
         print('Something went wrong');
       }
     }
+    else {
+      if (emailController.text.isEmpty) {
+        setState(() {
+          emptyEmail = true;
+        });
+      } 
+      if (passwordController.text.isEmpty) {
+        setState(() {
+          emptyPassword = true;
+        });
+      }
+    } 
   }
 
   @override 
@@ -95,6 +122,7 @@ class _LoginPageState extends State<LoginPage> {
                         controller: emailController,
                         hintText: 'Email',
                         obscureText: false,
+                        errorText: emptyEmail ? 'Please enter email' : '',
                       ),
 
                       const SizedBox(height: 30),
@@ -104,6 +132,7 @@ class _LoginPageState extends State<LoginPage> {
                         controller: passwordController,
                         hintText: 'Password',
                         obscureText: true,
+                        errorText: emptyPassword ? 'Please enter password' : '',
                       ),
 
                       const SizedBox(height: 20),

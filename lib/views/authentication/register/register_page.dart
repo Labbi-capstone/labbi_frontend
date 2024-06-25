@@ -23,14 +23,40 @@ class _RegisterPageState extends State<RegisterPage
   final confirmedPasswordController = TextEditingController();
   bool isNotMatch = false;
   bool isNotValid = false;
+  
+  //check if not filled
+  bool emptyFullname = false;
+  bool emptyEmail = false;
+  bool emptyPassword = false;
+  bool emptyConfirmedPassword = false;
 
   void register() async {
+      if (nameController.text.isNotEmpty) {
+        setState(() {
+          emptyFullname = false;
+        });
+      }
+      if (emailController.text.isNotEmpty) {
+        setState(() {
+          emptyEmail = false;
+        });
+      }
+      if (passwordController.text.isNotEmpty) {
+        setState(() {
+          emptyPassword = false;
+        });
+      }
+      if (passwordController.text.isNotEmpty) {
+        setState(() {
+          emptyConfirmedPassword = false;
+        });
+      }
+
     if (nameController.text.isNotEmpty && emailController.text.isNotEmpty && passwordController.text.isNotEmpty && confirmedPasswordController.text.isNotEmpty) {
       if (confirmedPasswordController.text != passwordController.text) {
         setState(() {
           isNotMatch = true;
         });
-          print("Password not match");
       } else {
         var reqBody = {
           "fullname": nameController.text,
@@ -50,16 +76,33 @@ class _RegisterPageState extends State<RegisterPage
         print(jsonRes['status']);
 
         if (jsonRes['status']) {
-          // Navigator.push(context, MaterialPageRoute(builder: (context) => LoginUI()));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => LoginUI()));
           print("success");
         } else {
           print("Something wrong");
         }
       }
     } else {
-      setState((){
-        isNotValid = true;
-      });
+      if (nameController.text.isEmpty) {
+        setState(() {
+          emptyFullname = true;
+        });
+      }
+      if (emailController.text.isEmpty) {
+        setState(() {
+          emptyEmail = true;
+        });
+      }
+      if (passwordController.text.isEmpty) {
+        setState(() {
+          emptyPassword = true;
+        });
+      }
+      if (passwordController.text.isEmpty) {
+        setState(() {
+          emptyConfirmedPassword = true;
+        });
+      }
     }
   }
 
@@ -103,6 +146,7 @@ class _RegisterPageState extends State<RegisterPage
                         controller: nameController,
                         hintText: 'Fullname',
                         obscureText: false,
+                        errorText: emptyFullname ? 'Please enter fullname' : '',
                       ),
 
                       const SizedBox(height: 30),
@@ -112,6 +156,7 @@ class _RegisterPageState extends State<RegisterPage
                         controller: emailController,
                         hintText: 'Email',
                         obscureText: false,
+                        errorText: emptyEmail ? 'Please enter email' : '',
                       ),
 
                       const SizedBox(height: 30),
@@ -121,6 +166,7 @@ class _RegisterPageState extends State<RegisterPage
                         controller: passwordController,
                         hintText: 'Password',
                         obscureText: false,
+                        errorText: emptyPassword ? 'Please enter password' : '',
                       ),
 
                       const SizedBox(height: 30),
@@ -130,6 +176,7 @@ class _RegisterPageState extends State<RegisterPage
                         controller: confirmedPasswordController,
                         hintText: 'Confirm Password',
                         obscureText: true,
+                        errorText: emptyPassword ? 'Please enter confirmed password' : isNotMatch ? 'Password not match' : '',
                       ),
 
                       const SizedBox(height: 20),

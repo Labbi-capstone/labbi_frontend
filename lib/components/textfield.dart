@@ -5,6 +5,7 @@ class MyTextField extends StatelessWidget {
   final onChanged;
   final String hintText;
   final bool obscureText;
+  final String errorText;
 
   const MyTextField({
     super.key,
@@ -12,6 +13,7 @@ class MyTextField extends StatelessWidget {
     this.onChanged,
     required this.hintText,
     required this.obscureText,
+    required this.errorText,
   });
 
   @override
@@ -31,6 +33,8 @@ class MyTextField extends StatelessWidget {
             ),
             fillColor: Colors.grey.shade200,
             filled: true,
+            errorText: errorText,
+            errorStyle: TextStyle(color: Color.fromARGB(255, 255, 0, 0)),
             hintText: hintText,
             hintStyle: TextStyle(color: Colors.grey[500])),
       ),
