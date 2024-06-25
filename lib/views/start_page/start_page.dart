@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:labbi_frontend/authentication/login/login.dart';
-import 'package:labbi_frontend/component/button.dart';
+import 'package:labbi_frontend/views/authentication/login/login_page.dart';
+import 'package:labbi_frontend/components/button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Dashboard extends StatefulWidget {
@@ -34,7 +34,7 @@ class _DashboardState extends State<Dashboard> {
   void logoutUser() async {
     final navigator = Navigator.of(context);
     prefs.setString('token', '');
-    navigator.pushAndRemoveUntil(MaterialPageRoute(builder: (context) => LoginUI()), (route) => false);
+    navigator.pushAndRemoveUntil(MaterialPageRoute(builder: (context) => LoginPage()), (route) => false);
   }
 
   @override

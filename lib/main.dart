@@ -2,14 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:labbi_frontend/views/user_profile/user_profile.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-<<<<<<< HEAD
 import 'package:labbi_frontend/views/start_page/start_page.dart';
 import 'views/authentication/login/login_page.dart';
 // import 'authentication/register/register.dart';
-=======
-import 'package:labbi_frontend/authentication/start_page/start_page.dart';
-import 'authentication/login/login.dart';
->>>>>>> main
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {

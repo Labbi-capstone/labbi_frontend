@@ -76,7 +76,7 @@ class _RegisterPageState extends State<RegisterPage
         print(jsonRes['status']);
 
         if (jsonRes['status']) {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => LoginUI()));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
           print("success");
         } else {
           print("Something wrong");
