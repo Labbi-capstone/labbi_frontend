@@ -23,15 +23,6 @@ flutter_*.png
 **/generated_plugin_registrant.*
 **/generated_plugins.cmake
 
-
-# Android related
-**/android/**/*.gradle
-android/.gradle
-android/captures/
-android/gradlew
-android/gradlew.bat
-android/local.properties
-
 # Temporary Files created by Android Studio
 **/android/**/GeneratedPluginRegistrant.*
 
