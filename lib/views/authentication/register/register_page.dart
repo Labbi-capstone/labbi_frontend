@@ -1,18 +1,20 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:labbi_frontend/component/textfield.dart';
-import 'package:labbi_frontend/component/button.dart';
+import 'package:labbi_frontend/components/textfield.dart';
+import 'package:labbi_frontend/components/button.dart';
 import 'package:http/http.dart' as http;
 import 'package:labbi_frontend/config/config.dart';
-import 'package:labbi_frontend/authentication/login/login.dart';
+import 'package:labbi_frontend/views/authentication/login/login_page.dart';
 
-class RegisterUI extends StatefulWidget {
+class RegisterPage
+ extends StatefulWidget {
   @override
-  _RegisterState createState() => _RegisterState();
+  _RegisterPageState createState() => _RegisterPageState();
 }
 
-class _RegisterState extends State<RegisterUI> {
+class _RegisterPageState extends State<RegisterPage
+> {
 
    // text editing controllers
   final nameController = TextEditingController();
@@ -192,7 +194,7 @@ class _RegisterState extends State<RegisterUI> {
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                              builder: (context) => LoginUI()));
+                                              builder: (context) => LoginPage()));
                                     }, 
                                   text: const Text('Sign in', 
                                     style: TextStyle(
