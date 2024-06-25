@@ -6,6 +6,7 @@ import 'package:labbi_frontend/views/start_page/start_page.dart';
 import 'views/authentication/login/login_page.dart';
 // import 'authentication/register/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:labbi_frontend/views/dashboard_page/dashboard_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,7 +40,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: token != null && !JwtDecoder.isExpired(token!) ? Dashboard(token: token!) : LoginPage(), // Check for null and use token safely
+      home: token != null && !JwtDecoder.isExpired(token!) ? Dashboard(token: token!) : DashboardPage(), // Check for null and use token safely
     );
   }
 }
