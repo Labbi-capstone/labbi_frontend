@@ -1,122 +1,112 @@
 import 'package:flutter/material.dart';
 
-void main() => runApp(BestLabApp());
+void main() => runApp(MyApp());
 
-class BestLabApp extends StatelessWidget {
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'BestLab',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
       home: UserListScreen(),
     );
   }
 }
 
-class UserListScreen extends StatelessWidget {
+class User {
+  final String username;
+  final String role;
+  User({required this.username, required this.role});
+}
+
+class UserListScreen extends StatefulWidget {
+  @override
+  _UserListScreenState createState() => _UserListScreenState();
+}
+
+class _UserListScreenState extends State<UserListScreen> {
+  List<User> users = [
+    User(username: 'Username1', role: 'Developer'),
+    User(username: 'Username2', role: 'Developer'),
+    User(username: 'Username3', role: 'Developer'),
+  ];
+
+  void _editUser(int index) {
+    // Add edit user logic here
+  }
+
+  void _deleteUser(int index) {
+    setState(() {
+      users.removeAt(index);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('BestLab'),
-        backgroundColor: Colors.blue,
+        leading: IconButton(
+          icon: Icon(Icons.menu),
+          onPressed: () {},
+        ),
       ),
-      body: Column(
-        children: <Widget>[
-          Container(
-            padding: EdgeInsets.all(10),
-            color: Colors.blue,
-            child: Row(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                InfoCard(
-                  icon: Icons.computer,
-                  title: 'Thiết Bị',
-                  count: 10,
+              children: [
+                Column(
+                  children: [
+                    Icon(Icons.devices),
+                    Text('Thiết Bị'),
+                    Text('10'),
+                  ],
                 ),
-                InfoCard(
-                  icon: Icons.people,
-                  title: 'Tài khoản',
-                  count: 20,
+                Column(
+                  children: [
+                    Icon(Icons.people),
+                    Text('Tài khoản'),
+                    Text('20'),
+                  ],
                 ),
               ],
             ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: 3, // Replace with the actual number of users
-              itemBuilder: (context, index) {
-                return UserTile();
-              },
+            SizedBox(height: 20),
+            Text(
+              'Danh sách người dùng',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class InfoCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final int count;
-
-  InfoCard({required this.icon, required this.title, required this.count});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width * 0.4,
-      padding: EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Column(
-        children: <Widget>[
-          Icon(icon, size: 40, color: Colors.blue),
-          SizedBox(height: 10),
-          Text(title, style: TextStyle(fontSize: 18, color: Colors.blue)),
-          SizedBox(height: 5),
-          Text('$count', style: TextStyle(fontSize: 24, color: Colors.blue)),
-        ],
-      ),
-    );
-  }
-}
-
-class UserTile extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: Colors.blue,
-          child: Icon(Icons.person, color: Colors.white),
-        ),
-        title: Text('Username'),
-        subtitle: Text('Developer'),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            IconButton(
-              icon: Icon(Icons.edit),
-              onPressed: () {
-                // Edit action
-              },
-            ),
-            IconButton(
-              icon: Icon(Icons.delete, color: Colors.red),
-              onPressed: () {
-                // Delete action
-              },
+            Expanded(
+              child: ListView.builder(
+                itemCount: users.length,
+                itemBuilder: (context, index) {
+                  return Card(
+                    child: ListTile(
+                      leading: Icon(Icons.person),
+                      title: Text(users[index].username),
+                      subtitle: Text(users[index].role),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.edit),
+                            onPressed: () => _editUser(index),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.delete),
+                            onPressed: () => _deleteUser(index),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
           ],
         ),
