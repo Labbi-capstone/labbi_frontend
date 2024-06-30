@@ -1,0 +1,108 @@
+import 'package:flutter/material.dart';
+
+class DevicesSection extends StatelessWidget {
+  List devicesList = [
+    'device 1',
+    'device 2',
+    'device 3',
+    'device 4',
+    'device 5',
+  ];
+
+  @override 
+  Widget build(BuildContext context){
+    return Container(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 30),
+            child: const Text("Danh sách thiết bị",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black
+              ),
+            ),
+          ),
+
+        const SizedBox(height: 10),
+
+        ListView.builder(
+          itemCount: devicesList.length,
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemBuilder: (context, index) {
+            return Column(
+              children: [
+                Container(
+                  height: 110,
+                  margin: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10)
+                  ),
+                  child: Row(children: [
+                    Container(
+                      height: 70,
+                      width: 70,
+                      margin: EdgeInsets.only(right: 15),
+                      child: Image.asset("/Users/hagiangnguyen/Desktop/Labbi-Frontend/lib/images/logo.png")
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            devicesList[index],
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            )
+                          ),
+                          Text(
+                            devicesList[index],
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black26,
+                            )
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const Spacer(),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 5),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Icon(
+                            Icons.edit_document,
+                            color: Colors.black,
+                          ),
+                          Text(
+                            "Xoá",
+                            style: TextStyle(
+                              color: Colors.red,
+                            ),
+                          )
+                        ],
+                      )
+                    ),
+                  ],)
+                )
+              ],
+            );
+          },
+        ),
+      ]),
+    );
+  }
+}
