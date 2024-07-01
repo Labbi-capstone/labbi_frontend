@@ -29,15 +29,13 @@ class UsersSection extends StatelessWidget {
         const SizedBox(height: 10),
 
         ListView.builder(
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           itemCount: usersList.length,
-          physics: const NeverScrollableScrollPhysics(),
+          physics: const AlwaysScrollableScrollPhysics(),
           shrinkWrap: true,
           itemBuilder: (context, index) {
             return Column(
               children: [
                 Container(
-                  height: 110,
                   margin: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                   padding: EdgeInsets.all(10),
                   decoration: BoxDecoration(

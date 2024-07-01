@@ -17,7 +17,7 @@ class DevicesSection extends StatelessWidget {
         children: [
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 30),
-            child: const Text("Danh sách thiết bị",
+            child: const Text("Danh sách tài khoản",
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -30,13 +30,12 @@ class DevicesSection extends StatelessWidget {
 
         ListView.builder(
           itemCount: devicesList.length,
-          physics: const NeverScrollableScrollPhysics(),
+          physics: const AlwaysScrollableScrollPhysics(),
           shrinkWrap: true,
           itemBuilder: (context, index) {
             return Column(
               children: [
                 Container(
-                  height: 110,
                   margin: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                   padding: EdgeInsets.all(10),
                   decoration: BoxDecoration(

@@ -15,12 +15,56 @@ class _ManagementPageState extends State<ManagementPage> {
 
   @override 
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        textTheme: GoogleFonts.barlowSemiCondensedTextTheme(),
+    return Scaffold(
+      appBar: AppBar(
+        title: 
+                      Image.asset(
+                        '/Users/hagiangnguyen/Desktop/Labbi-Frontend/lib/images/logo.png',
+                        height: 50,
+                        color: Colors.white,
+                      ),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                      colors: [
+                        Color.fromRGBO(175, 216, 237, 100),
+                        Color.fromRGBO(0, 184, 237, 100),
+                      ],
+                      begin: FractionalOffset(0.0, 0.0),
+                      end: FractionalOffset(1.0, 0.0),
+                      stops: [0.0, 1.0],
+                      tileMode: TileMode.clamp),
+                ),
+        ),
       ),
-      home: Scaffold(
-        body: SafeArea(
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+           const DrawerHeader(
+              child: Text('Menu'),
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+            ),
+            ListTile(
+              title: Text('Item 1'),
+              onTap: () {
+                // Handle the tap
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: Text('Item 2'),
+              onTap: () {
+                // Handle the tap
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      ),
+      body: SafeArea(
           child: Container(
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
@@ -36,14 +80,6 @@ class _ManagementPageState extends State<ManagementPage> {
                 child: Center(
                   child: Column(
                     children: [
-                      const SizedBox(height: 20),
-
-                      Image.asset(
-                        '/Users/hagiangnguyen/Desktop/Labbi-Frontend/lib/images/logo.png',
-                        height: 50,
-                        color: Colors.white,
-                      ),
-
                       const SizedBox(height: 20),
 
                       Container(
@@ -154,8 +190,7 @@ class _ManagementPageState extends State<ManagementPage> {
                   ),
                 )
             ),
-          ),
-        )
+          ),  
     );
   }
 }
