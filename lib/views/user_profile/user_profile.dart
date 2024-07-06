@@ -1,41 +1,117 @@
 import 'package:flutter/material.dart';
+import 'package:labbi_frontend/models/notification_message.dart';
+import 'package:labbi_frontend/views/notification/notification_page.dart';
 
-class UserProfilePage extends StatelessWidget {
-  const UserProfilePage({super.key});
+class UserProfilePage extends StatefulWidget {
+  final List<NotificationMessage> listOfNotification;
+  const UserProfilePage({super.key, required this.listOfNotification});
+  @override
+  State<StatefulWidget> createState() => _UserProfilePageState();
+}
+
+class _UserProfilePageState extends State<UserProfilePage> {
+  late List<NotificationMessage> listOfNotification;
+  int count = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    listOfNotification = widget.listOfNotification;
+    for (var i = 0; i < listOfNotification.length; i++) {
+      if (listOfNotification[i].status == 'unread') {
+        setState(() {
+          count += 1;
+        });
+      } else {
+        setState(() {
+          count = count;
+        });
+      }
+    }
+
+  }
 
   @override
   Widget build(BuildContext context) {
     dynamic screenHeight = MediaQuery.of(context).size.height;
     dynamic screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      body: Stack(
-        clipBehavior: Clip.none,
-        alignment: Alignment.topCenter,
-        children: <Widget>[
-          Positioned(
-            top: ((1 / 3) * screenHeight),
-            child: Container(
-              height: screenHeight,
-              width: screenWidth,
-              decoration: const BoxDecoration(
-                  image: DecorationImage(
-                      image: AssetImage(
-                          "assets/images/user-profile-background.jpg"),
-                      fit: BoxFit.cover)),
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          centerTitle: true,
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back,
+              color: Colors.white,
             ),
+            onPressed: () => Navigator.of(context).pop(),
           ),
-          userCoverImage(context, screenHeight, screenWidth),
-          Positioned(
-            top: ((1 / 3) * screenHeight) - (screenHeight / 9.7),
-            child: userProfileImage(context, screenHeight, screenWidth),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 17.0),
+              child: InkWell(
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const NotificationPage()));
+                },
+                child: Container(
+                  alignment: Alignment.bottomRight,
+                  height: 0.05 * screenHeight,
+                  width: (1 / 12) * screenWidth,
+                  decoration: const BoxDecoration(
+                      // color: Colors.red,
+                      image: DecorationImage(
+                          image:
+                              AssetImage("assets/images/notification-icon.png"),
+                          fit: BoxFit.fill)),
+                  child: Container(
+                    alignment: Alignment.center,
+                    height: (1 / 35) * screenHeight,
+                    width: (1 / 35) * screenHeight,
+                    decoration: const BoxDecoration(
+                        color: Colors.red, shape: BoxShape.circle),
+                    child: Text(
+                      count < 9 ? '$count' : '9+',
+                      style: const TextStyle(
+                          color: Colors.white, overflow: TextOverflow.clip),
+                    ),
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
+        body: SingleChildScrollView(
+          child: Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.topCenter,
+            children: <Widget>[
+              Positioned(
+                top: ((1 / 3) * screenHeight),
+                child: Container(
+                  height: screenHeight,
+                  width: screenWidth,
+                  decoration: const BoxDecoration(
+                      image: DecorationImage(
+                          image: AssetImage(
+                              "assets/images/user-profile-background.jpg"),
+                          fit: BoxFit.cover)),
+                ),
+              ),
+              userCoverImage(context, screenHeight, screenWidth),
+              Positioned(
+                top: ((1 / 3) * screenHeight) - (screenHeight / 9.7),
+                child: userProfileImage(context, screenHeight, screenWidth),
+              ),
+              Positioned(
+                top: ((1 / 3) * screenHeight) + (screenHeight / 8.6),
+                child: userDetail(context, screenHeight, screenWidth),
+              )
+            ],
           ),
-          Positioned(
-            top: ((1 / 3) * screenHeight) + (screenHeight / 8.6),
-            child: userDetail(context, screenHeight, screenWidth),
-          )
-        ],
-      ),
-    );
+        ));
   }
 
   /*Cover image*/
@@ -56,61 +132,19 @@ class UserProfilePage extends StatelessWidget {
             height: (1 / 3) * screenHeight,
             width: screenWidth,
             child: Row(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 10.0),
-                  child: Container(
-                    height: (1 / 20) * screenHeight,
-                    width: (1 / 12) * screenWidth,
-                    decoration: const BoxDecoration(
-                        // color: Colors.red,
-                        image: DecorationImage(
-                            image: AssetImage(
-                                "assets/images/hamburger-menu-white.png"),
-                            fit: BoxFit.fill)),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 20.0, bottom: 20.0),
-                  child: Container(
-                    height: (1 / 3) * screenHeight,
-                    width: (2 / 3) * screenWidth,
-                    decoration: const BoxDecoration(
-                        // color: Colors.red,
-                        image: DecorationImage(
-                            image: AssetImage(
-                                "assets/images/company-logo-white.png"),
-                            fit: BoxFit.fill)),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 10.0),
-                  child: Container(
-                    alignment: Alignment.bottomRight,
-                    height: (1 / 20) * screenHeight,
-                    width: (1 / 12) * screenWidth,
-                    decoration: const BoxDecoration(
-                        // color: Colors.red,
-                        image: DecorationImage(
-                            image: AssetImage(
-                                "assets/images/notification-icon.png"),
-                            fit: BoxFit.fill)),
-                    child: Container(
-                      alignment: Alignment.center,
-                      height: (1 / 35) * screenHeight,
-                      width: (1 / 35) * screenHeight,
-                      decoration: const BoxDecoration(
-                          color: Colors.red, shape: BoxShape.circle),
-                      child: const Text(
-                        "9+",
-                        style: TextStyle(
-                            color: Colors.white, overflow: TextOverflow.clip),
-                      ),
-                    ),
-                  ),
+                Container(
+                  height: null,
+                  width: 0.9 * screenWidth,
+                  decoration: const BoxDecoration(
+                      // color: Colors.red,
+                      image: DecorationImage(
+                          image: AssetImage(
+                              "assets/images/company-logo-white.png"),
+                          fit: BoxFit.fill)),
                 ),
               ],
             ),
@@ -169,7 +203,7 @@ class UserProfilePage extends StatelessWidget {
           Positioned(
             top: 80,
             child: Container(
-              height: screenHeight * (2.9 / 7),
+              height: null,
               width: (9 / 10) * screenWidth,
               decoration: BoxDecoration(
                   color: Colors.white,
@@ -183,10 +217,13 @@ class UserProfilePage extends StatelessWidget {
                   // border: Border.all(color: Colors.black),
                   borderRadius: BorderRadius.circular(20)),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
                 children: [
                   Row(
-                    mainAxisSize: MainAxisSize.min,
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
@@ -238,6 +275,7 @@ class UserProfilePage extends StatelessWidget {
                   /*1st Row */
                   Row(
                     mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       /*Account's ID*/
@@ -248,28 +286,23 @@ class UserProfilePage extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 0.0),
-                              child: Text(
-                                "Account's ID",
-                                style: TextStyle(
-                                    fontSize: screenHeight / 40,
-                                    fontWeight: FontWeight.bold),
-                              ),
+                            Text(
+                              "Account's ID",
+                              style: TextStyle(
+                                  fontSize: screenHeight / 40,
+                                  fontWeight: FontWeight.bold),
                             ),
-                            Padding(
-                                padding: const EdgeInsets.only(left: 0.0),
-                                child: SizedBox(
-                                  height: screenHeight / 10,
-                                  width: screenWidth / 4,
-                                  child: Text(
-                                    "admin012345",
-                                    style: TextStyle(
-                                        fontSize: screenHeight / 45,
-                                        color: Colors.grey),
-                                    overflow: TextOverflow.clip,
-                                  ),
-                                ))
+                            SizedBox(
+                              height: screenHeight / 10,
+                              width: screenWidth / 4,
+                              child: Text(
+                                "admin012345",
+                                style: TextStyle(
+                                    fontSize: screenHeight / 45,
+                                    color: Colors.grey),
+                                overflow: TextOverflow.clip,
+                              ),
+                            )
                           ],
                         ),
                       ),
@@ -281,28 +314,23 @@ class UserProfilePage extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 0.0),
-                              child: Text(
-                                "Creation Date",
-                                style: TextStyle(
-                                    fontSize: screenHeight / 40,
-                                    fontWeight: FontWeight.bold),
-                              ),
+                            Text(
+                              "Creation Date",
+                              style: TextStyle(
+                                  fontSize: screenHeight / 40,
+                                  fontWeight: FontWeight.bold),
                             ),
-                            Padding(
-                                padding: const EdgeInsets.only(left: 0.0),
-                                child: SizedBox(
-                                  height: screenHeight / 10,
-                                  width: screenWidth / 4,
-                                  child: Text(
-                                    "11/06/2024",
-                                    style: TextStyle(
-                                        fontSize: screenHeight / 45,
-                                        color: Colors.grey),
-                                    overflow: TextOverflow.clip,
-                                  ),
-                                ))
+                            SizedBox(
+                              height: screenHeight / 10,
+                              width: screenWidth / 4,
+                              child: Text(
+                                "11/06/2024",
+                                style: TextStyle(
+                                    fontSize: screenHeight / 45,
+                                    color: Colors.grey),
+                                overflow: TextOverflow.clip,
+                              ),
+                            )
                           ],
                         ),
                       ),
@@ -312,6 +340,7 @@ class UserProfilePage extends StatelessWidget {
                   /*2nd Row*/
                   Row(
                     mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       /*Email*/
@@ -322,28 +351,23 @@ class UserProfilePage extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 0.0),
-                              child: Text(
-                                "Email",
-                                style: TextStyle(
-                                    fontSize: screenHeight / 40,
-                                    fontWeight: FontWeight.bold),
-                              ),
+                            Text(
+                              "Email",
+                              style: TextStyle(
+                                  fontSize: screenHeight / 40,
+                                  fontWeight: FontWeight.bold),
                             ),
-                            Padding(
-                                padding: const EdgeInsets.only(left: 0.0),
-                                child: SizedBox(
-                                  height: screenHeight / 10,
-                                  width: screenWidth / 4,
-                                  child: Text(
-                                    "admin@bestlab.com",
-                                    style: TextStyle(
-                                        fontSize: screenHeight / 45,
-                                        color: Colors.grey),
-                                    overflow: TextOverflow.clip,
-                                  ),
-                                ))
+                            SizedBox(
+                              height: screenHeight / 10,
+                              width: screenWidth / 4,
+                              child: Text(
+                                "admin@bestlab.com",
+                                style: TextStyle(
+                                    fontSize: screenHeight / 45,
+                                    color: Colors.grey),
+                                overflow: TextOverflow.clip,
+                              ),
+                            )
                           ],
                         ),
                       ),
@@ -355,28 +379,23 @@ class UserProfilePage extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 0.0),
-                              child: Text(
-                                "Phone",
-                                style: TextStyle(
-                                    fontSize: screenHeight / 40,
-                                    fontWeight: FontWeight.bold),
-                              ),
+                            Text(
+                              "Phone",
+                              style: TextStyle(
+                                  fontSize: screenHeight / 40,
+                                  fontWeight: FontWeight.bold),
                             ),
-                            Padding(
-                                padding: const EdgeInsets.only(left: 0.0),
-                                child: SizedBox(
-                                  height: screenHeight / 10,
-                                  width: screenWidth / 4,
-                                  child: Text(
-                                    "09xxxxxxxx",
-                                    style: TextStyle(
-                                        fontSize: screenHeight / 45,
-                                        color: Colors.grey),
-                                    overflow: TextOverflow.clip,
-                                  ),
-                                ))
+                            SizedBox(
+                              height: screenHeight / 10,
+                              width: screenWidth / 4,
+                              child: Text(
+                                "09xxxxxxxx",
+                                style: TextStyle(
+                                    fontSize: screenHeight / 45,
+                                    color: Colors.grey),
+                                overflow: TextOverflow.clip,
+                              ),
+                            )
                           ],
                         ),
                       ),
