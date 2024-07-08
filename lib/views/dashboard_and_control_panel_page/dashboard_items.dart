@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class DashboardItem extends StatelessWidget {
   final String title; // Assuming each dashboard item has a title
@@ -8,77 +9,76 @@ class DashboardItem extends StatelessWidget {
   final String bottomStat; // For the bottom stat
 
   const DashboardItem({
-    Key? key,
+    super.key,
     required this.title,
     required this.topStat1,
     required this.topStat2,
     required this.middleStat,
     required this.bottomStat,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: Colors.blue[200],
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(title, style: Theme.of(context).textTheme.bodyMedium),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Flexible(
-                  // Wrap the AspectRatio with Expanded
-                  child: Container(
-                    margin: EdgeInsets.all(8),
-                    color: Colors.grey[300],
-                    child: AspectRatio(
-                      aspectRatio: 1, // Example aspect ratio
-                      child: Container(
-                        // Your content here
-                        child: Text(topStat1),
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 8),
-                Flexible(
-                  child: Container(
-                    margin: EdgeInsets.all(8),
-                    color: Colors.grey[300],
-                    child: AspectRatio(
-                      aspectRatio: 1, // Example aspect ratio
-                      child: Container(
-                        // Your content here
-                        child: Text(topStat2),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Flexible(
-              child: Container(
-                margin: EdgeInsets.all(8),
-                color: Colors.grey[300],
-                child: AspectRatio(
-                  aspectRatio: 16 / 9, // Example aspect ratio
-                  child: Text(bottomStat),
-                ),
-              ),
-            ),
-            Flexible(
-              child: Container(
-                margin: EdgeInsets.all(8),
-                color: Colors.grey[300],
-                child: AspectRatio(
-                  aspectRatio: 16 / 9, // Example aspect ratio
-                  child: Text(bottomStat),
-                ),
-              ),
-            ),
+            _buildRowStat(context),
+            _middleStat(middleStat, context),
+            _middleStat(bottomStat, context),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRowStat(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Flexible(
+          child: _buildSquareStat(topStat1, context),
+        ),
+        Flexible(
+          child: _buildSquareStat(topStat2, context),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSquareStat(String stat, BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.all(8),
+      color: Colors.grey[300],
+      child: AspectRatio(
+        aspectRatio: 1, // Example aspect ratio
+        child: Text(
+          stat,
+          style: TextStyle(
+            fontSize: MediaQuery.of(context).size.width * 0.05,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _middleStat(String stat, BuildContext context) {
+    return Flexible(
+      child: Container(
+        margin: const EdgeInsets.all(8),
+        color: Colors.grey[300],
+        child: AspectRatio(
+          aspectRatio: 16 / 9, // Example aspect ratio
+          child: Text(
+            bottomStat,
+            style: TextStyle(
+              fontSize: MediaQuery.of(context).size.width * 0.05,
+            ),
+          ),
         ),
       ),
     );
