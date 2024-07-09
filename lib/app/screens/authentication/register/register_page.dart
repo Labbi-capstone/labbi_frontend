@@ -1,85 +1,109 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:labbi_frontend/views/authentication/register/register_page.dart';
-import 'package:labbi_frontend/views/start_page/start_page.dart';
-import 'package:labbi_frontend/components/textfield.dart';
-import 'package:labbi_frontend/components/button.dart';
-import 'package:labbi_frontend/models/User.dart';
+import 'package:labbi_frontend/app/components/textfield.dart';
+import 'package:labbi_frontend/app/components/button.dart';
 import 'package:http/http.dart' as http;
 import 'package:labbi_frontend/config/config.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:labbi_frontend/app/screens/authentication/login/login_page.dart';
 
-class LoginPage extends StatefulWidget {
+class RegisterPage
+ extends StatefulWidget {
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _RegisterPageState createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage
+> {
+
+   // text editing controllers
+  final nameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-
+  final confirmedPasswordController = TextEditingController();
+  bool isNotMatch = false;
+  bool isNotValid = false;
+  
   //check if not filled
+  bool emptyFullname = false;
   bool emptyEmail = false;
   bool emptyPassword = false;
+  bool emptyConfirmedPassword = false;
 
-  late SharedPreferences prefs;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    initSharedPref();
-  }
-
-  void initSharedPref() async {
-    prefs = await SharedPreferences.getInstance();
-  }
-
-  void loginUser() async {
-    if (emailController.text.isNotEmpty) {
-      setState(() {
-        emptyEmail = false;
-      });
-    }
-    if (passwordController.text.isNotEmpty) {
-      setState(() {
-        emptyPassword = false;
-      });
-    }
-    
-    if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
-      var regBody = {
-        "email": emailController.text,
-        "password": passwordController.text
-      };
-
-      var res = await http.post(Uri.parse(signin),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode(regBody)
-      );
-
-      var jsonRes = jsonDecode(res.body);
-      if(jsonRes['status']){
-        var myToken = jsonRes['token'];
-        prefs.setString('token', myToken);
-        Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard(token: myToken)));
-      } else {
-        print('Something went wrong');
+  void register() async {
+      if (nameController.text.isNotEmpty) {
+        setState(() {
+          emptyFullname = false;
+        });
       }
-    }
-    else {
+      if (emailController.text.isNotEmpty) {
+        setState(() {
+          emptyEmail = false;
+        });
+      }
+      if (passwordController.text.isNotEmpty) {
+        setState(() {
+          emptyPassword = false;
+        });
+      }
+      if (passwordController.text.isNotEmpty) {
+        setState(() {
+          emptyConfirmedPassword = false;
+        });
+      }
+
+    if (nameController.text.isNotEmpty && emailController.text.isNotEmpty && passwordController.text.isNotEmpty && confirmedPasswordController.text.isNotEmpty) {
+      if (confirmedPasswordController.text != passwordController.text) {
+        setState(() {
+          isNotMatch = true;
+        });
+      } else {
+        var reqBody = {
+          "fullname": nameController.text,
+          "email": emailController.text,
+          "password": passwordController.text
+        };
+
+        var res = await http.post(Uri.parse(registration),
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: jsonEncode(reqBody)
+        );
+
+        var jsonRes = jsonDecode(res.body);
+
+        print(jsonRes['status']);
+
+        if (jsonRes['status']) {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
+          print("success");
+        } else {
+          print("Something wrong");
+        }
+      }
+    } else {
+      if (nameController.text.isEmpty) {
+        setState(() {
+          emptyFullname = true;
+        });
+      }
       if (emailController.text.isEmpty) {
         setState(() {
           emptyEmail = true;
         });
-      } 
+      }
       if (passwordController.text.isEmpty) {
         setState(() {
           emptyPassword = true;
         });
       }
-    } 
+      if (passwordController.text.isEmpty) {
+        setState(() {
+          emptyConfirmedPassword = true;
+        });
+      }
+    }
   }
 
   @override 
@@ -106,7 +130,7 @@ class _LoginPageState extends State<LoginPage> {
                   child: Column(
                     children: [
                       const SizedBox(height: 50),
-                      Text('Sign In', style: GoogleFonts.barlowSemiCondensed(
+                      Text('Sign Up', style: GoogleFonts.barlowSemiCondensed(
                         textStyle: const TextStyle(
                           color: Colors.white, 
                           fontSize: 40.0,
@@ -119,6 +143,16 @@ class _LoginPageState extends State<LoginPage> {
 
                       // username textfield
                       MyTextField(
+                        controller: nameController,
+                        hintText: 'Fullname',
+                        obscureText: false,
+                        errorText: emptyFullname ? 'Please enter fullname' : '',
+                      ),
+
+                      const SizedBox(height: 30),
+
+                      // username textfield
+                      MyTextField(
                         controller: emailController,
                         hintText: 'Email',
                         obscureText: false,
@@ -127,40 +161,55 @@ class _LoginPageState extends State<LoginPage> {
 
                       const SizedBox(height: 30),
 
-                      // password textfield
+                      // username textfield
                       MyTextField(
                         controller: passwordController,
                         hintText: 'Password',
-                        obscureText: true,
+                        obscureText: false,
                         errorText: emptyPassword ? 'Please enter password' : '',
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      // forgot password?
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                             MyButton(
-                                onTap: (){},
-                                text: const Text(
-                                  'Forgot Password?',
-                                  style: TextStyle(
-                                    color: Color.fromARGB(255, 127, 127, 127),
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
                       ),
 
                       const SizedBox(height: 30),
 
-                      // sign in button
+                      // password textfield
+                      MyTextField(
+                        controller: confirmedPasswordController,
+                        hintText: 'Confirm Password',
+                        obscureText: true,
+                        errorText: emptyPassword ? 'Please enter confirmed password' : isNotMatch ? 'Password not match' : '',
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      // have an account?
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                                const Text('Already have an account? '),
+                                const SizedBox(width: 4),
+                                MyButton(
+                                    onTap: (){
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => LoginPage()));
+                                    }, 
+                                  text: const Text('Sign in', 
+                                    style: TextStyle(
+                                      color: Colors.blue,
+                                      fontWeight: FontWeight.bold
+                                    ),
+                                  ),
+                                )
+                            ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      // sign up button
                       Container(
                         padding: const EdgeInsets.all(25),
                         margin: const EdgeInsets.symmetric(horizontal: 25),
@@ -169,11 +218,11 @@ class _LoginPageState extends State<LoginPage> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: MyButton(
-                          onTap: () async {
-                                loginUser();
+                          onTap: () => {
+                            register()
                           },
                           text: const Text(
-                            'Sign in',
+                            'Sign up',
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
@@ -185,7 +234,7 @@ class _LoginPageState extends State<LoginPage> {
 
                       const SizedBox(height: 30),
 
-                      // google sign in
+                      // google sign up
                       const Padding(
                         padding: EdgeInsets.symmetric(horizontal: 25),
                         child: Row(children: [
@@ -232,46 +281,20 @@ class _LoginPageState extends State<LoginPage> {
                                     height: 50
                                   ),
                                   const SizedBox(width: 10),
-                                  MyButton(
-                                    onTap: (){},
-                                      text: const Text(
-                                        'Sign in with Google',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                        ),
+                                  GestureDetector(
+                                    onTap: (){
+                                      print('Sign up with Google');
+                                    },
+                                    child: const Text('Sign up with Google', 
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold
                                       ),
+                                    )
                                   ),
                                 ],)
                               )
                             ],
                       ),
-
-                      const SizedBox(height: 30),
-                      Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                                const Text('Don\'t have an account? '),
-                                const SizedBox(width: 4),
-                                MyButton(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => RegisterPage()));
-                                  },
-                                  text: const Text(
-                                    'Register',
-                                    style: TextStyle(
-                                      color: Colors.blue,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                ),
-                            ],
-                      ),
-                  
                 ]
               )
             ),
@@ -281,3 +304,4 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
+ 

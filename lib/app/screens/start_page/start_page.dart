@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:labbi_frontend/views/authentication/login/login_page.dart';
-import 'package:labbi_frontend/components/button.dart';
+import 'package:labbi_frontend/app/screens/authentication/login/login_page.dart';
+import 'package:labbi_frontend/app/components/button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Dashboard extends StatefulWidget {

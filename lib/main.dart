@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-import 'package:labbi_frontend/views/user_profile/user_profile.dart';
+import 'package:labbi_frontend/app/screens/user_profile/user_profile.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:labbi_frontend/views/start_page/start_page.dart';
-import 'views/authentication/login/login_page.dart';
+import 'package:labbi_frontend/app/screens/start_page/start_page.dart';
+import 'app/screens/authentication/login/login_page.dart';
 // import 'authentication/register/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:labbi_frontend/views/dashboard_and_control_panel_page/dashboard_page.dart';
+import 'package:labbi_frontend/app/screens/dashboard_and_control_panel_page/dashboard_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
