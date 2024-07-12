@@ -19,6 +19,7 @@ class _UserProfileUpdateState extends State<UserProfileUpdate>{
 
   late String maskedPhoneNumber;
 
+  // Hiring phone number
   @override
   void initState() {
     super.initState();
@@ -28,6 +29,9 @@ class _UserProfileUpdateState extends State<UserProfileUpdate>{
 
   @override
   Widget build(BuildContext context) {
+    dynamic screenHeight = MediaQuery.of(context).size.height;
+    dynamic screenWidth = MediaQuery.of(context).size.width;
+
     return MaterialApp(
       home: Scaffold(
         body: SafeArea(
@@ -64,15 +68,17 @@ class _UserProfileUpdateState extends State<UserProfileUpdate>{
                       
                     Stack(
                       children: [
+                        
+
                         CircleAvatar(
                           backgroundColor: Colors.white,
-                          radius: 70,
+                          radius: screenHeight * 0.08,
                           child: ClipOval(
                             child: Image.asset(
                               pathImage,
                               fit: BoxFit.cover,
-                              width: 100,
-                              height: 100,
+                              // width: screenWidth*0.04,
+                              // height: screenHeight*0.04,
                             ),
                           ),
                         ),
@@ -85,9 +91,9 @@ class _UserProfileUpdateState extends State<UserProfileUpdate>{
                               onTap: () {
                                 // Handle image update logic
                               },
-                              child: const Icon(
+                              child: Icon(
                                 Icons.upload,
-                                size: 65,
+                                size: screenHeight * 0.06,
                                 color: Colors.black,
                               ),
                             ),
@@ -97,35 +103,42 @@ class _UserProfileUpdateState extends State<UserProfileUpdate>{
                     ),
 
                     const SizedBox(height: 30),
-
-                    MyTextField(
+                    
+                    SizedBox(
+                      height: screenHeight*0.07,
+                      width: screenWidth*0.7,
+                      child: MyTextField(
                         // controller: nameController,
                         hintText: username,
                         obscureText: false,
                       ),
+                    ),
                     
                     const SizedBox(height: 30),
 
-                    MyTextField(
-                        // controller: nameController,
-                        hintText: email,
-                        obscureText: false,
-                      ),
+                    SizedBox(
+                      height: screenHeight*0.07,
+                      width: screenWidth*0.7,
+                      child: MyTextField(
+                          // controller: nameController,
+                          hintText: email,
+                          obscureText: false,
+                        ),
+                    ),
 
                     const SizedBox(height: 30),
 
                     Container(
-                      width: 305,
+                      width: screenWidth * 0.45,
                       decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 233, 233, 233),
+                        color: const Color.fromARGB(255, 233, 233, 233),
                         borderRadius: BorderRadius.circular(5.0),
                       ),
                       child: Row( 
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                         SizedBox(
-                          width: 150,
-                          child: Padding( padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 15),
+                          child: Padding( padding: EdgeInsets.symmetric(vertical: screenHeight*0.015, horizontal: screenWidth * 0.02),
                             child: Text( maskedPhoneNumber,
                               style: const TextStyle(
                                 color: Colors.black,  
@@ -137,7 +150,7 @@ class _UserProfileUpdateState extends State<UserProfileUpdate>{
                         const Spacer(),
 
                         SizedBox(
-                          height: 40,
+                          height: screenHeight * 0.04,
                           child: TextButton(
                             onPressed: () {
                               // Handle OTP send action
@@ -148,10 +161,10 @@ class _UserProfileUpdateState extends State<UserProfileUpdate>{
                                 borderRadius: BorderRadius.circular(20.0),
                               ), // Button text color
                             ),
-                          child: const Text(
+                          child: Text(
                             'Send OTP',
                             style: TextStyle(
-                              fontSize: 14.0,
+                              fontSize: screenHeight*0.015,
                             ),
                           ),
                         ),
@@ -161,22 +174,29 @@ class _UserProfileUpdateState extends State<UserProfileUpdate>{
                     const SizedBox(height: 30),
 
                     SizedBox(
-                      width: 200, // Set the desired width
-                      child: MyTextField(
-                        // controller: nameController,
-                        hintText: otpNum,
-                        obscureText: false,
+                      height: screenHeight*0.07,
+                      width: screenWidth*0.35,
+                      child: SizedBox(
+                        child: MyTextField(
+                          // controller: nameController,
+                          hintText: otpNum,
+                          obscureText: false,
+                        ),
                       ),
                     ),
 
                     const SizedBox(height: 30),
 
-                    MyTextField(
-                      // controller: nameController,
-                      hintText: newPhoneNum,
-                      obscureText: false,
+                    SizedBox(
+                      height: screenHeight*0.07,
+                      width: screenWidth*0.7,
+                      child: MyTextField(
+                        // controller: nameController,
+                        hintText: newPhoneNum,
+                        obscureText: false,
+                      ),
                     ),
-                    
+
                     const SizedBox(height: 30),
 
                     Row(
@@ -188,15 +208,15 @@ class _UserProfileUpdateState extends State<UserProfileUpdate>{
                               // update
                             }, 
                             style: TextButton.styleFrom(
-                              foregroundColor: Colors.white, backgroundColor: const Color.fromARGB(255, 41, 42, 43), padding: const EdgeInsets.all(15),
+                              foregroundColor: Colors.white, backgroundColor: const Color.fromARGB(255, 41, 42, 43), padding: EdgeInsets.all(screenHeight*0.015),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(7.0),
                               ), // Button text color
                             ),
-                            child: const Text(
+                            child: Text(
                               'Update',
                               style: TextStyle(
-                                fontSize: 18.0,
+                                fontSize: screenHeight*0.024,
                               ),
                             ),
                           ),
@@ -210,15 +230,15 @@ class _UserProfileUpdateState extends State<UserProfileUpdate>{
                               // cancel
                             }, 
                             style: TextButton.styleFrom(
-                              foregroundColor: Colors.white, backgroundColor: Color.fromARGB(255, 167, 44, 44), padding: const EdgeInsets.all(15),
+                              foregroundColor: Colors.white, backgroundColor: const Color.fromARGB(255, 167, 44, 44), padding: EdgeInsets.all(screenHeight*0.015),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(7.0),
                               ), // Button text color
                             ),
-                            child: const Text(
+                            child: Text(
                               'Cancel',
                               style: TextStyle(
-                                fontSize: 18.0,
+                                fontSize: screenHeight*0.024,
                               ),
                             ),
                           ),

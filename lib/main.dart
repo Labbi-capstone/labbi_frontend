@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
     return const MaterialApp(
       // home: token != null && !JwtDecoder.isExpired(token!) ? Dashboard(token: token!) : const LoginUI(), // Check for null and use token safely
       // home: Dashboard(token: 'token',), // Testing
-      home: UserProfileUpdate(),
+      home: UserProfileUpdate(), // Testing
     );
   }
 }

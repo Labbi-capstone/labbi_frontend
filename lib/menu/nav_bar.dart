@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:labbi_frontend/authentication/start_page/start_page.dart';
-import 'package:labbi_frontend/main.dart';
 
 class MenuTaskbar extends StatefulWidget {
   const MenuTaskbar({super.key});
@@ -12,33 +10,35 @@ class MenuTaskbar extends StatefulWidget {
 
 class _MenuTaskbarState extends State<MenuTaskbar>{
   final userName = 'User';
-  final String pathImage = '';
+  final String pathImage = 'assets/images/logo-image.png';
   
   @override
   Widget build(BuildContext context) {
+    dynamic screenHeight = MediaQuery.of(context).size.height;
+    dynamic screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       appBar: AppBar(
-        title: Row( children: [
-          Container(
+        title: Row( 
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [ Container(
+              // padding: EdgeInsets.only(left: screenWidth * 0.05),
+              height: screenHeight * 0.1,
+              width: screenWidth * 0.25,
             decoration: const BoxDecoration(
               color: Colors.blue,
+              image: DecorationImage(
+                image: AssetImage("assets/images/logo-image.jpg"),
+                fit: BoxFit.fill
+              )
             ),
-            constraints: const BoxConstraints(
-              maxHeight: 250.0,
-              maxWidth: 250.0, 
-            ),
-            child: ClipRRect( // Clip overflowing parts of the image
-              child: Image.asset(
-                'lib/images/logoImage.png',             
-              ),
-            ),
-          ),
-        ],),
+          ),],
+        ),
       ),
             
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.all(10),
+          padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.02,vertical: screenHeight * 0.01),
           child: Column (
               children: [
                 // Line
@@ -51,13 +51,14 @@ class _MenuTaskbarState extends State<MenuTaskbar>{
                   child: Row(
                      mainAxisAlignment: MainAxisAlignment.start,
                      children: [
+                      SizedBox(width: screenWidth * 0.1),
                       CircleAvatar(
                         backgroundColor: Colors.blue,
-                        radius: 50,
+                        radius: screenHeight * 0.055,
                         child: Image.asset(pathImage),
                       ),
-                      const SizedBox(width: 50),
-                      Text(userName, style: const TextStyle(fontSize: 20.0)),
+                      SizedBox(width: screenWidth * 0.05),
+                      Text(userName, style: TextStyle(fontSize: screenHeight * 0.025)),
                     ],
                   ),
                 ),
@@ -66,7 +67,6 @@ class _MenuTaskbarState extends State<MenuTaskbar>{
                 const Divider(
                   color: Colors.black,
                 ),
-
 
                 // Frame for a list of buttons
                 Expanded(
@@ -86,21 +86,19 @@ class _MenuTaskbarState extends State<MenuTaskbar>{
                             //   MaterialPageRoute(builder: (context) => const Dashboard()),
                             // );
                           },
-                          icon: const Padding(
-                            padding: EdgeInsets.only(right: 20.0),
-                            child: Icon(Icons.home, size: 64.0),
+                          icon: Padding(
+                            padding: EdgeInsets.only(right: screenWidth * 0.02),
+                            child: Icon(Icons.home, size: screenHeight * 0.08),
                           ),
-                          label: const Text('Dashboard', style: TextStyle(fontSize: 22.0)),
+                          label: Text('Dashboard', style: TextStyle(fontSize: screenHeight * 0.02)),
                           style: TextButton.styleFrom(
                             foregroundColor: Colors.black,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                           ), 
                         ),
                       ),
-                      
-                      // const SizedBox(Space), // Space between buttons
                       
                       // Control Panel Button
                       SizedBox(
@@ -108,15 +106,15 @@ class _MenuTaskbarState extends State<MenuTaskbar>{
                           onPressed: () {
                             // Navigate to Control Panel
                           },
-                          icon: const Padding(
-                            padding: EdgeInsets.only(right: 20.0),
-                            child: Icon(Icons.dashboard, size: 64.0),
+                          icon: Padding(
+                            padding: EdgeInsets.only(right: screenWidth * 0.02),
+                            child: Icon(Icons.dashboard, size: screenHeight * 0.08),
                           ),
-                          label: const Text('Control Panel', style: TextStyle(fontSize: 22.0)),
+                          label: Text('Control Panel', style: TextStyle(fontSize: screenHeight * 0.02)),
                           style: TextButton.styleFrom(
                             foregroundColor: Colors.black, 
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                           ),
                         ),
@@ -128,15 +126,15 @@ class _MenuTaskbarState extends State<MenuTaskbar>{
                           onPressed: () {
                             // Navigate to Message
                           },
-                          icon: const Padding(
-                            padding: EdgeInsets.only(right: 20.0),
-                            child: Icon(Icons.message, size: 64.0),
+                          icon: Padding(
+                            padding: EdgeInsets.only(right:  screenWidth * 0.02),
+                            child: Icon(Icons.message, size: screenHeight * 0.08),
                           ),
-                          label: const Text('Message', style: TextStyle(fontSize: 22.0)),
+                          label: Text('Message', style: TextStyle(fontSize: screenHeight * 0.02)),
                           style: TextButton.styleFrom(
                             foregroundColor: Colors.black,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                           ),
                         ),
@@ -150,15 +148,15 @@ class _MenuTaskbarState extends State<MenuTaskbar>{
                           onPressed: () {
                             // Logout functionality
                           },
-                          icon: const Padding(
-                            padding: EdgeInsets.only(right: 20, left: 30),
-                            child: Icon(Icons.logout, size: 32.0),
+                          icon: Padding(
+                            padding: EdgeInsets.only(right: screenWidth * 0.025, left: screenWidth * 0.03),
+                            child: Icon(Icons.logout, size:  screenHeight * 0.05),
                           ),
-                          label: const Text('Log out', style: TextStyle(fontSize: 18.0)),
+                          label: Text('Log out', style: TextStyle(fontSize:  screenHeight * 0.02)),
                           style: TextButton.styleFrom(
                             foregroundColor: Colors.black,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                           ),
                         ),
