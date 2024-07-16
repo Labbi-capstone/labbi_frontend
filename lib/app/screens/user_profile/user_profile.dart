@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:labbi_frontend/user_profile/notification_page.dart';
-import 'package:labbi_frontend/user_profile/notification_message.dart';
+import 'package:labbi_frontend/app/screens/notification/notification_page.dart';
+import 'package:labbi_frontend/app/models/notification_message.dart';
 
 class UserProfilePage extends StatefulWidget {
   final List<NotificationMessage> listOfNotification;

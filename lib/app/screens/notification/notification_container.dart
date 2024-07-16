@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:labbi_frontend/user_profile/notification_message.dart';
+import 'package:labbi_frontend/app/models/notification_message.dart';
 
 class NotificationContainer extends StatefulWidget {
   final NotificationMessage notification;

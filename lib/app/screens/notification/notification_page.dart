@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:labbi_frontend/user_profile/notification_message.dart';
-import 'package:labbi_frontend/user_profile/notification_container.dart';
+import 'package:labbi_frontend/app/models/notification_message.dart';
+import 'package:labbi_frontend/app/screens/notification/notification_container.dart';
 
 class NotificationPage extends StatefulWidget {
   const NotificationPage({super.key});
