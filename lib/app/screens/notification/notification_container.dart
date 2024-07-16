@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:labbi_frontend/app/models/notification_message.dart';
+import 'package:labbi_frontend/user_profile/notification_message.dart';
 
 class NotificationContainer extends StatefulWidget {
   final NotificationMessage notification;
   const NotificationContainer({super.key, required this.notification});
-
   @override
   State<StatefulWidget> createState() => _NotificationContainerState();
 }
@@ -13,16 +12,19 @@ class _NotificationContainerState extends State<NotificationContainer> {
   bool isTap = false;
   late NotificationMessage notification;
 
+  // _UnreadMessageState({required this.notification});
+
   @override
   void initState() {
     super.initState();
     notification = widget.notification;
+    //your code here
   }
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
-    double screenWidth = MediaQuery.of(context).size.width;
+    dynamic screenHeight = MediaQuery.of(context).size.height;
+    dynamic screenWidth = MediaQuery.of(context).size.width;
 
     return InkWell(
       onTap: () {
@@ -114,7 +116,7 @@ class _NotificationContainerState extends State<NotificationContainer> {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(top: 5, bottom: screenHeight / 55),
+                    padding: EdgeInsets.only(top: screenHeight / 100, bottom: screenHeight / 55),
                     child: Text(notification.content,
                         style: TextStyle(fontSize: screenHeight / 50),
                         overflow: isTap
@@ -128,7 +130,7 @@ class _NotificationContainerState extends State<NotificationContainer> {
               flex: 1,
               child: Padding(
                   padding: EdgeInsets.only(
-                      top: screenHeight / 55, left: 5, right: 5),
+                      top: screenHeight / 55, left: screenWidth / 60, right: screenWidth / 60),
                   child: RotatedBox(
                     quarterTurns: isTap ? 2 : 0,
                     child: const Image(
