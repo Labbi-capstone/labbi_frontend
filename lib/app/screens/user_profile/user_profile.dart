@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:labbi_frontend/app/models/notification_message.dart';
 import 'package:labbi_frontend/app/screens/notification/notification_page.dart';
+import 'package:labbi_frontend/app/models/notification_message.dart';
 
 class UserProfilePage extends StatefulWidget {
   final List<NotificationMessage> listOfNotification;
@@ -28,7 +28,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
         });
       }
     }
-
   }
 
   @override
@@ -41,16 +40,19 @@ class _UserProfilePageState extends State<UserProfilePage> {
           elevation: 0,
           backgroundColor: Colors.transparent,
           centerTitle: true,
-          leading: IconButton(
-            icon: const Icon(
-              Icons.arrow_back,
-              color: Colors.white,
+          leading: Padding(
+            padding: EdgeInsets.only(left: screenWidth * 0.045),
+            child: IconButton(
+              icon: const Icon(
+                Icons.arrow_back,
+                color: Colors.white,
+              ),
+              onPressed: () => Navigator.of(context).pop(),
             ),
-            onPressed: () => Navigator.of(context).pop(),
           ),
           actions: [
             Padding(
-              padding: const EdgeInsets.only(right: 17.0),
+              padding: EdgeInsets.only(right: screenWidth * 0.045),
               child: InkWell(
                 onTap: () {
                   Navigator.of(context).push(MaterialPageRoute(
@@ -194,14 +196,14 @@ class _UserProfilePageState extends State<UserProfilePage> {
             ),
           ),
           Positioned(
-              top: 30,
+              top: screenHeight * 0.05,
               child: Text(
                 "Administrator",
                 style:
                     TextStyle(fontSize: screenHeight / 45, color: Colors.grey),
               )),
           Positioned(
-            top: 80,
+            top: screenHeight * 0.12,
             child: Container(
               height: null,
               width: (9 / 10) * screenWidth,
@@ -227,7 +229,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(left: 30.0, top: 16.0),
+                        padding: EdgeInsets.only(left: screenWidth * 0.08, top: screenHeight * 0.028),
                         child: Text(
                           "User's Information",
                           style: TextStyle(
@@ -240,8 +242,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         child: Container(
                           alignment: Alignment.topRight,
                           child: Padding(
-                            padding:
-                                const EdgeInsets.only(right: 30.0, bottom: 5.0),
+                            padding: EdgeInsets.only(right: screenWidth * 0.08, bottom: screenHeight * 0.008),
                             child: Container(
                               height: screenHeight / 13,
                               width: screenWidth / 10,
@@ -266,10 +267,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
                       )
                     ],
                   ),
-                  const Padding(
+                  Padding(
                     padding:
-                        EdgeInsets.only(left: 30.0, right: 30.0, bottom: 16.0),
-                    child: Divider(),
+                        EdgeInsets.only(left: screenWidth * 0.08, right: screenWidth * 0.08, bottom: screenHeight * 0.028),
+                    child: const Divider(),
                   ),
                   /*Detailed components */
                   /*1st Row */
@@ -280,7 +281,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     children: [
                       /*Account's ID*/
                       Padding(
-                        padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+                        padding: EdgeInsets.only(left: screenWidth * 0.08, right: screenWidth * 0.08),
                         child: Column(
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -308,7 +309,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                       ),
                       /*Creation Date*/
                       Padding(
-                        padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+                        padding: EdgeInsets.only(left: screenWidth * 0.08, right: screenWidth * 0.08),
                         child: Column(
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -345,7 +346,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     children: [
                       /*Email*/
                       Padding(
-                        padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+                        padding: EdgeInsets.only(left: screenWidth * 0.08, right: screenWidth * 0.08),
                         child: Column(
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -373,7 +374,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                       ),
                       /*Phone*/
                       Padding(
-                        padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+                        padding: EdgeInsets.only(left: screenWidth * 0.08, right: screenWidth * 0.08),
                         child: Column(
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.start,

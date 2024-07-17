@@ -16,8 +16,8 @@ class _NotificationPageState extends State<NotificationPage> {
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
-    double screenWidth = MediaQuery.of(context).size.width;
+    dynamic screenHeight = MediaQuery.of(context).size.height;
+    dynamic screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       // extendBodyBehindAppBar: true,
@@ -32,10 +32,12 @@ class _NotificationPageState extends State<NotificationPage> {
           ),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: const Text(
+        title: Text(
           "Notification",
           style: TextStyle(
-              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20.0),
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: screenHeight / 35),
         ),
       ),
       body: SingleChildScrollView(
@@ -57,13 +59,14 @@ class _NotificationPageState extends State<NotificationPage> {
               mainAxisSize: MainAxisSize.max,
               children: [
                 Padding(
-                    padding: const EdgeInsets.only(top: 30, bottom: 30),
+                    padding: EdgeInsets.only(
+                        top: screenHeight / 30, bottom: screenHeight / 30),
                     child: customTabBar(screenHeight, screenWidth)),
                 if (isChanged == false)
                   for (var i = 0; i < notificationList.length; i++)
                     if (notificationList[i].status == 'unread')
                       Padding(
-                          padding: const EdgeInsets.only(bottom: 20),
+                          padding: EdgeInsets.only(bottom: screenHeight / 35),
                           child: NotificationContainer(
                             notification: notificationList[i],
                           ))
@@ -73,7 +76,7 @@ class _NotificationPageState extends State<NotificationPage> {
                   for (var i = 0; i < notificationList.length; i++)
                     if (notificationList[i].status == 'read')
                       Padding(
-                          padding: const EdgeInsets.only(bottom: 20),
+                          padding: EdgeInsets.only(bottom: screenHeight / 35),
                           child: NotificationContainer(
                             notification: notificationList[i],
                           ))
