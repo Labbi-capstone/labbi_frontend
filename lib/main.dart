@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:labbi_frontend/app/screens/user_org/user_home_org.dart';
 
 import 'package:labbi_frontend/app/screens/user_profile/user_profile.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -26,7 +27,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: token != null && !JwtDecoder.isExpired(token!)
           ? Dashboard(token: token!)
-          : DashboardPage(), // Check for null and use token safely
+          // : DashboardPage(), // Check for null and use token safely
+          // : const UserProfilePage(listOfNotification: [],),
+          : UserHomeOrg(),
     );
   }
 }
