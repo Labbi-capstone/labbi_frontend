@@ -19,6 +19,12 @@ class _MenuTaskbarState extends State<MenuTaskbar>{
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context); // Navigate back to the previous screen
+          },
+          icon: const Icon(Icons.menu, color: Colors.black,),
+        ),
         title: SizedBox(
           height: screenHeight*0.18,
           width: screenWidth*0.3,
