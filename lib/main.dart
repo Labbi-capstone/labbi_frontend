@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/screens/user_org/user_home_org.dart';
+import 'package:labbi_frontend/app/screens/user_profile/user/edit_user_profile.dart';
 
 import 'package:labbi_frontend/app/screens/user_profile/user_profile.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -29,7 +30,8 @@ class MyApp extends StatelessWidget {
           ? Dashboard(token: token!)
           // : DashboardPage(), // Check for null and use token safely
           // : const UserProfilePage(listOfNotification: [],),
-          : UserHomeOrg(),
+          : const UserHomeOrg(), // testing to check
+          // : const UserProfileUpdate(), // testing to check
     );
   }
 }

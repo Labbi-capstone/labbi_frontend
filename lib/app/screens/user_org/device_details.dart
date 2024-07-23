@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:labbi_frontend/app/models/user_device.dart';
-import 'package:labbi_frontend/app/screens/user_org/users_in_desvice.dart';
+import 'package:labbi_frontend/app/models/user_device_test.dart';
 
 class DeviceDetails extends StatelessWidget {
   final UserDevice device;
-  final List<UserDevice> allDevices;
 
-  const DeviceDetails({super.key, required this.device, required this.allDevices});
+  const DeviceDetails({super.key, required this.device,});
   
   @override
   Widget build(BuildContext context) {
@@ -77,28 +75,6 @@ class DeviceDetails extends StatelessWidget {
               ),
             ),
 
-            const Divider(
-                color: Colors.black,
-            ),
-
-            TextButton( onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => UsersInDesvice(devices: allDevices), // Pass the list of devices
-                ),
-              );
-            }, child: Text(
-              'Danh sách người sử dụng máy',
-              style: TextStyle(
-                fontSize: screenHeight*0.03,
-                color: Colors.black,
-              ),
-            )),
-
-            const Divider(
-              color: Colors.black,
-            ),
             ],
           ),
           ),

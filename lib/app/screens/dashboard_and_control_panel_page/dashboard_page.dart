@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:labbi_frontend/app/screens/menu/nav_bar.dart';
 import 'package:labbi_frontend/app/widgets/custom_search_delegate.dart';
 import 'package:labbi_frontend/app/models/dashboard.dart';
 import 'package:labbi_frontend/app/screens/dashboard_and_control_panel_page/dashboard_items.dart ';
@@ -18,6 +19,15 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.menu, color: Colors.blue,),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const  MenuTaskbar()),
+            );
+          },
+        ),
         title: const Text('Dashboard'),
         centerTitle: true,
         backgroundColor: Colors.lightBlue[50],

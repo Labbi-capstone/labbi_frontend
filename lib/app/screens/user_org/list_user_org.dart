@@ -1,27 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:labbi_frontend/app/models/user_org_test.dart';
 // import 'package:flutter/widgets.dart';
-import 'package:labbi_frontend/app/models/user_device_test.dart';
-import 'package:labbi_frontend/app/screens/user_org/device_details.dart';
 
-class ListUserDevice extends StatefulWidget{
+
+class ListUserOrg extends StatefulWidget{
   
-  final List<UserDevice> devices;
+  final List<UserOrg> users;
 
-  const ListUserDevice({super.key, required this.devices});
+  const ListUserOrg({super.key, required this.users});
 
   @override
   // ignore: library_private_types_in_public_api
   _ListUserDeviceState createState() => _ListUserDeviceState();
 }
   
-class _ListUserDeviceState extends State<ListUserDevice>{
+class _ListUserDeviceState extends State<ListUserOrg>{
   @override
   Widget build(BuildContext context) {
     dynamic screenHeight = MediaQuery.of(context).size.height;
     dynamic screenWidth = MediaQuery.of(context).size.width;
 
     return ListView.builder(
-      itemCount: widget.devices.length,
+      itemCount: widget.users.length,
       itemBuilder: (context, index) {
         return Padding(
           padding: EdgeInsets.symmetric(vertical: screenHeight*0.004),
@@ -35,27 +35,30 @@ class _ListUserDeviceState extends State<ListUserDevice>{
                title: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Icon(Icons.memory, size: screenHeight * 0.1, color: Colors.black),
+                  CircleAvatar(
+                    radius: screenHeight * 0.05, // This is half of the size you want
+                    backgroundImage: AssetImage(widget.users[index].pathImage), // Replace with your image URL
+                  ),
                   SizedBox(width: screenWidth*0.04), // Space between icon and text
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        widget.devices[index].name,
+                        widget.users[index].name,
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      Text('ID: ${widget.devices[index].id}\nStatus: ${widget.devices[index].status}'),
+                      Text('ID: ${widget.users[index].id}'),
                     ],
                   ),
                 ],
               ),
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => DeviceDetails(device: widget.devices[index]),
-                  ),
-                );
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (context) => DeviceDetails(device: widget.users[index]),
+                //   ),
+                // );
               },
             ),
           ),

@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:labbi_frontend/app/models/user_device_test.dart';
+import 'package:labbi_frontend/app/models/user_org_test.dart';
 import 'package:labbi_frontend/app/screens/menu/nav_bar.dart';
-import 'package:labbi_frontend/app/screens/user_org/list_user_device.dart';
-import 'package:labbi_frontend/app/screens/user_org/user_org.dart';
+import 'package:labbi_frontend/app/screens/user_org/list_user_org.dart';
+import 'package:labbi_frontend/app/screens/user_org/user_home_org.dart';
 
-class UserHomeOrg extends StatefulWidget {
-  const UserHomeOrg({super.key});
+class UserOrg extends StatefulWidget {
+  const UserOrg({super.key});
 
   @override
-  _UserHomeOrgState createState() => _UserHomeOrgState();
+  _UserOrgState createState() => _UserOrgState();
 }
 
-class _UserHomeOrgState extends State<UserHomeOrg>{
+class _UserOrgState extends State<UserOrg>{
   @override
   Widget build(BuildContext context) {
     dynamic screenHeight = MediaQuery.of(context).size.height;
@@ -96,7 +96,7 @@ class _UserHomeOrgState extends State<UserHomeOrg>{
                       label: Text('Thiết bị', style: TextStyle(fontSize: screenHeight * 0.02)),
                       style: TextButton.styleFrom(
                         padding: EdgeInsets.symmetric(horizontal: screenWidth*0.04, vertical: screenHeight*0.03),
-                        backgroundColor: Colors.white,
+                        backgroundColor: Colors.grey,
                         foregroundColor: Colors.black,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
@@ -118,7 +118,7 @@ class _UserHomeOrgState extends State<UserHomeOrg>{
                       label: Text('Người dùng', style: TextStyle(fontSize: screenHeight * 0.02)),
                       style: TextButton.styleFrom(
                         padding: EdgeInsets.symmetric(horizontal: screenWidth*0.04, vertical: screenHeight*0.03),
-                        backgroundColor: Colors.grey,
+                        backgroundColor: Colors.white,
                         foregroundColor: Colors.black,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
@@ -131,7 +131,7 @@ class _UserHomeOrgState extends State<UserHomeOrg>{
               
               SizedBox(height: screenHeight*0.025),
 
-              Text('Danh sách thiết bị của người dùng',
+              Text('Danh sách người dùng',
                style: TextStyle(
                   fontSize: screenHeight*0.02, // Set the font size
                   fontWeight: FontWeight.bold, // Optional: set the font weight
@@ -145,8 +145,8 @@ class _UserHomeOrgState extends State<UserHomeOrg>{
 
               // List of user devices
               Expanded(
-                child: ListUserDevice(
-                  devices: getUserDevices(),
+                child: ListUserOrg( // need to change
+                  users: getUserOrg(),
                 ),
               ),
             ],
