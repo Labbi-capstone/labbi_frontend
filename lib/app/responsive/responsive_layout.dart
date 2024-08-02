@@ -4,7 +4,7 @@ class ResponsiveLayout extends StatelessWidget {
   final Widget mobileBody;
   final Widget tabletBody;
 
-  ResponsiveLayout({
+  const ResponsiveLayout({super.key, 
     required this.mobileBody,
     required this.tabletBody,
   });
