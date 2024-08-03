@@ -9,6 +9,8 @@ import 'package:labbi_frontend/app/screens/authentication/login/login_page.dart'
 
 class RegisterPage
  extends StatefulWidget {
+  const RegisterPage({super.key});
+
   @override
   _RegisterPageState createState() => _RegisterPageState();
 }
@@ -76,7 +78,7 @@ class _RegisterPageState extends State<RegisterPage
         print(jsonRes['status']);
 
         if (jsonRes['status']) {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
           print("success");
         } else {
           print("Something wrong");
@@ -194,7 +196,7 @@ class _RegisterPageState extends State<RegisterPage
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                              builder: (context) => LoginPage()));
+                                              builder: (context) => const LoginPage()));
                                     }, 
                                   text: const Text('Sign in', 
                                     style: TextStyle(
