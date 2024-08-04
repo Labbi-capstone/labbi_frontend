@@ -1,85 +1,93 @@
 import 'package:flutter/material.dart';
+import 'package:fl_chart/fl_chart.dart';
+import 'package:labbi_frontend/app/components/charts/line_chart_component.dart';
+import 'package:labbi_frontend/app/components/charts/pie_chart_component.dart';
 
 class DashboardItem extends StatelessWidget {
-  final String title; // Assuming each dashboard item has a title
-  final String topStat1; // For the first top stat, e.g., temperature
-  final String topStat2; // For the second top stat, e.g., humidity
-  final String middleStat; // For the middle stat
-  final String bottomStat; // For the bottom stat
+  final String title;
+  final List<FlSpot> lineChartData;
+  final List<PieChartSectionData> pieChartData;
 
   const DashboardItem({
-    super.key,
     required this.title,
-    required this.topStat1,
-    required this.topStat2,
-    required this.middleStat,
-    required this.bottomStat,
-  });
+    required this.lineChartData,
+    required this.pieChartData,
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.blue[200],
+      margin: const EdgeInsets.all(10),
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(16),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text(title, style: Theme.of(context).textTheme.bodyMedium),
-            _buildRowStat(context),
-            _middleStat(middleStat, context),
-            _middleStat(bottomStat, context),
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Text(
+                title,
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+            ),
+            SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: SquareStat(pieChartData: pieChartData),
+                ),
+                SizedBox(width: 10),
+                Expanded(
+                  flex: 1,
+                  child: SquareStat(pieChartData: pieChartData),
+                ),
+              ],
+            ),
+            SizedBox(height: 10),
+            RectangleStat(lineChartData: lineChartData),
           ],
         ),
       ),
     );
   }
+}
 
-  Widget _buildRowStat(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Flexible(
-          child: _buildSquareStat(topStat1, context),
-        ),
-        Flexible(
-          child: _buildSquareStat(topStat2, context),
-        ),
-      ],
-    );
-  }
+class RectangleStat extends StatelessWidget {
+  final List<FlSpot> lineChartData;
 
-  Widget _buildSquareStat(String stat, BuildContext context) {
+  const RectangleStat({required this.lineChartData, Key? key})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.all(8),
-      color: Colors.grey[300],
-      child: AspectRatio(
-        aspectRatio: 1, // Example aspect ratio
-        child: Text(
-          stat,
-          style: TextStyle(
-            fontSize: MediaQuery.of(context).size.width * 0.05,
-          ),
-        ),
+      height: 200,
+      decoration: BoxDecoration(
+        color: Colors.grey[300],
+        borderRadius: BorderRadius.circular(12),
       ),
+      padding: const EdgeInsets.all(8.0),
+      child: LineChartComponent(dataPoints: lineChartData),
     );
   }
+}
 
-  Widget _middleStat(String stat, BuildContext context) {
-    return Flexible(
-      child: Container(
-        margin: const EdgeInsets.all(8),
+class SquareStat extends StatelessWidget {
+  final List<PieChartSectionData> pieChartData;
+
+  const SquareStat({required this.pieChartData, Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 200,
+      decoration: BoxDecoration(
         color: Colors.grey[300],
-        child: AspectRatio(
-          aspectRatio: 16 / 9, // Example aspect ratio
-          child: Text(
-            bottomStat,
-            style: TextStyle(
-              fontSize: MediaQuery.of(context).size.width * 0.05,
-            ),
-          ),
-        ),
+        borderRadius: BorderRadius.circular(12),
       ),
+      padding: const EdgeInsets.all(8.0),
+      child: PieChartComponent(sections: pieChartData),
     );
   }
 }
