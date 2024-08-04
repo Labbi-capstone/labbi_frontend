@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/screens/menu/nav_bar.dart';
 import 'package:labbi_frontend/app/widgets/custom_search_delegate.dart';
 import 'package:labbi_frontend/app/models/dashboard.dart';
-import 'package:labbi_frontend/app/screens/dashboard_and_control_panel_page/dashboard_items.dart ';
+import 'package:labbi_frontend/app/screens/dashboard_and_control_panel_page/dashboard_items.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
