@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: token != null && !JwtDecoder.isExpired(token!)
           ? Dashboard(token: token!)
-          : const UserHomeOrg(), // Check for null and use token safely
+          : DashboardPage(), // Check for null and use token safely
           // : const UserHomeOrg(), // testing to check
           // : const UserProfileUpdate(), // testing to check
     );
