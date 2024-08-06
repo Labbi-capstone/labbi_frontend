@@ -4,12 +4,13 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:labbi_frontend/app/screens/start_page/start_page.dart';
 // import 'authentication/register/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:labbi_frontend/app/screens/dashboard_and_control_panel_page/dashboard_page.dart';
+import 'package:labbi_frontend/app/screens/dashboard_page/dashboard_page.dart';
 import 'app/screens/menu/nav_bar.dart';
 import 'app/screens/notification/notification_page.dart';
 import 'app/screens/start_page/start_page.dart';
 import 'app/screens/user_org/user_home_org.dart';
 import 'app/screens/authentication/login/login_page.dart';
+import 'app/screens/control_panel_page/control_panel_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,6 +20,7 @@ void main() async {
 
   runApp(MyApp(token: token));
 }
+
 class MyApp extends StatelessWidget {
   final dynamic token;
   const MyApp({@required this.token, super.key});
@@ -29,9 +31,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: token != null && !JwtDecoder.isExpired(token!)
           ? Dashboard(token: token!)
-          : LoginPage(), // Check for null and use token safely
-          // : const UserHomeOrg(), // testing to check
-          // : const UserProfileUpdate(), // testing to check
+          : ControlPanelPage(), // Check for null and use token safely
+      // : const UserHomeOrg(), // testing to check
+      // : const UserProfileUpdate(), // testing to check
     );
   }
 }
