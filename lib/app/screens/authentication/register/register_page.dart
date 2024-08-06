@@ -251,7 +251,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                         child: Row(
                           children: [
-                            Image.asset('assets/images/google.png', height: 50, fit: BoxFit.contain,),
+                            Image.asset('assets/images/google-icon.png', height: 50, fit: BoxFit.contain,),
                             
                             const SizedBox(width: 10),
                             GestureDetector(

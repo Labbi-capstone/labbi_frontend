@@ -229,7 +229,7 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                                 child: Row(children: [
                                   Image.asset(
-                                    '/Users/hagiangnguyen/Desktop/Labbi-Frontend/lib/images/google.png',
+                                    'assets/images/google-icon.png',
                                     height: 50
                                   ),
                                   const SizedBox(width: 10),
