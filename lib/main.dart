@@ -47,4 +47,3 @@ class MyApp extends StatelessWidget {
 //Admin user
 //sau khi login, page đầu tiên của admin là admin admin_dashboard_page (hiện tại thiếu admin_dashboard_page)
 //TODO: trong menu Admin, 3 options: user profile, admin_dashboard_page, admin notification ()
-
