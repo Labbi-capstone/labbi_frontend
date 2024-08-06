@@ -1,4 +1,4 @@
-const url = 'http://localhost:8080/';
-const registration = "${url}signup";
-const signin = "${url}signin";
+const url = 'http://localhost:3000/';
+const registration = "${url}register";
+const signin = "${url}login";
 

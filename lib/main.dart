@@ -9,6 +9,7 @@ import 'app/screens/menu/nav_bar.dart';
 import 'app/screens/notification/notification_page.dart';
 import 'app/screens/start_page/start_page.dart';
 import 'app/screens/user_org/user_home_org.dart';
+import 'app/screens/authentication/login/login_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: token != null && !JwtDecoder.isExpired(token!)
           ? Dashboard(token: token!)
-          : DashboardPage(), // Check for null and use token safely
+          : LoginPage(), // Check for null and use token safely
           // : const UserHomeOrg(), // testing to check
           // : const UserProfileUpdate(), // testing to check
     );
