@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:labbi_frontend/app/screens/authentication/register/register_page.dart';
@@ -28,7 +29,6 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     initSharedPref();
   }
@@ -48,42 +48,68 @@ class _LoginPageState extends State<LoginPage> {
         emptyPassword = false;
       });
     }
-    
+
     if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
       var regBody = {
         "email": emailController.text,
         "password": passwordController.text
       };
 
-      var res = await http.post(Uri.parse(signin),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode(regBody)
-      );
+      try {
+        var res = await http.post(Uri.parse(login),
+            headers: {"Content-Type": "application/json"},
+            body: jsonEncode(regBody));
 
-      var jsonRes = jsonDecode(res.body);
-      if(jsonRes['status']){
-        var myToken = jsonRes['token'];
-        prefs.setString('token', myToken);
-        Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard(token: myToken)));
-      } else {
-        print('Something went wrong');
+        // Print the status code and raw response body for debugging
+        print('Status code: ${res.statusCode}');
+        print('Response body: ${res.body}');
+
+        if (res.statusCode == 200) {
+          var jsonRes = jsonDecode(res.body);
+
+          if (jsonRes['status'] == true) {
+            var myToken = jsonRes['token'] ?? ''; // Ensure token is not null
+            if (myToken.isNotEmpty) {
+              prefs.setString('token', myToken);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Dashboard(token: myToken)));
+            } else {
+              print('Token is null or empty');
+              ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Invalid token received')));
+            }
+          } else {
+            print('Something went wrong: ${jsonRes['message']}');
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Login failed: ${jsonRes['message']}')));
+          }
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Error: ${res.statusCode}')));
+        }
+      } catch (e) {
+        print('Error decoding JSON: $e');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content:
+                Text('An error occurred during login. Please try again.')));
       }
-    }
-    else {
+    } else {
       if (emailController.text.isEmpty) {
         setState(() {
           emptyEmail = true;
         });
-      } 
+      }
       if (passwordController.text.isEmpty) {
         setState(() {
           emptyPassword = true;
         });
       }
-    } 
+    }
   }
 
-  @override 
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
@@ -92,192 +118,186 @@ class _LoginPageState extends State<LoginPage> {
       home: Scaffold(
         body: SafeArea(
           child: Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                      colors: [
-                        Color.fromRGBO(175, 216, 237, 100),
-                        Color.fromRGBO(0, 184, 237, 100),
-                      ],
-                      begin: FractionalOffset(0.0, 0.0),
-                      end: FractionalOffset(1.0, 0.0),
-                      stops: [0.0, 1.0],
-                      tileMode: TileMode.clamp),
-                ),
-                child: Center(
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 50),
-                      Text('Sign In', style: GoogleFonts.barlowSemiCondensed(
-                        textStyle: const TextStyle(
-                          color: Colors.white, 
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                  colors: [
+                    Color.fromRGBO(175, 216, 237, 100),
+                    Color.fromRGBO(0, 184, 237, 100),
+                  ],
+                  begin: FractionalOffset(0.0, 0.0),
+                  end: FractionalOffset(1.0, 0.0),
+                  stops: [0.0, 1.0],
+                  tileMode: TileMode.clamp),
+            ),
+            child: Center(
+              child: Column(
+                children: [
+                  const SizedBox(height: 50),
+                  Text(
+                    'Sign In',
+                    style: GoogleFonts.barlowSemiCondensed(
+                      textStyle: const TextStyle(
+                          color: Colors.white,
                           fontSize: 40.0,
-                          fontWeight: FontWeight.w600
-                        )
-                      )
-                      ),
-
-                      const SizedBox(height: 50),
-
-                      // username textfield
-                      MyTextField(
-                        controller: emailController,
-                        hintText: 'Email',
-                        obscureText: false,
-                        errorText: emptyEmail ? 'Please enter email' : '',
-                      ),
-
-                      const SizedBox(height: 30),
-
-                      // password textfield
-                      MyTextField(
-                        controller: passwordController,
-                        hintText: 'Password',
-                        obscureText: true,
-                        errorText: emptyPassword ? 'Please enter password' : '',
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      // forgot password?
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                             MyButton(
-                                onTap: (){},
-                                text: const Text(
-                                  'Forgot Password?',
-                                  style: TextStyle(
-                                    color: Color.fromARGB(255, 127, 127, 127),
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(height: 30),
-
-                      // sign in button
-                      Container(
-                        padding: const EdgeInsets.all(25),
-                        margin: const EdgeInsets.symmetric(horizontal: 25),
-                        decoration: BoxDecoration(
-                          color: Colors.black,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: MyButton(
-                          onTap: () async {
-                                loginUser();
-                          },
+                          fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                  const SizedBox(height: 50),
+                  // username textfield
+                  MyTextField(
+                    controller: emailController,
+                    hintText: 'Email',
+                    obscureText: false,
+                    errorText: emptyEmail ? 'Please enter email' : '',
+                  ),
+                  const SizedBox(height: 30),
+                  // password textfield
+                  MyTextField(
+                    controller: passwordController,
+                    hintText: 'Password',
+                    obscureText: true,
+                    errorText: emptyPassword ? 'Please enter password' : '',
+                  ),
+                  const SizedBox(height: 20),
+                  // forgot password?
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        MyButton(
+                          onTap: () {},
                           text: const Text(
-                            'Sign in',
+                            'Forgot Password?',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Color.fromARGB(255, 127, 127, 127),
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
                           ),
                         ),
-                      ),
-
-                      const SizedBox(height: 30),
-
-                      // google sign in
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 25),
-                        child: Row(children: [
-                            SizedBox(width: 40),
-                            Expanded(
-                              child: Divider(
-                                thickness: 2,
-                                color: Color.fromARGB(255, 255, 255, 255),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 10),
-                              child: Text("Or", style: TextStyle(
-                                color: Colors.white, 
-                                fontWeight: FontWeight.w900,
-                                fontSize: 18.0
-                              ))
-                            ),
-                            Expanded(
-                              child: Divider(
-                                thickness: 2,
-                                color: Color.fromARGB(255, 255, 255, 255),
-                              ),
-                            ),
-                            SizedBox(width: 40),
-                          ],
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  // sign in button
+                  Container(
+                    padding: const EdgeInsets.all(25),
+                    margin: const EdgeInsets.symmetric(horizontal: 25),
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: MyButton(
+                      onTap: () async {
+                        loginUser();
+                      },
+                      text: const Text(
+                        'Sign in',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
                         ),
                       ),
-                      const SizedBox(height: 30),
-
-                      Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 70, vertical: 10),
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.white),
-                                  borderRadius: BorderRadius.circular(15),
-                                  color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  // google sign in
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 25),
+                    child: Row(
+                      children: [
+                        SizedBox(width: 40),
+                        Expanded(
+                          child: Divider(
+                            thickness: 2,
+                            color: Color.fromARGB(255, 255, 255, 255),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          child: Text(
+                            "Or",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w900,
+                                fontSize: 18.0),
+                          ),
+                        ),
+                        Expanded(
+                          child: Divider(
+                            thickness: 2,
+                            color: Color.fromARGB(255, 255, 255, 255),
+                          ),
+                        ),
+                        SizedBox(width: 40),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 70, vertical: 10),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.white),
+                          borderRadius: BorderRadius.circular(15),
+                          color: Colors.white,
+                        ),
+                        child: Row(
+                          children: [
+                            Image.asset(
+                              'assets/images/google-icon.png',
+                              height: 50,
+                            ),
+                            const SizedBox(width: 10),
+                            MyButton(
+                              onTap: () {},
+                              text: const Text(
+                                'Sign in with Google',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
                                 ),
-                                child: Row(children: [
-                                  Image.asset(
-                                    'assets/images/google-icon.png',
-                                    height: 50
-                                  ),
-                                  const SizedBox(width: 10),
-                                  MyButton(
-                                    onTap: (){},
-                                      text: const Text(
-                                        'Sign in with Google',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                  ),
-                                ],)
-                              )
-                            ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 30),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text('Don\'t have an account? '),
+                      const SizedBox(width: 4),
+                      MyButton(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const RegisterPage()));
+                        },
+                        text: const Text(
+                          'Register',
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
                       ),
-
-                      const SizedBox(height: 30),
-                      Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                                const Text('Don\'t have an account? '),
-                                const SizedBox(width: 4),
-                                MyButton(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => const RegisterPage()));
-                                  },
-                                  text: const Text(
-                                    'Register',
-                                    style: TextStyle(
-                                      color: Colors.blue,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                ),
-                            ],
-                      ),
-                  
-                ]
-              )
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
-        )
+        ),
       ),
     );
   }
