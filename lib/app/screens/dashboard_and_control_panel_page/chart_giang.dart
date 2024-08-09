@@ -27,9 +27,9 @@
 // class _ChartScreenState extends State<ChartScreen> {
 //   Future<List<FlSpot>> fetchGrafanaData() async {
 //     final response = await http.get(
-//       Uri.parse('http://localhost:3000/api/dashboards/uid/TXSTREZ/'),
+//       Uri.parse('${dotenv.env['URL']}'),
 //       headers: {
-//         'Authorization': 'Bearer ',//token
+//         'Authorization': 'Bearer ${dotenv.env['API_KEYS']}',//token
 //       },
 //     );
 

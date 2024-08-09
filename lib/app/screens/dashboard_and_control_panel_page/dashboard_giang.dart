@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 
 class DashboardScreen extends StatefulWidget {
@@ -10,10 +11,11 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   Future<Map<String, dynamic>> fetchDashboardData() async {
+    await dotenv.load();
     final response = await http.get(
-      Uri.parse('http://localhost:3000/api/dashboards/uid/TXSTREZ/'),
+      Uri.parse('${dotenv.env['URL']}'),
       headers: {
-        'Authorization': 'Bearer  ', //token
+        'Authorization': 'Bearer ${dotenv.env['API_KEYS']}', //
       },
     );
 
