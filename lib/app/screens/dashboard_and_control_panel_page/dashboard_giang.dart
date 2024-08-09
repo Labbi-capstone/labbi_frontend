@@ -15,7 +15,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final response = await http.get(
       Uri.parse('${dotenv.env['URL']}'),
       headers: {
-        'Authorization': 'Bearer ${dotenv.env['API_KEYS']}', //
+        'Authorization': 'Bearer ${dotenv.env['API_KEYS']}'
       },
     );
 
