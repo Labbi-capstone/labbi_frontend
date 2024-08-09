@@ -7,6 +7,7 @@ import 'app/screens/authentication/login/login_page.dart';
 // import 'authentication/register/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:labbi_frontend/app/screens/dashboard_and_control_panel_page/dashboard_page.dart';
+import 'package:labbi_frontend/app/screens/dashboard_and_control_panel_page/dashboard_giang.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,9 +25,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: token != null && !JwtDecoder.isExpired(token!)
-          ? Dashboard(token: token!)
-          : DashboardPage(), // Check for null and use token safely
+      home: token != '' && !JwtDecoder.isExpired(token!)
+          ? LoginPage()
+          : DashboardScreen(), // Check for null and use token safely
     );
   }
 }
