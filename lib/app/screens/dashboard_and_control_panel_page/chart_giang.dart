@@ -29,7 +29,7 @@
 //     final response = await http.get(
 //       Uri.parse('http://localhost:3000/api/dashboards/uid/TXSTREZ/'),
 //       headers: {
-//         'Authorization': 'Bearer TOKEN',
+//         'Authorization': 'Bearer ',//token
 //       },
 //     );
 
