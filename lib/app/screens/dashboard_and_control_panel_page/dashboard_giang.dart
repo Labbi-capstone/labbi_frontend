@@ -13,7 +13,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final response = await http.get(
       Uri.parse('http://localhost:3000/api/dashboards/uid/TXSTREZ/'),
       headers: {
-        'Authorization': 'Bearer TOKEN', //token: glsa_pA6NNsGaMKGE8MWRq8RvHvbUjDTpY79N_54752dda
+        'Authorization': 'Bearer TOKEN',
       },
     );
 
