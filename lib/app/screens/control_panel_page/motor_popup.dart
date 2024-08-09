@@ -1,12 +1,21 @@
 import 'package:flutter/material.dart';
 
-class ControlPanelPopup extends StatefulWidget {
-  const ControlPanelPopup({super.key});
+class MotorPopup extends StatefulWidget {
+  final double currentValue;
+  const MotorPopup({super.key, required this.currentValue});
   @override
-  State<StatefulWidget> createState() => _ControlPanelPopupState();
+  State<StatefulWidget> createState() => _MotorPopupState();
 }
 
-class _ControlPanelPopupState extends State<ControlPanelPopup> {
+class _MotorPopupState extends State<MotorPopup> {
+  late int currentValue;
+
+  @override
+  void initState() {
+    super.initState();
+    currentValue = widget.currentValue.toInt();
+  }
+
   @override
   Widget build(BuildContext context) {
     dynamic screenHeight = MediaQuery.of(context).size.height;
@@ -52,7 +61,7 @@ class _ControlPanelPopupState extends State<ControlPanelPopup> {
                   Padding(
                     padding: EdgeInsets.only(left: 0.02 * screenWidth),
                     child: Text(
-                      "Motor speed: 200 RPM",
+                      "Motor speed: $currentValue RPM",
                       style: TextStyle(fontSize: 0.02 * screenHeight),
                     ),
                   )
@@ -70,43 +79,6 @@ class _ControlPanelPopupState extends State<ControlPanelPopup> {
                           borderRadius: BorderRadius.circular(20.0)),
                       filled: true,
                       hintText: "Enter custom motor speed (RPM)",
-                      fillColor: Colors.white),
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Container(
-                    height: 0.06 * screenHeight,
-                    width: 0.1 * screenWidth,
-                    decoration: const BoxDecoration(
-                        // color: Colors.red,
-                        image: DecorationImage(
-                            image: AssetImage("assets/images/fan.png"))),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 0.02 * screenWidth),
-                    child: Text(
-                      "Fan speed: 1000 RPM",
-                      style: TextStyle(fontSize: 0.02 * screenHeight),
-                    ),
-                  )
-                ],
-              ),
-              Padding(
-                padding: EdgeInsets.only(
-                    left: 0.01 * screenWidth,
-                    right: 0.01 * screenWidth,
-                    top: 0.025 * screenHeight,
-                    bottom: 0.025 * screenHeight),
-                child: TextField(
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20.0)),
-                      filled: true,
-                      hintText: "Enter custom fan speed (RPM)",
                       fillColor: Colors.white),
                 ),
               ),
