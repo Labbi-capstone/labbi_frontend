@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:labbi_frontend/app/screens/control_panel_page/control_panel_popup.dart';
 
 class ControlSliderComponent extends StatefulWidget {
   final IconData icon;
@@ -56,7 +57,14 @@ class _ControlSliderState extends State<ControlSliderComponent> {
             ],
           ),
         ),
-        Icon(Icons.arrow_forward, size: 30),
+        InkWell(
+          onTap: () {
+            showDialog(
+                context: context,
+                builder: (context) => const ControlPanelPopup());
+          },
+          child: const Icon(Icons.arrow_forward, size: 30),
+        )
       ],
     );
   }
