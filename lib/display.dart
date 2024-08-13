@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:labbi_frontend/function.dart';
 
 class PrometheusDataPage extends StatefulWidget {
@@ -7,13 +8,13 @@ class PrometheusDataPage extends StatefulWidget {
 }
 
 class _PrometheusDataPageState extends State<PrometheusDataPage> {
-  Future<Map<String, dynamic>>? prometheusData;
+  Stream<Map<String, dynamic>>? dataStream;
 
   @override
   void initState() {
     super.initState();
-    prometheusData =
-        queryPrometheus('go_gc_duration_seconds'); // Example query that works
+    dataStream = Stream.periodic(Duration(seconds: 1))
+        .asyncMap((_) => queryPrometheus('go_gc_duration_seconds'));
   }
 
   @override
@@ -22,8 +23,8 @@ class _PrometheusDataPageState extends State<PrometheusDataPage> {
       appBar: AppBar(
         title: Text('Prometheus Data'),
       ),
-      body: FutureBuilder<Map<String, dynamic>>(
-        future: prometheusData,
+      body: StreamBuilder<Map<String, dynamic>>(
+        stream: dataStream,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -32,8 +33,6 @@ class _PrometheusDataPageState extends State<PrometheusDataPage> {
           } else if (snapshot.hasData &&
               snapshot.data!['data']['result'].isNotEmpty) {
             var data = snapshot.data!['data']['result'];
-            print(
-                'Fetched data: $data'); // Print the fetched data to the console for debugging
             return ListView.builder(
               itemCount: data.length,
               itemBuilder: (context, index) {
