@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-// import 'package:flutter/widgets.dart';
 import 'package:labbi_frontend/app/models/user_device_test.dart';
-import 'package:labbi_frontend/app/screens/user_org/device_details.dart';
+import 'package:labbi_frontend/app/screens/admin_org/device_admin_details.dart';
 
 class ListUserDevice extends StatefulWidget {
   final List<UserDevice> devices;
