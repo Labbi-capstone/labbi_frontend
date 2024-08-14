@@ -11,7 +11,35 @@ import 'app/screens/start_page/start_page.dart';
 import 'app/screens/user_org/user_home_org.dart';
 import 'app/screens/authentication/login/login_page.dart';
 import 'app/screens/control_panel_page/control_panel_page.dart';
+//import 'app/screens/admin_org/admin_home_org.dart';
+import 'package:labbi_frontend/app/screens/admin_org/admin_home_org.dart';
 
+// void main() async {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   SharedPreferences prefs = await SharedPreferences.getInstance();
+
+//   dynamic token = prefs.getString('token');
+
+//   runApp(MyApp(token: token));
+// }
+
+// class MyApp extends StatelessWidget {
+//   final dynamic token;
+//   const MyApp({@required this.token, super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       debugShowCheckedModeBanner: false,
+//       home: token != null && !JwtDecoder.isExpired(token!)
+//           ? Dashboard(token: token!)
+//           : ControlPanelPage(), // Check for null and use token safely
+//       // : const AdminHomeOrg(),
+//       // : const UserHomeOrg(), // testing to check
+//       // : const UserProfileUpdate(), // testing to check
+//     );
+//   }
+// }
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -22,22 +50,27 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  final dynamic token;
-  const MyApp({@required this.token, super.key});
+  final String? token;
+  const MyApp({this.token, super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: token != null && !JwtDecoder.isExpired(token!)
-          ? Dashboard(token: token!)
-          : ControlPanelPage(), // Check for null and use token safely
-      // : const UserHomeOrg(), // testing to check
-      // : const UserProfileUpdate(), // testing to check
+      home: _getInitialPage(),
     );
   }
-}
 
+  Widget _getInitialPage() {
+    if (token != null && !JwtDecoder.isExpired(token!)) {
+      // You can add more checks here if needed, e.g., user roles, etc.
+      return Dashboard(token: token!);
+    } else {
+      return const AdminHomeOrg();
+      // return const UserHomeOrg(); // Replace with the appropriate initial page if token is null or expired
+    }
+  }
+}
 //Normal user 
 //sau khi login, page đầu tiên cua user la dashboard_page. 
 //TODO: trong menu, 3 options: user profile, dashboard, notification 
