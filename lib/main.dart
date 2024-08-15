@@ -13,8 +13,6 @@ import 'app/screens/authentication/login/login_page.dart';
 import 'app/screens/control_panel_page/control_panel_page.dart';
 //import 'app/screens/admin_org/admin_home_org.dart';
 import 'package:labbi_frontend/app/screens/admin_org/admin_home_org.dart';
-import 'app/screens/user_profile/user_profile.dart';
-import 'app/models/notification_message.dart';
 
 // void main() async {
 //   WidgetsFlutterBinding.ensureInitialized();
@@ -68,8 +66,7 @@ class MyApp extends StatelessWidget {
       // You can add more checks here if needed, e.g., user roles, etc.
       return Dashboard(token: token!);
     } else {
-      // return const AdminHomeOrg();
-      return UserProfilePage(listOfNotification: notificationList,);
+      return const AdminHomeOrg();
       // return const UserHomeOrg(); // Replace with the appropriate initial page if token is null or expired
     }
   }
