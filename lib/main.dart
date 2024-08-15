@@ -69,7 +69,7 @@ class MyApp extends StatelessWidget {
       return Dashboard(token: token!);
     } else {
       // return const AdminHomeOrg();
-      return UserProfilePage(listOfNotification: notificationList);
+      return const NotificationPage();
       // return const UserHomeOrg(); // Replace with the appropriate initial page if token is null or expired
     }
   }

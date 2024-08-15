@@ -92,7 +92,7 @@ class _NotificationPageState extends State<NotificationPage> {
 
   Widget customTabBar(double screenHeight, double screenWidth) => Container(
         height: (1 / 18) * screenHeight,
-        width: (4 / 5) * screenWidth,
+        width: (4.5 / 5) * screenWidth,
         decoration: const BoxDecoration(
             color: Color(0xffeaeaea),
             borderRadius: BorderRadius.all(Radius.circular(40))),
@@ -105,7 +105,7 @@ class _NotificationPageState extends State<NotificationPage> {
               padding: const EdgeInsets.all(0.0),
               child: SizedBox(
                 height: (1 / 18) * screenHeight,
-                width: ((4 / 5) * screenWidth) / 2,
+                width: ((4.5 / 5) * screenWidth) / 2,
                 child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                         elevation: 0,
@@ -130,7 +130,7 @@ class _NotificationPageState extends State<NotificationPage> {
               padding: const EdgeInsets.all(0.0),
               child: SizedBox(
                 height: (1 / 18) * screenHeight,
-                width: ((4 / 5) * screenWidth) / 2,
+                width: ((4.5 / 5) * screenWidth) / 2,
                 child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                         elevation: 0,
