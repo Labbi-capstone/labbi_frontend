@@ -87,35 +87,32 @@ class _UserProfilePageState extends State<UserProfilePage> {
           ],
         ),
         body: SingleChildScrollView(
-          child: Stack(
-            clipBehavior: Clip.none,
-            alignment: Alignment.topCenter,
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.only(top: ((1 / 3) * screenHeight)),
-                child: Container(
-                  height: screenHeight - ((1 / 3) * screenHeight),
-                  width: screenWidth,
-                  decoration: const BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage(
-                              "assets/images/user-profile-background.jpg"),
-                          fit: BoxFit.cover)),
+          child: Container(
+            height: null,
+            width: screenWidth,
+            decoration: const BoxDecoration(
+                image: DecorationImage(
+                    image:
+                        AssetImage("assets/images/user-profile-background.jpg"),
+                    fit: BoxFit.fill)),
+            child: Stack(
+              clipBehavior: Clip.none,
+              alignment: Alignment.topCenter,
+              children: <Widget>[
+                userCoverImage(context, screenHeight, screenWidth),
+                Padding(
+                  padding: EdgeInsets.only(
+                      top: ((1 / 3) * screenHeight) - (screenHeight / 9.7)),
+                  child: userProfileImage(context, screenHeight, screenWidth),
                 ),
-              ),
-              userCoverImage(context, screenHeight, screenWidth),
-              Padding(
-                padding: EdgeInsets.only(
-                    top: ((1 / 3) * screenHeight) - (screenHeight / 9.7)),
-                child: userProfileImage(context, screenHeight, screenWidth),
-              ),
-              Padding(
-                padding: EdgeInsets.only(
-                    top: ((1 / 3) * screenHeight) + (screenHeight / 8.6),
-                    bottom: screenHeight * 0.05),
-                child: userDetail(context, screenHeight, screenWidth),
-              )
-            ],
+                Padding(
+                  padding: EdgeInsets.only(
+                      top: ((1 / 3) * screenHeight) + (screenHeight / 8.6),
+                      bottom: screenHeight * 0.05),
+                  child: userDetail(context, screenHeight, screenWidth),
+                )
+              ],
+            ),
           ),
         ));
   }

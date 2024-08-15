@@ -41,50 +41,44 @@ class _NotificationPageState extends State<NotificationPage> {
         ),
       ),
       body: SingleChildScrollView(
-        child: Stack(
-          clipBehavior: Clip.none,
-          alignment: Alignment.topCenter,
-          children: <Widget>[
-            Container(
-              height: screenHeight,
-              width: screenWidth,
-              decoration: const BoxDecoration(
-                  image: DecorationImage(
-                      image: AssetImage("assets/images/app-background.jpg"),
-                      fit: BoxFit.fill)),
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Padding(
-                    padding: EdgeInsets.only(
-                        top: screenHeight / 30, bottom: screenHeight / 30),
-                    child: customTabBar(screenHeight, screenWidth)),
-                if (isChanged == false)
-                  for (var i = 0; i < notificationList.length; i++)
-                    if (notificationList[i].status == 'unread')
-                      Padding(
-                          padding: EdgeInsets.only(bottom: screenHeight / 35),
-                          child: NotificationContainer(
-                            notification: notificationList[i],
-                          ))
-                    else
-                      const SizedBox.shrink()
-                else
-                  for (var i = 0; i < notificationList.length; i++)
-                    if (notificationList[i].status == 'read')
-                      Padding(
-                          padding: EdgeInsets.only(bottom: screenHeight / 35),
-                          child: NotificationContainer(
-                            notification: notificationList[i],
-                          ))
-                    else
-                      const SizedBox.shrink()
-              ],
-            ),
-          ],
+        child: Container(
+          height: null,
+          width: screenWidth,
+          decoration: const BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage("assets/images/app-background.jpg"),
+                  fit: BoxFit.fill)),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Padding(
+                  padding: EdgeInsets.only(
+                      top: screenHeight / 30, bottom: screenHeight / 30),
+                  child: customTabBar(screenHeight, screenWidth)),
+              if (isChanged == false)
+                for (var i = 0; i < notificationList.length; i++)
+                  if (notificationList[i].status == 'unread')
+                    Padding(
+                        padding: EdgeInsets.only(bottom: screenHeight / 35),
+                        child: NotificationContainer(
+                          notification: notificationList[i],
+                        ))
+                  else
+                    const SizedBox.shrink()
+              else
+                for (var i = 0; i < notificationList.length; i++)
+                  if (notificationList[i].status == 'read')
+                    Padding(
+                        padding: EdgeInsets.only(bottom: screenHeight / 35),
+                        child: NotificationContainer(
+                          notification: notificationList[i],
+                        ))
+                  else
+                    const SizedBox.shrink()
+            ],
+          ),
         ),
       ),
     );
