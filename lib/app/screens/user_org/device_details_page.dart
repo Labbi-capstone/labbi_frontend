@@ -3,7 +3,6 @@ import 'package:labbi_frontend/app/models/user_device_test.dart';
 
 class DeviceDetails extends StatelessWidget {
   final UserDevice device;
-
   const DeviceDetails({super.key, required this.device,});
   
   @override
@@ -55,8 +54,6 @@ class DeviceDetails extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Text('ID: ${device.id}', style: TextStyle(fontSize: 18)),
-                // Text('Type: ${device.type}', style: TextStyle(fontSize: 18)),
                 Container(
                   height: screenHeight*0.5,
                   width: screenWidth*0.9,

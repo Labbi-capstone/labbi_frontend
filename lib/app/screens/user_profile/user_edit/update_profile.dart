@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/components/textfield.dart';
 import 'package:labbi_frontend/app/models/edit_User_Profile_Test.dart';
@@ -32,7 +31,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
               child: IconButton( 
                 icon:  const Icon(Icons.arrow_back),
                 onPressed: (){
-                  // Handle move back logic
+                  Navigator.pop(context);
                 },
               ),
             ),
@@ -73,7 +72,6 @@ class _UpdateProfileState extends State<UpdateProfile> {
           ],
         ),
       
-
         const SizedBox(height: 20),
         
         SizedBox(

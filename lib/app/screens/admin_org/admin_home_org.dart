@@ -234,8 +234,8 @@
 import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/models/user_device_test.dart';
 import 'package:labbi_frontend/app/screens/admin_org/history_admin_org.dart';
-import 'package:labbi_frontend/app/screens/menu/nav_bar.dart';
 import 'package:labbi_frontend/app/screens/admin_org/list_admin_org_device.dart';
+import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
 //import 'package:labbi_frontend/app/screens/admin_org/admin_org.dart';
 
 class AdminHomeOrg extends StatefulWidget {
@@ -268,16 +268,12 @@ class _AdminHomeOrgState extends State<AdminHomeOrg> {
           ),
         ),
 
-        // Icon button
-        leading: IconButton(
-          icon: const Icon(
-            Icons.menu,
-            color: Colors.blue,
-          ),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const MenuTaskbar()),
+        // Menu button
+        leading: Builder( // Wrap the IconButton with Builder
+          builder: (BuildContext context) {
+            return IconButton(
+              icon: const Icon( Icons.menu, color: Colors.blue,),
+              onPressed: () {Scaffold.of(context).openDrawer();},
             );
           },
         ),
@@ -293,6 +289,10 @@ class _AdminHomeOrgState extends State<AdminHomeOrg> {
         ),
         centerTitle: true,
       ),
+
+      // Menu Bar
+      drawer: const MenuTaskbar(),
+      
       body: Container(
           width: screenWidth,
           height: screenHeight,
