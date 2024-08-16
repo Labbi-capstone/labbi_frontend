@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/models/user_org_test.dart';
-// import 'package:flutter/widgets.dart';
-
 
 class ListUserOrg extends StatefulWidget{
   
@@ -37,8 +35,8 @@ class _ListUserDeviceState extends State<ListUserOrg>{
                 children: [
                   
                   CircleAvatar(
-                    radius: screenHeight * 0.05, // This is half of the size you want
-                    backgroundImage: AssetImage(widget.users[index].pathImage), // Replace with your image URL
+                    radius: screenHeight * 0.05,
+                    backgroundImage: AssetImage(widget.users[index].pathImage),
                   ),
 
                   SizedBox(width: screenWidth*0.04), // Space between icon and text
@@ -56,12 +54,7 @@ class _ListUserDeviceState extends State<ListUserOrg>{
                 ],
               ),
               onTap: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) => DeviceDetails(device: widget.users[index]),
-                //   ),
-                // );
+                // View Users
               },
             ),
           ),

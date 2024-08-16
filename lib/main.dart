@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:labbi_frontend/app/screens/start_page/start_page.dart';
+import 'package:labbi_frontend/app/screens/user_profile/user_edit/edit_user_profile_page.dart';
 // import 'authentication/register/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:labbi_frontend/app/screens/dashboard_page/dashboard_page.dart';
-import 'app/screens/menu/nav_bar.dart';
+import 'app/screens/menu/menu_task_bar.dart';
 import 'app/screens/notification/notification_page.dart';
 import 'app/screens/start_page/start_page.dart';
-import 'app/screens/user_org/user_home_org.dart';
+import 'app/screens/user_org/user_org_home_page.dart';
 import 'app/screens/authentication/login/login_page.dart';
 import 'app/screens/control_panel_page/control_panel_page.dart';
 //import 'app/screens/admin_org/admin_home_org.dart';
@@ -67,7 +68,8 @@ class MyApp extends StatelessWidget {
       return Dashboard(token: token!);
     } else {
       return const AdminHomeOrg();
-      // return const UserHomeOrg(); // Replace with the appropriate initial page if token is null or expired
+      // return const UserOrgHomePage(); // Replace with the appropriate initial page if token is null or expired
+      // return const EditUserProfilePage();
     }
   }
 }

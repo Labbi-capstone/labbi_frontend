@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/models/edit_User_Profile_Test.dart';
 import 'package:labbi_frontend/app/screens/user_profile/user_edit/update_profile.dart';
 
-class UserProfileUpdate extends StatefulWidget {
-  const UserProfileUpdate({super.key});
+class EditUserProfilePage extends StatefulWidget {
+  const EditUserProfilePage({super.key});
 
   @override
   // ignore: library_private_types_in_public_api
-  _UserProfileUpdateState createState() => _UserProfileUpdateState();
+  _EditUserProfilePageState createState() => _EditUserProfilePageState();
 }
 
-class _UserProfileUpdateState extends State<UserProfileUpdate>{
+class _EditUserProfilePageState extends State<EditUserProfilePage>{
 
   @override
   Widget build(BuildContext context) {
@@ -25,11 +25,12 @@ class _UserProfileUpdateState extends State<UserProfileUpdate>{
       newPhoneNum: 'Updated Phone Number',
     );
 
-
     return MaterialApp(
       home: Scaffold(
         body: SafeArea(
           child: Container(
+            width: double.infinity,  
+            height: double.infinity,
             decoration: const BoxDecoration(
               gradient: LinearGradient(
               colors: [
@@ -41,8 +42,8 @@ class _UserProfileUpdateState extends State<UserProfileUpdate>{
               stops: [0.0, 1.0],
               tileMode: TileMode.clamp),
             ),
-            child: Center(
-              child: UpdateProfile(model: userProfileModel)
+            child: SingleChildScrollView(
+              child: UpdateProfile(model: userProfileModel),
             ),
           ),
         ),
