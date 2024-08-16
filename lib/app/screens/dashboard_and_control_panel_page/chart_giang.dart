@@ -1,100 +1,92 @@
-// import 'dart:convert';
-// import 'package:flutter/material.dart';
-// import 'package:http/http.dart' as http;
-// import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
+import 'dart:async';
+import 'dart:math' as math;
 
-// void main() {
-//   runApp(MyApp());
-// }
+class Chart extends StatefulWidget {
+  const Chart({Key? key, required this.title}) : super(key: key);
 
-// class MyApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       home: Scaffold(
-//         appBar: AppBar(title: Text('Grafana Data Chart')),
-//         body: ChartScreen(),
-//       ),
-//     );
-//   }
-// }
+  // This widget is the home page of your application. It is stateful, meaning
+  // that it has a State object (defined below) that contains fields that affect
+  // how it looks.
 
-// class ChartScreen extends StatefulWidget {
-//   @override
-//   _ChartScreenState createState() => _ChartScreenState();
-// }
+  // This class is the configuration for the state. It holds the values (in this
+  // case the title) provided by the parent (in this case the App widget) and
+  // used by the build method of the State. Fields in a Widget subclass are
+  // always marked "final".
 
-// class _ChartScreenState extends State<ChartScreen> {
-//   Future<List<FlSpot>> fetchGrafanaData() async {
-//     final response = await http.get(
-//       Uri.parse('${dotenv.env['URL']}'),
-//       headers: {
-//         'Authorization': 'Bearer ${dotenv.env['API_KEYS']}'
-//       },
-//     );
+  final String title;
 
-//     if (response.statusCode == 200) {
-//       final jsonResponse = json.decode(response.body);
-//       List<FlSpot> spots = [];
+  @override
+  _ChartState createState() => _ChartState();
+}
 
-//       // Giả sử dữ liệu có dạng như sau:
-//       // {"status": "success", "data": {"result": [{"metric": {}, "values": [[timestamp, value], ...]}]}}
-//       var results = jsonResponse['data']['result'];
-//       for (var result in results) {
-//         var values = result['values'];
-//         for (var value in values) {
-//           double x = value[0] / 1000; // Chuyển đổi timestamp từ ms sang s
-//           double y = double.parse(value[1].toString());
-//           spots.add(FlSpot(x, y));
-//         }
-//       }
+class _ChartState extends State<Chart> {
+  late List<LiveData> chartData;
+  late ChartSeriesController _chartSeriesController;
 
-//       return spots;
-//     } else {
-//       throw Exception('Failed to load data');
-//     }
-//   }
+  @override
+  void initState() {
+    chartData = getChartData();
+    Timer.periodic(const Duration(seconds: 1), updateData);
+    super.initState();
+  }
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return FutureBuilder<List<FlSpot>>(
-//       future: fetchGrafanaData(),
-//       builder: (context, snapshot) {
-//         if (snapshot.connectionState == ConnectionState.waiting) {
-//           return Center(child: CircularProgressIndicator());
-//         } else if (snapshot.hasError) {
-//           return Center(child: Text('Error: ${snapshot.error}'));
-//         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-//           return Center(child: Text('No data found'));
-//         }
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+        child: Scaffold(
+            body: SfCartesianChart(
+                series: <LineSeries<LiveData, int>>[
+                  LineSeries<LiveData, int>(
+                    onRendererCreated: (ChartSeriesController controller) {
+                      _chartSeriesController = controller;
+                    },
+                    dataSource: chartData,
+                    color: Color.fromARGB(255, 108, 139, 192),
+                    xValueMapper: (LiveData sales, _) => sales.time,
+                    yValueMapper: (LiveData sales, _) => sales.speed,
+                  )
+                ],
+                primaryXAxis: const NumericAxis(
+                    majorGridLines: MajorGridLines(width: 0),
+                    edgeLabelPlacement: EdgeLabelPlacement.shift,
+                    interval: 3,
+                    title: AxisTitle(text: 'Time (seconds)')),
+                primaryYAxis: const NumericAxis(
+                    axisLine: AxisLine(width: 0),
+                    majorTickLines: MajorTickLines(size: 0),
+                    title: AxisTitle(text: 'Internet speed (Mbps)')))));
+  }
 
-//         final spots = snapshot.data!;
+  int time = 19;
+  void updateData(Timer timer) {
+    chartData.add(LiveData(time++, (math.Random().nextInt(60) + 30)));
+    chartData.removeAt(0);
+    _chartSeriesController.updateDataSource(
+        addedDataIndex: chartData.length - 1, removedDataIndex: 0);
+  }
 
-//         return Padding(
-//           padding: const EdgeInsets.all(16.0),
-//           child: LineChart(
-//             LineChartData(
-//               lineBarsData: [
-//                 LineChartBarData(
-//                   spots: spots,
-//                   isCurved: true,
-//                   colors: [Colors.blue],
-//                   dotData: FlDotData(show: true),
-//                   belowBarData: BarAreaData(show: false),
-//                 ),
-//               ],
-//               titlesData: FlTitlesData(
-//                 leftTitles: SideTitles(showTitles: true),
-//                 bottomTitles: SideTitles(showTitles: true),
-//               ),
-//               borderData: FlBorderData(show: true),
-//               gridData: FlGridData(show: true),
-//             ),
-//           ),
-//         );
-//       },
-//     );
-//   }
-// }
+  List<LiveData> getChartData() {
+    return <LiveData>[
+      LiveData(0, 42),
+      LiveData(1, 47),
+      LiveData(2, 43),
+      LiveData(3, 49),
+      LiveData(4, 54),
+      LiveData(5, 41),
+      LiveData(6, 58),
+      LiveData(7, 51),
+      LiveData(8, 98),
+      LiveData(9, 41),
+      LiveData(10, 53),
+   
+    ];
+  }
+}
 
-
+class LiveData {
+  LiveData(this.time, this.speed);
+  final int time;
+  final num speed;
+}

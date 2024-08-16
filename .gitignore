@@ -8,6 +8,7 @@
 .vscode/
 .history/
 .svn/
+*.env
 
 # Flutter/Dart/Pub related
 .dart_tool/
