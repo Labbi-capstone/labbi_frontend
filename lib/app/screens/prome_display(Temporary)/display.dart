@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:intl/intl.dart'; // Add this import for date formatting
-import 'package:labbi_frontend/function.dart';
+import 'package:labbi_frontend/app/services/prometheus_service.dart';
 
 class PrometheusDataPage extends StatefulWidget {
   @override
@@ -10,12 +10,13 @@ class PrometheusDataPage extends StatefulWidget {
 
 class _PrometheusDataPageState extends State<PrometheusDataPage> {
   Stream<Map<String, dynamic>>? dataStream;
+    final PrometheusService _prometheusService = PrometheusService();
 
   @override
   void initState() {
     super.initState();
     dataStream = Stream.periodic(Duration(seconds: 1))
-        .asyncMap((_) => queryPrometheus('go_gc_duration_seconds'));
+        .asyncMap((_) => _prometheusService.queryPrometheus('go_gc_duration_seconds'));
   }
 
   String formatTimestamp(dynamic timestamp) {
