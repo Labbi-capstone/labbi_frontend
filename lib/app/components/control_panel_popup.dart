@@ -1,19 +1,29 @@
 import 'package:flutter/material.dart';
 
-class MotorPopup extends StatefulWidget {
+class ControlPanelPopup extends StatefulWidget {
   final double currentValue;
-  const MotorPopup({super.key, required this.currentValue});
+  final IconData icon;
+  final String label;
+  const ControlPanelPopup(
+      {super.key,
+      required this.currentValue,
+      required this.icon,
+      required this.label});
   @override
-  State<StatefulWidget> createState() => _MotorPopupState();
+  State<StatefulWidget> createState() => _ControlPanelPopupState();
 }
 
-class _MotorPopupState extends State<MotorPopup> {
+class _ControlPanelPopupState extends State<ControlPanelPopup> {
   late int currentValue;
+  late IconData icon;
+  late String label;
 
   @override
   void initState() {
     super.initState();
     currentValue = widget.currentValue.toInt();
+    icon = widget.icon;
+    label = widget.label;
   }
 
   @override
@@ -50,18 +60,11 @@ class _MotorPopupState extends State<MotorPopup> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  Container(
-                    height: 0.06 * screenHeight,
-                    width: 0.1 * screenWidth,
-                    decoration: const BoxDecoration(
-                        // color: Colors.red,
-                        image: DecorationImage(
-                            image: AssetImage("assets/images/motor.png"))),
-                  ),
+                  Icon(icon, size: 30),
                   Padding(
                     padding: EdgeInsets.only(left: 0.02 * screenWidth),
                     child: Text(
-                      "Motor speed: $currentValue RPM",
+                      label,
                       style: TextStyle(fontSize: 0.02 * screenHeight),
                     ),
                   )
@@ -78,7 +81,7 @@ class _MotorPopupState extends State<MotorPopup> {
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20.0)),
                       filled: true,
-                      hintText: "Enter custom motor speed (RPM)",
+                      hintText: "Enter custom value",
                       fillColor: Colors.white),
                 ),
               ),
