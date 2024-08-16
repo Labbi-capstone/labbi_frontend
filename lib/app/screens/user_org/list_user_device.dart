@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 // import 'package:flutter/widgets.dart';
 import 'package:labbi_frontend/app/models/user_device_test.dart';
-import 'package:labbi_frontend/app/screens/user_org/device_details.dart';
+import 'package:labbi_frontend/app/screens/user_org/device_details_page.dart';
 
 class ListUserDevice extends StatefulWidget{
   
@@ -36,7 +36,7 @@ class _ListUserDeviceState extends State<ListUserDevice>{
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Icon(Icons.memory, size: screenHeight * 0.1, color: Colors.black),
-                  SizedBox(width: screenWidth*0.04), // Space between icon and text
+                  SizedBox(width: screenWidth * 0.04), // Space between icon and text
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

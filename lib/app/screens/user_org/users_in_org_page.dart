@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:labbi_frontend/app/components/menu_button.dart';
 import 'package:labbi_frontend/app/models/user_org_test.dart';
-import 'package:labbi_frontend/app/screens/menu/nav_bar.dart';
+import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
 import 'package:labbi_frontend/app/screens/user_org/list_user_org.dart';
-import 'package:labbi_frontend/app/screens/user_org/user_home_org.dart';
+import 'package:labbi_frontend/app/screens/user_org/user_org_home_page.dart';
 
-class UserOrg extends StatefulWidget {
-  const UserOrg({super.key});
+class UsersInOrgPage extends StatefulWidget {
+  const UsersInOrgPage({super.key});
 
   @override
-  _UserOrgState createState() => _UserOrgState();
+  _UsersInOrgPageState createState() => _UsersInOrgPageState();
 }
 
-class _UserOrgState extends State<UserOrg>{
+class _UsersInOrgPageState extends State<UsersInOrgPage>{
   @override
   Widget build(BuildContext context) {
     dynamic screenHeight = MediaQuery.of(context).size.height;
@@ -20,30 +21,23 @@ class _UserOrgState extends State<UserOrg>{
     return Scaffold(
       appBar: AppBar(
         flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Color.fromRGBO(83, 206, 255, 0.801),
-                  Color.fromRGBO(0, 174, 255, 0.959),
-                ],
-                begin: FractionalOffset(0.0, 0.0),
-                end: FractionalOffset(1.0, 0.0),
-                stops: [0.0, 1.0],
-                tileMode: TileMode.clamp,
-              ),
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color.fromRGBO(83, 206, 255, 0.801),
+                Color.fromRGBO(0, 174, 255, 0.959),
+              ],
+              begin: FractionalOffset(0.0, 0.0),
+              end: FractionalOffset(1.0, 0.0),
+              stops: [0.0, 1.0],
+              tileMode: TileMode.clamp,
             ),
-            
           ),
+        ),
 
-        // Icon button
-        leading: IconButton(
-          icon: const Icon(Icons.menu, color: Colors.blue,),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const  MenuTaskbar()),
-            );
-          },
+        // Menu button
+        leading: Builder( builder: (BuildContext context) {
+          return MenuButton();},
         ),
 
         // logo image
@@ -51,12 +45,15 @@ class _UserOrgState extends State<UserOrg>{
           height: screenHeight*0.18,
           width: screenWidth*0.3,
           child: Image.asset(
-            'assets/images/company-logo-color.png', // Path to your image asset
+            'assets/images/company-logo-color.png',
             fit: BoxFit.contain,
           ),
         ),
         centerTitle: true,
       ),
+
+      // Menu Bar
+      drawer: const MenuTaskbar(),
 
       body: Container(
         width: screenWidth,
@@ -89,11 +86,11 @@ class _UserOrgState extends State<UserOrg>{
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const UserHomeOrg()),
+                          MaterialPageRoute(builder: (context) => const UserOrgHomePage()),
                         );
                       },
                       icon: Icon(Icons.devices, size: screenHeight * 0.05),
-                      label: Text('Thiết bị', style: TextStyle(fontSize: screenHeight * 0.02)),
+                      label: Text('Devices', style: TextStyle(fontSize: screenHeight * 0.02)),
                       style: TextButton.styleFrom(
                         padding: EdgeInsets.symmetric(horizontal: screenWidth*0.04, vertical: screenHeight*0.03),
                         backgroundColor: Colors.grey,
@@ -111,11 +108,11 @@ class _UserOrgState extends State<UserOrg>{
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const UserOrg()),
+                          MaterialPageRoute(builder: (context) => const UsersInOrgPage()), // Stay page
                         );
                       },
                       icon: Icon(Icons.people, size: screenHeight * 0.05),
-                      label: Text('Người dùng', style: TextStyle(fontSize: screenHeight * 0.02)),
+                      label: Text('View Users', style: TextStyle(fontSize: screenHeight * 0.02)),
                       style: TextButton.styleFrom(
                         padding: EdgeInsets.symmetric(horizontal: screenWidth*0.04, vertical: screenHeight*0.03),
                         backgroundColor: Colors.white,
@@ -131,7 +128,7 @@ class _UserOrgState extends State<UserOrg>{
               
               SizedBox(height: screenHeight*0.025),
 
-              Text('Danh sách người dùng',
+              Text('Other users in your organization',
                style: TextStyle(
                   fontSize: screenHeight*0.02, // Set the font size
                   fontWeight: FontWeight.bold, // Optional: set the font weight

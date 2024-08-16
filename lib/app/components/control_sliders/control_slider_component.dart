@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:labbi_frontend/app/screens/control_panel_page/fan_popup.dart';
-import 'package:labbi_frontend/app/screens/control_panel_page/motor_popup.dart';
+import 'package:labbi_frontend/app/components/control_panel_popup.dart';
 
 class ControlSliderComponent extends StatefulWidget {
   final IconData icon;
@@ -60,16 +59,12 @@ class _ControlSliderState extends State<ControlSliderComponent> {
         ),
         InkWell(
           onTap: () {
-            if (widget.icon == FontAwesomeIcons.fan) {
-              showDialog(
-                  context: context,
-                  builder: (context) => FanPopup(currentValue: _currentValue));
-            } else {
-              showDialog(
-                  context: context,
-                  builder: (context) =>
-                      MotorPopup(currentValue: _currentValue));
-            }
+            showDialog(
+                context: context,
+                builder: (context) => ControlPanelPopup(
+                    currentValue: _currentValue,
+                    icon: widget.icon,
+                    label: widget.label));
           },
           child: const Icon(Icons.arrow_forward, size: 30),
         )

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/screens/notification/notification_page.dart';
 import 'package:labbi_frontend/app/models/notification_message.dart';
-import 'package:labbi_frontend/app/screens/user_profile/user_edit/edit_user_profile.dart';
+import 'package:labbi_frontend/app/screens/user_profile/user_edit/edit_user_profile_page.dart';
 
 class UserProfilePage extends StatefulWidget {
   final List<NotificationMessage> listOfNotification;
@@ -246,31 +246,41 @@ class _UserProfilePageState extends State<UserProfilePage> {
                       ),
                       /*Ribon button */
                       Expanded(
-                          child: Container(
-                              alignment: Alignment.topRight,
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                    right: screenWidth * 0.08,
-                                    bottom: screenHeight * 0.008),
-                                child: InkWell(
-                                  onTap: () {
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const UserProfileUpdate()));
-                                  },
-                                  child: Container(
-                                    height: screenHeight / 12,
-                                    width: screenWidth / 10,
-                                    alignment: Alignment.center,
-                                    decoration: const BoxDecoration(
-                                        image: DecorationImage(
-                                            image: AssetImage(
-                                                "assets/images/edit-ribon.jpg"),
-                                            fit: BoxFit.fill)),
-                                  ),
+                        child: Container(
+                          alignment: Alignment.topRight,
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                                right: screenWidth * 0.08,
+                                bottom: screenHeight * 0.008),
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) =>
+                                        const EditUserProfilePage()));
+                              },
+                              child: Container(
+                                height: screenHeight / 13,
+                                width: screenWidth / 10,
+                                alignment: Alignment.center,
+                                decoration: const BoxDecoration(
+                                    image: DecorationImage(
+                                        image: AssetImage(
+                                            "assets/images/ribon.jpg"),
+                                        fit: BoxFit.fill)),
+                                child: Container(
+                                  height: screenHeight / 40,
+                                  width: screenHeight / 40,
+                                  decoration: const BoxDecoration(
+                                      image: DecorationImage(
+                                          image: AssetImage(
+                                              "assets/images/edit-icon.png"),
+                                          fit: BoxFit.fill)),
                                 ),
-                              )))
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
                     ],
                   ),
                   Padding(
