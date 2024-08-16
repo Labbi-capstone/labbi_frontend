@@ -3,11 +3,13 @@ import 'package:labbi_frontend/app/components/textfield.dart';
 import 'package:labbi_frontend/app/models/edit_User_Profile_Test.dart';
 import 'package:labbi_frontend/app/screens/user_profile/user_edit/edit_buttons.dart';
 
-
-class UpdateProfile extends StatefulWidget{
+class UpdateProfile extends StatefulWidget {
   final UserProfileModel model;
 
-  const UpdateProfile({super.key, required this.model,});
+  const UpdateProfile({
+    super.key,
+    required this.model,
+  });
 
   @override
   // ignore: library_private_types_in_public_api
@@ -15,7 +17,6 @@ class UpdateProfile extends StatefulWidget{
 }
 
 class _UpdateProfileState extends State<UpdateProfile> {
-  
   @override
   Widget build(BuildContext context) {
     final model = widget.model;
@@ -24,20 +25,16 @@ class _UpdateProfileState extends State<UpdateProfile> {
 
     return Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            SizedBox(
-              child: IconButton( 
-                icon:  const Icon(Icons.arrow_back),
-                onPressed: (){
-                  Navigator.pop(context);
-                },
-              ),
+        Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+          SizedBox(
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () {
+                Navigator.pop(context);
+              },
             ),
-          ]
-        ),
-         
+          ),
+        ]),
         Stack(
           children: [
             CircleAvatar(
@@ -52,11 +49,11 @@ class _UpdateProfileState extends State<UpdateProfile> {
                 ),
               ),
             ),
-            
+
             // Covering icon button
             Positioned.fill(
-              child:  Align(
-              alignment: Alignment.bottomCenter,
+              child: Align(
+                alignment: Alignment.bottomCenter,
                 child: GestureDetector(
                   onTap: () {
                     // Handle image update logic
@@ -71,16 +68,15 @@ class _UpdateProfileState extends State<UpdateProfile> {
             ),
           ],
         ),
-      
         const SizedBox(height: 20),
-        
         SizedBox(
           width: screenWidth * 0.8,
           child: MyTextField(
             controller: model.usernameController,
             onChanged: (value) {
               setState(() {
-                model.usernameError = value.isEmpty ? 'Username cannot be empty' : '';
+                model.usernameError =
+                    value.isEmpty ? 'Username cannot be empty' : '';
               });
             },
             hintText: model.username,
@@ -88,70 +84,71 @@ class _UpdateProfileState extends State<UpdateProfile> {
             errorText: model.usernameError,
           ),
         ),
-        
         SizedBox(
           width: screenWidth * 0.8,
-          child: Expanded(child:                      
-            MyTextField(
-            controller: model.emailController,
-            onChanged: (value) {
-              setState(() {
-                model.emailError = value.isEmpty ? 'Email cannot be empty' : '';
-              });
-            },
-            hintText: model.email,
-            obscureText: false,
-            errorText: model.emailError,
-          ),
+          child: Expanded(
+            child: MyTextField(
+              controller: model.emailController,
+              onChanged: (value) {
+                setState(() {
+                  model.emailError =
+                      value.isEmpty ? 'Email cannot be empty' : '';
+                });
+              },
+              hintText: model.email,
+              obscureText: false,
+              errorText: model.emailError,
+            ),
           ),
         ),
-
         Container(
           width: screenWidth * 0.6,
           decoration: BoxDecoration(
             color: const Color.fromARGB(255, 233, 233, 233),
             borderRadius: BorderRadius.circular(5.0),
           ),
-          child: Row( 
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-            SizedBox(
-              child: Padding( padding: EdgeInsets.symmetric(vertical: screenHeight*0.018, horizontal: screenWidth * 0.02),
-                child: Text( model.maskedPhoneNumber,
-                  style: TextStyle(
-                    color: Colors.black,  
-                    fontSize: screenHeight*0.02,
+              SizedBox(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                      vertical: screenHeight * 0.018,
+                      horizontal: screenWidth * 0.02),
+                  child: Text(
+                    model.maskedPhoneNumber,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: screenHeight * 0.02,
+                    ),
                   ),
                 ),
               ),
-            ),
-
-            const Spacer(),
-
-            SizedBox(
-              height: screenHeight * 0.05,
-              child: TextButton(
-                onPressed: () {
-                  // Handle OTP send action
-                },
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.white, backgroundColor: Colors.blue,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                  ), // Button text color
-                ),
-              child: Text(
-                'Send OTP',
-                style: TextStyle(
-                  fontSize: screenHeight*0.015,
+              const Spacer(),
+              SizedBox(
+                height: screenHeight * 0.05,
+                child: TextButton(
+                  onPressed: () {
+                    // Handle OTP send action
+                  },
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.white, backgroundColor: Colors.blue,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                    ), // Button text color
+                  ),
+                  child: Text(
+                    'Send OTP',
+                    style: TextStyle(
+                      fontSize: screenHeight * 0.015,
+                    ),
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
-        ],),),
-
+        ),
         const SizedBox(height: 20),
-
         SizedBox(
           width: screenWidth * 0.4,
           child: MyTextField(
@@ -166,14 +163,14 @@ class _UpdateProfileState extends State<UpdateProfile> {
             errorText: model.otpError,
           ),
         ),
-
         SizedBox(
           width: screenWidth * 0.8,
           child: MyTextField(
             controller: model.newPhoneController,
             onChanged: (value) {
               setState(() {
-                model.newPhoneError = value.isEmpty ? 'New phone number cannot be empty' : '';
+                model.newPhoneError =
+                    value.isEmpty ? 'New phone number cannot be empty' : '';
               });
             },
             hintText: model.newPhoneNum,
@@ -181,11 +178,8 @@ class _UpdateProfileState extends State<UpdateProfile> {
             errorText: model.newPhoneError,
           ),
         ),
-
         const SizedBox(height: 10),
-
         const EditButtons(),
-
       ],
     );
   }

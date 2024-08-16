@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 
 class MyButton extends StatelessWidget {
+  final Widget text; // Change Text to Widget
   final Function()? onTap;
-  final Text text;
 
-  const MyButton({super.key, required this.onTap, required this.text});
+  const MyButton({required this.text, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        child: Center(
-          child: text,
-        ),
+        // Your button styling here
+        child: Center(child: text), // Now this can be any widget
       ),
     );
   }
 }
+

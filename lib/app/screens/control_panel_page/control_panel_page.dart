@@ -4,7 +4,7 @@ import 'package:flutter_switch/flutter_switch.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:labbi_frontend/app/components/charts/two_line_chart_component.dart';
 import 'package:labbi_frontend/app/components/control_sliders/control_slider_component.dart';
-import 'package:labbi_frontend/app/mock_datas/device_data.dart'; // Import the device data
+import 'package:labbi_frontend/app/models/device_data.dart'; // Import the device data
 
 class ControlPanelPage extends StatelessWidget {
   @override
