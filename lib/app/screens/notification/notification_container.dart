@@ -48,18 +48,18 @@ class _NotificationContainerState extends State<NotificationContainer> {
                 padding: EdgeInsets.only(
                     top: screenHeight / 55, bottom: screenHeight / 55),
                 child: Container(
-                  height: screenHeight / 11,
-                  width: screenHeight / 11,
+                  height: screenHeight / 15,
+                  width: screenHeight / 15,
                   decoration: const BoxDecoration(
                       color: Colors.red, shape: BoxShape.circle),
                   child: CircleAvatar(
-                    radius: (screenHeight / 11) / 2,
+                    radius: (screenHeight / 15) / 2,
                     backgroundColor: Colors.white,
                     child: ClipOval(
                       child: Image(
                         image: AssetImage(notification.imagePath),
-                        height: screenHeight / 11,
-                        width: screenHeight / 11,
+                        height: screenHeight / 15,
+                        width: screenHeight / 15,
                         fit: BoxFit.fill,
                       ),
                     ),
@@ -68,7 +68,7 @@ class _NotificationContainerState extends State<NotificationContainer> {
               ),
             ),
             Expanded(
-              flex: 8,
+              flex: 10,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 mainAxisSize: MainAxisSize.max,
