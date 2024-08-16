@@ -235,8 +235,9 @@ import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/components/menu_button.dart';
 import 'package:labbi_frontend/app/models/user_device_test.dart';
 import 'package:labbi_frontend/app/screens/admin_org/history_admin_org.dart';
-import 'package:labbi_frontend/app/screens/admin_org/list_admin_org_device.dart';
+
 import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
+import 'package:labbi_frontend/app/screens/user_org/list_user_device.dart';
 //import 'package:labbi_frontend/app/screens/admin_org/admin_org.dart';
 
 class AdminHomeOrg extends StatefulWidget {
