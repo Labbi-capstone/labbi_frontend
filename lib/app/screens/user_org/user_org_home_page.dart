@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:labbi_frontend/app/components/menu_button.dart';
 import 'package:labbi_frontend/app/models/user_device_test.dart';
 import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
 import 'package:labbi_frontend/app/screens/user_org/list_user_device.dart';
@@ -35,13 +36,8 @@ class _UserOrgHomePageState extends State<UserOrgHomePage>{
         ),
 
         // Menu button
-        leading: Builder( // Wrap the IconButton with Builder
-          builder: (BuildContext context) {
-            return IconButton(
-              icon: const Icon( Icons.menu, color: Colors.blue,),
-              onPressed: () {Scaffold.of(context).openDrawer();},
-            );
-          },
+        leading: Builder( builder: (BuildContext context) {
+          return MenuButton();},
         ),
 
         // logo image

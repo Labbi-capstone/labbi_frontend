@@ -38,7 +38,7 @@ final List<MenuItemModel> adminMenuItems = [
     route: DashboardPage(),
   ),
   MenuItemModel(
-    icon: Icons.control_point,
+    icon: Icons.dashboard,
     label: 'Control Panel',
     route: ControlPanelPage(),
   ),

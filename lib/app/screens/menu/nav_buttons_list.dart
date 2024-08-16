@@ -18,8 +18,8 @@ class NavButtonsList extends StatelessWidget {
       children: [
 
         MenuItem(
-          // menuItem: userMenuItems,
-          menuItem: orgAdminMenuItems,
+          menuItem: userMenuItems,
+          // menuItem: orgAdminMenuItems,
           // menuItem: adminMenuItems,
 
           screenHeight: screenHeight,

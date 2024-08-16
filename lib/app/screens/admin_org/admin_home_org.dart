@@ -232,6 +232,7 @@
 //   }
 // }
 import 'package:flutter/material.dart';
+import 'package:labbi_frontend/app/components/menu_button.dart';
 import 'package:labbi_frontend/app/models/user_device_test.dart';
 import 'package:labbi_frontend/app/screens/admin_org/history_admin_org.dart';
 import 'package:labbi_frontend/app/screens/admin_org/list_admin_org_device.dart';
@@ -269,13 +270,8 @@ class _AdminHomeOrgState extends State<AdminHomeOrg> {
         ),
 
         // Menu button
-        leading: Builder( // Wrap the IconButton with Builder
-          builder: (BuildContext context) {
-            return IconButton(
-              icon: const Icon( Icons.menu, color: Colors.blue,),
-              onPressed: () {Scaffold.of(context).openDrawer();},
-            );
-          },
+        leading: Builder( builder: (BuildContext context) {
+          return MenuButton();},
         ),
 
         // logo image

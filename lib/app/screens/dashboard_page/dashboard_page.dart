@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:labbi_frontend/app/components/menu_button.dart';
 import 'package:labbi_frontend/app/models/dashboard.dart';
 import 'package:labbi_frontend/app/screens/dashboard_page/dashboard_items.dart';
 import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
@@ -9,13 +10,8 @@ class DashboardPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         // Menu button
-        leading: Builder( // Wrap the IconButton with Builder
-          builder: (BuildContext context) {
-            return IconButton(
-              icon: const Icon( Icons.menu, color: Colors.blue,),
-              onPressed: () {Scaffold.of(context).openDrawer();},
-            );
-          },
+        leading: Builder( builder: (BuildContext context) {
+          return MenuButton();},
         ),
         title: Text('Dashboard'),
         centerTitle: true,
