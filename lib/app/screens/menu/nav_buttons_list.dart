@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:labbi_frontend/app/components/logout_button.dart';
+import 'package:labbi_frontend/app/models/menu_item_model.dart';
+import 'package:labbi_frontend/app/screens/menu/menu_item.dart';
 
 class NavButtonsList extends StatelessWidget {
   const NavButtonsList({super.key});
@@ -14,90 +17,26 @@ class NavButtonsList extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start, // Center buttons horizontally
       children: [
 
-        // Home Button
-        SizedBox(
-          child: 
-          TextButton.icon(
-            onPressed: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => const Dashboard()),
-              // );
-            },
-            icon: Padding(
-              padding: EdgeInsets.only(right: screenWidth * 0.02),
-              child: Icon(Icons.home, size: screenHeight * 0.08),
-            ),
-            label: Text('Dashboard', style: TextStyle(fontSize: screenHeight * 0.02)),
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.black,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ), 
-          ),
+        MenuItem(
+          menuItem: userMenuItems,
+          // menuItem: orgAdminMenuItems,
+          // menuItem: adminMenuItems,
+
+          screenHeight: screenHeight,
+          screenWidth: screenWidth,
         ),
-        
-        // Control Panel Button
-        SizedBox(
-          child: TextButton.icon(
-            onPressed: () {
-              // Navigate to Control Panel
-            },
-            icon: Padding(
-              padding: EdgeInsets.only(right: screenWidth * 0.02),
-              child: Icon(Icons.dashboard, size: screenHeight * 0.08),
-            ),
-            label: Text('Control Panel', style: TextStyle(fontSize: screenHeight * 0.02)),
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.black, 
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-          ),
-        ),
-        
-        // Message Button
-        SizedBox(
-          child: TextButton.icon(
-            onPressed: () {
-              // Navigate to Message
-            },
-            icon: Padding(
-              padding: EdgeInsets.only(right:  screenWidth * 0.02),
-              child: Icon(Icons.message, size: screenHeight * 0.08),
-            ),
-            label: Text('Message', style: TextStyle(fontSize: screenHeight * 0.02)),
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.black,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-          ),
-        ),
-        
+         
         const Spacer(),
+
+        // Line
+        const Divider(
+          color: Colors.black,
+        ),
 
         // Log out Button
         SizedBox(
-          child: TextButton.icon(
-            onPressed: () {
-              // Logout functionality
-            },
-            icon: Padding(
-              padding: EdgeInsets.only(right: screenWidth * 0.025, left: screenWidth * 0.03),
-              child: Icon(Icons.logout, size:  screenHeight * 0.05),
-            ),
-            label: Text('Log out', style: TextStyle(fontSize:  screenHeight * 0.02)),
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.black,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-          ),
+          width: screenWidth,
+          child: LogoutButton(),
         ),
       ],
     );
