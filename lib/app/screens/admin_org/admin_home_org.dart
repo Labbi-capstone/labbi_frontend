@@ -237,7 +237,7 @@ import 'package:labbi_frontend/app/models/user_device_test.dart';
 import 'package:labbi_frontend/app/screens/admin_org/history_admin_org.dart';
 
 import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
-import 'package:labbi_frontend/app/screens/user_org/list_user_device.dart';
+import 'package:labbi_frontend/app/components/org_device_list.dart';
 //import 'package:labbi_frontend/app/screens/admin_org/admin_org.dart';
 
 class AdminHomeOrg extends StatefulWidget {
@@ -389,7 +389,7 @@ class _AdminHomeOrgState extends State<AdminHomeOrg> {
 
                 // Admin Dashboard Content
                 Expanded(
-                  child: ListUserDevice(
+                  child: OrgDeviceList(
                     devices: getUserDevices(),
                   ),
                 ),
