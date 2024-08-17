@@ -6,6 +6,7 @@ import 'package:labbi_frontend/app/screens/start_page/start_page.dart'; // Impor
 import 'package:labbi_frontend/app/screens/prome_display(Temporary)/display.dart';
 import 'package:labbi_frontend/app/screens/prome_display(Temporary)/cpuDisplay.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:labbi_frontend/app/screens/user_org/user_org_home_page.dart';
 
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
@@ -20,14 +21,16 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       scaffoldMessengerKey: scaffoldMessengerKey, // Assign the global key
       debugShowCheckedModeBanner: false,
-      initialRoute: '/login', // Set the initial route
+      initialRoute: '/userorghomepage', // Set the initial route
       routes: {
         '/login': (context) => const LoginPage(),
         '/register': (context) => const RegisterPage(),
         '/dashboard': (context) =>
             DashboardPage(), // Your main dashboard or data display page
         // Add other routes as needed
+        '/userorghomepage': (context) => const UserOrgHomePage(), // Testing
       },
+
     );
   }
 }
