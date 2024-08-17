@@ -13,6 +13,5 @@ List<UserOrg> getUserOrg() {
     UserOrg(name: 'user 2', id: '002', pathImage: 'assets/images/test-profile-image.jpg'),
     UserOrg(name: 'user 3', id: '003', pathImage: 'assets/images/man.png'),
     UserOrg(name: 'user 4', id: '004', pathImage: 'assets/images/man.png'),
-
   ];
 }

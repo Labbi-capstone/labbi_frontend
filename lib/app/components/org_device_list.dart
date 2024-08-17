@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
-// import 'package:flutter/widgets.dart';
 import 'package:labbi_frontend/app/models/user_device_test.dart';
 import 'package:labbi_frontend/app/screens/user_org/device_details_page.dart';
 
-class ListUserDevice extends StatefulWidget {
+class OrgDeviceList extends StatefulWidget {
   final List<UserDevice> devices;
 
-  const ListUserDevice({super.key, required this.devices});
+  const OrgDeviceList({super.key, required this.devices});
 
   @override
   // ignore: library_private_types_in_public_api
-  _ListUserDeviceState createState() => _ListUserDeviceState();
+  _OrgDeviceListState createState() => _OrgDeviceListState();
 }
 
-class _ListUserDeviceState extends State<ListUserDevice> {
+class _OrgDeviceListState extends State<OrgDeviceList> {
   @override
   Widget build(BuildContext context) {
     dynamic screenHeight = MediaQuery.of(context).size.height;
@@ -44,7 +43,8 @@ class _ListUserDeviceState extends State<ListUserDevice> {
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       Text(
-                          'ID: ${widget.devices[index].id}\nStatus: ${widget.devices[index].status}'),
+                        'ID: ${widget.devices[index].id}\nStatus: ${widget.devices[index].status}'
+                      ),
                     ],
                   ),
                 ],

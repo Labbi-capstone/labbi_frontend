@@ -67,8 +67,8 @@ class MyApp extends StatelessWidget {
       // You can add more checks here if needed, e.g., user roles, etc.
       return Dashboard(token: token!);
     } else {
-      return const AdminHomeOrg();
-      // return const UserOrgHomePage(); // Replace with the appropriate initial page if token is null or expired
+      // return const AdminHomeOrg();
+      return const UserOrgHomePage(); // Replace with the appropriate initial page if token is null or expired
       // return const EditUserProfilePage();
     }
   }

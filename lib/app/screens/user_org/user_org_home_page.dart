@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/components/menu_button.dart';
 import 'package:labbi_frontend/app/models/user_device_test.dart';
 import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
-import 'package:labbi_frontend/app/screens/user_org/list_user_device.dart';
+import 'package:labbi_frontend/app/components/org_device_list.dart';
 import 'package:labbi_frontend/app/screens/user_org/users_in_org_page.dart';
 
 class UserOrgHomePage extends StatefulWidget {
@@ -142,7 +142,7 @@ class _UserOrgHomePageState extends State<UserOrgHomePage>{
 
               // List of user devices
               Expanded(
-                child: ListUserDevice(
+                child: OrgDeviceList(
                   devices: getUserDevices(),
                 ),
               ),
