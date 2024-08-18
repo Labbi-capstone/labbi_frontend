@@ -28,9 +28,9 @@ class _UpdateProfileState extends State<UpdateProfile> {
         Row(mainAxisAlignment: MainAxisAlignment.start, children: [
           SizedBox(
             child: IconButton(
-              icon: const Icon(Icons.abc_rounded),
+              icon: const Icon(Icons.arrow_back),
               onPressed: () {
-                Navigator.popAndPushNamed(context, '/userProfilePage');
+              Navigator.pushReplacementNamed(context, '/userProfilePage');
               },
             ),
           ),

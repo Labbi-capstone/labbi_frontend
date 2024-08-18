@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:labbi_frontend/app/components/menu_button.dart';
+import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
 import 'package:labbi_frontend/app/screens/notification/notification_page.dart';
 import 'package:labbi_frontend/app/models/notification_message.dart';
 import 'package:labbi_frontend/app/screens/user_profile/user_edit/edit_user_profile_page.dart';
@@ -40,18 +42,14 @@ class _UserProfilePageState extends State<UserProfilePage> {
     return Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(
+
           elevation: 0,
           backgroundColor: Colors.transparent,
           centerTitle: true,
-          leading: Padding(
-            padding: EdgeInsets.only(left: screenWidth * 0.045),
-            child: IconButton(
-              icon: const Icon(
-                Icons.arrow_back,
-                color: Colors.white,
-              ),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
+          leading: Builder(
+            builder: (BuildContext context) {
+              return const MenuButton();
+            },
           ),
           actions: [
             Padding(
@@ -88,6 +86,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
             )
           ],
         ),
+        // Menu Bar
+        drawer: const MenuTaskbar(),
         body: SingleChildScrollView(
           child: Container(
             height: null,
@@ -254,7 +254,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                 bottom: screenHeight * 0.008),
                             child: InkWell(
                               onTap: () {
-                                Navigator.pushNamed(
+                                Navigator.pushReplacementNamed(
                                     context, '/editUserProfilePage');
                               },
                               child: Container(

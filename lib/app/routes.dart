@@ -9,5 +9,6 @@ class Routes {
   static const String userProfilePage = '/userProfilePage';
   static const String editUserProfilePage = '/editUserProfilePage'; 
   static const String notificationPage = '/notificationPage';
+  static const String menuTaskbar = '/menuTaskbar';
   // Add more routes as needed
 }

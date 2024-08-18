@@ -6,6 +6,7 @@ import 'package:labbi_frontend/app/routes.dart';
 import 'package:labbi_frontend/app/screens/authentication/login/login_page.dart';
 import 'package:labbi_frontend/app/screens/authentication/register/register_page.dart';
 import 'package:labbi_frontend/app/screens/dashboard_page/dashboard_page.dart';
+import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
 import 'package:labbi_frontend/app/screens/notification/notification_page.dart';
 import 'package:labbi_frontend/app/screens/start_page/start_page.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
         Routes.userProfilePage: (context) =>  UserProfilePage(),
         Routes.editUserProfilePage: (context) => const EditUserProfilePage(),
         Routes.notificationPage: (context) => const NotificationPage(),
+        Routes.menuTaskbar: (context) => const MenuTaskbar(),
         
       },
       onUnknownRoute: (settings) => MaterialPageRoute(
