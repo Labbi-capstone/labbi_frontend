@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:labbi_frontend/app/screens/admin_org/admin_home_org.dart';
+import 'package:labbi_frontend/app/screens/admin_org/admin_org_home_page.dart';
 import 'package:labbi_frontend/app/screens/control_panel_page/control_panel_page.dart';
 import 'package:labbi_frontend/app/screens/dashboard_page/dashboard_page.dart';
 import 'package:labbi_frontend/app/screens/notification/notification_page.dart';
@@ -50,7 +50,7 @@ final List<MenuItemModel> adminMenuItems = [
   MenuItemModel(
     icon: Icons.work,
     label: 'Organization',
-    route: AdminHomeOrg(),
+    route: AdminOrgHomePage(),
   ),
 ];
 
@@ -68,6 +68,6 @@ final List<MenuItemModel> orgAdminMenuItems = [
   MenuItemModel(
     icon: Icons.work,
     label: 'Organization',
-    route: AdminHomeOrg(),
+    route: AdminOrgHomePage(),
   ),
 ];

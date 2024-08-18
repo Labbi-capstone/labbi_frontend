@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:labbi_frontend/app/screens/admin_org/add_create_org_page.dart';
+import 'package:labbi_frontend/app/screens/admin_org/admin_org_home_page.dart';
 import 'package:labbi_frontend/app/screens/authentication/login/login_page.dart';
 import 'package:labbi_frontend/app/screens/authentication/register/register_page.dart';
 import 'package:labbi_frontend/app/screens/dashboard_page/dashboard_page.dart';
@@ -21,16 +23,17 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       scaffoldMessengerKey: scaffoldMessengerKey, // Assign the global key
       debugShowCheckedModeBanner: false,
-      initialRoute: '/userorghomepage', // Set the initial route
+      initialRoute: '/adminorghomepage', // Set the initial route
       routes: {
         '/login': (context) => const LoginPage(),
         '/register': (context) => const RegisterPage(),
         '/dashboard': (context) =>
             DashboardPage(), // Your main dashboard or data display page
         // Add other routes as needed
-        '/userorghomepage': (context) => const UserOrgHomePage(), // Testing
+        '/userorghomepage': (context) => const UserOrgHomePage(),
+        '/adminorghomepage': (context) => const AdminOrgHomePage(),
+        '/addcreateorgpage': (context) => const AddCreateOrgPage(), // Testing
       },
-
     );
   }
 }
