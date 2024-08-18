@@ -2,33 +2,35 @@ import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/screens/notification/notification_page.dart';
 import 'package:labbi_frontend/app/models/notification_message.dart';
 import 'package:labbi_frontend/app/screens/user_profile/user_edit/edit_user_profile_page.dart';
+import 'package:labbi_frontend/app/utils/user_info_helper.dart';
 
 class UserProfilePage extends StatefulWidget {
-  final List<NotificationMessage> listOfNotification;
-  const UserProfilePage({super.key, required this.listOfNotification});
   @override
   State<StatefulWidget> createState() => _UserProfilePageState();
 }
 
 class _UserProfilePageState extends State<UserProfilePage> {
+  String userName = '';
+  String userId = '';
+  String userEmail = '';
+  String userRole = '';
   late List<NotificationMessage> listOfNotification;
   int count = 0;
 
   @override
   void initState() {
     super.initState();
-    listOfNotification = widget.listOfNotification;
-    for (var i = 0; i < listOfNotification.length; i++) {
-      if (listOfNotification[i].status == 'unread') {
-        setState(() {
-          count += 1;
-        });
-      } else {
-        setState(() {
-          count = count;
-        });
-      }
-    }
+    _loadUserInfo();
+  }
+
+  Future<void> _loadUserInfo() async {
+    final userInfo = await UserInfoHelper.loadUserInfo();
+    setState(() {
+      userName = userInfo['userName']!;
+      userId = userInfo['userId']!;
+      userEmail = userInfo['userEmail']!;
+      userRole = userInfo['userRole']!;
+    });
   }
 
   @override
@@ -193,7 +195,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
           Padding(
             padding: const EdgeInsets.all(0),
             child: Text(
-              "Username",
+              '$userName',
               style: TextStyle(
                   fontSize: screenHeight / 26, fontWeight: FontWeight.bold),
             ),
@@ -201,7 +203,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
           Padding(
               padding: EdgeInsets.only(top: screenHeight * 0.005),
               child: Text(
-                "Administrator",
+                "Role: $userRole",
                 style:
                     TextStyle(fontSize: screenHeight / 45, color: Colors.grey),
               )),
@@ -221,7 +223,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         spreadRadius: 0.2,
                         offset: Offset(0, 4))
                   ],
-                  // border: Border.all(color: Colors.black),
                   borderRadius: BorderRadius.circular(20)),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -244,7 +245,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
                               fontWeight: FontWeight.bold),
                         ),
                       ),
-                      /*Ribon button */
                       Expanded(
                         child: Container(
                           alignment: Alignment.topRight,
@@ -265,7 +265,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                 decoration: const BoxDecoration(
                                     image: DecorationImage(
                                         image: AssetImage(
-                                            "assets/images/ribon.jpg"),
+                                            "assets/images/test-profile-image.jpg"),
                                         fit: BoxFit.fill)),
                                 child: Container(
                                   height: screenHeight / 40,
@@ -273,7 +273,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                   decoration: const BoxDecoration(
                                       image: DecorationImage(
                                           image: AssetImage(
-                                              "assets/images/edit-icon.png"),
+                                              "assets/images/hamburger-menu-white.png"),
                                           fit: BoxFit.fill)),
                                 ),
                               ),
@@ -290,134 +290,86 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         bottom: screenHeight * 0.025),
                     child: const Divider(),
                   ),
-                  /*Detailed components */
-                  /*1st Row */
-                  Padding(
-                      padding: EdgeInsets.only(
-                          left: screenWidth * 0.08,
-                          right: screenWidth * 0.08,
-                          bottom: screenHeight * 0.025),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          /*Account's ID*/
-                          Text(
-                            "Account's ID:",
-                            style: TextStyle(
-                                fontSize: screenHeight / 50,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(left: screenWidth * 0.02),
-                            child: Text(
-                              "admin012345",
-                              style: TextStyle(
-                                  fontSize: screenHeight / 50,
-                                  color: Colors.grey),
-                              overflow: TextOverflow.clip,
-                            ),
-                          )
-                        ],
-                      )),
-
-                  /*2nd Row */
-                  Padding(
-                      padding: EdgeInsets.only(
-                          left: screenWidth * 0.08,
-                          right: screenWidth * 0.08,
-                          bottom: screenHeight * 0.025),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          /*Creation Date*/
-                          Text(
-                            "Creation Date:",
-                            style: TextStyle(
-                                fontSize: screenHeight / 50,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(left: screenWidth * 0.02),
-                            child: Text(
-                              "11/06/2024",
-                              style: TextStyle(
-                                  fontSize: screenHeight / 50,
-                                  color: Colors.grey),
-                              overflow: TextOverflow.clip,
-                            ),
-                          )
-                        ],
-                      )),
-
-                  /*3rd Row */
-                  Padding(
-                      padding: EdgeInsets.only(
-                          left: screenWidth * 0.08,
-                          right: screenWidth * 0.08,
-                          bottom: screenHeight * 0.025),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          /*Email*/
-                          Text(
-                            "Email:",
-                            style: TextStyle(
-                                fontSize: screenHeight / 50,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(left: screenWidth * 0.02),
-                            child: Text(
-                              "admin@bestlab.com",
-                              style: TextStyle(
-                                  fontSize: screenHeight / 50,
-                                  color: Colors.grey),
-                              overflow: TextOverflow.clip,
-                            ),
-                          )
-                        ],
-                      )),
-
-                  /*4th Row */
-                  Padding(
-                      padding: EdgeInsets.only(
-                          left: screenWidth * 0.08,
-                          right: screenWidth * 0.08,
-                          bottom: screenHeight * 0.025),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          /*Phone*/
-                          Text(
-                            "Phone:",
-                            style: TextStyle(
-                                fontSize: screenHeight / 50,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(left: screenWidth * 0.02),
-                            child: Text(
-                              "09xxxxxxxx",
-                              style: TextStyle(
-                                  fontSize: screenHeight / 50,
-                                  color: Colors.grey),
-                              overflow: TextOverflow.clip,
-                            ),
-                          )
-                        ],
-                      )),
+                  // Use the reusable UserInfoRow widget
+                  UserInfoRow(
+                    label: "Account's ID",
+                    value: "*Need update*",
+                    screenHeight: screenHeight,
+                    screenWidth: screenWidth,
+                  ),
+                  UserInfoRow(
+                    label: "Creation Date",
+                    value: "*Need update*",
+                    screenHeight: screenHeight,
+                    screenWidth: screenWidth,
+                  ),
+                  UserInfoRow(
+                    label: "Email",
+                    value: "$userEmail",
+                    screenHeight: screenHeight,
+                    screenWidth: screenWidth,
+                  ),
+                  UserInfoRow(
+                    label: "Phone",
+                    value: "*Need update*",
+                    screenHeight: screenHeight,
+                    screenWidth: screenWidth,
+                  ),
                 ],
               ),
             ),
           )
         ],
       );
+}
+
+class UserInfoRow extends StatelessWidget {
+  final String label;
+  final String value;
+  final double screenHeight;
+  final double screenWidth;
+
+  const UserInfoRow({
+    Key? key,
+    required this.label,
+    required this.value,
+    required this.screenHeight,
+    required this.screenWidth,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(
+        left: screenWidth * 0.08,
+        right: screenWidth * 0.08,
+        bottom: screenHeight * 0.025,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "$label:",
+            style: TextStyle(
+              fontSize: screenHeight / 50,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: screenWidth * 0.02),
+            child: Text(
+              value,
+              style: TextStyle(
+                fontSize: screenHeight / 50,
+                color: Colors.grey,
+              ),
+              overflow: TextOverflow.clip,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

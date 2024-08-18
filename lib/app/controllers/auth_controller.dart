@@ -47,22 +47,29 @@ class AuthController extends ChangeNotifier {
         "email": emailController.text.trim(),
         "password": passwordController.text,
       };
-      print('Sending login request with body: $reqBody'); // Debugging
+
       final response = await http.post(
         Uri.parse('http://localhost:3000/api/users/login'),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(reqBody),
       );
-      print(
-          'Received response with status code: ${response.statusCode}'); // Debugging
-      print('Response body: ${response.body}'); // Debugging
+      print(response.body);
+
       final jsonRes = jsonDecode(response.body);
 
       if (response.statusCode == 200 && jsonRes['status']) {
         final userRole = jsonRes['user']['role'];
+        final userId = jsonRes['user']['id'];
+        final userName = jsonRes['user']['fullName'];
+        final userEmail = jsonRes['user']['email'];
+
+        // Store user information in SharedPreferences
+        prefs.setString('userName', userName);
+        prefs.setString('userId', userId);
+        prefs.setString('userRole', userRole);
+        prefs.setString('userEmail', userEmail);
 
         if (context.mounted) {
-          // Guarding with mounted check
           // Navigate based on the user role
           switch (userRole) {
             case 'admin':
@@ -84,7 +91,6 @@ class AuthController extends ChangeNotifier {
         }
       }
     } catch (e) {
-      print('Error during login: $e');
       if (context.mounted) {
         _showErrorMessage(
             context, 'An unexpected error occurred. Please try again.');
