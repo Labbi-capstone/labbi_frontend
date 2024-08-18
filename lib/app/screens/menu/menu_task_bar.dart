@@ -10,18 +10,17 @@ class MenuTaskbar extends StatefulWidget {
   _MenuTaskbarState createState() => _MenuTaskbarState();
 }
 
-class _MenuTaskbarState extends State<MenuTaskbar>{
-  
+class _MenuTaskbarState extends State<MenuTaskbar> {
   final userName = 'User Nageg erwetr rew435t';
   final String pathImage = 'assets/images/man.png';
-  
+
   @override
-    Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
     dynamic screenHeight = MediaQuery.of(context).size.height;
     dynamic screenWidth = MediaQuery.of(context).size.width;
 
     return Drawer(
-      width: screenWidth*0.7,
+      width: screenWidth * 0.7,
       child: Column(
         children: [
           buildHeader(context, screenHeight, screenWidth),
@@ -35,50 +34,51 @@ class _MenuTaskbarState extends State<MenuTaskbar>{
 
   Widget buildHeader(BuildContext context, screenHeight, screenWidth) {
     return Material(
-      child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const UserProfilePage(listOfNotification: [])),
-          );
-        },
-        child: Container(
-          width: double.infinity,
-          height: screenHeight * 0.2,
-          color: Colors.blue,
-          child: Padding (
-            padding: EdgeInsets.symmetric(horizontal: screenWidth*0.02,vertical: screenHeight*0.012),
-            child: Column(
-              children: [ 
-                Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.3), 
-                          spreadRadius: 2,
-                          blurRadius: 6,
-                        ),
-                      ],
+        child: InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  const UserProfilePage(listOfNotification: [])),
+        );
+      },
+      child: Container(
+        width: double.infinity,
+        height: screenHeight * 0.2,
+        color: Colors.blue,
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+              horizontal: screenWidth * 0.02, vertical: screenHeight * 0.012),
+          child: Column(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.3),
+                      spreadRadius: 2,
+                      blurRadius: 6,
                     ),
-                    child: CircleAvatar(
-                      radius: screenHeight * 0.065,
-                      backgroundImage: AssetImage(pathImage),
-                    ),
-                  ),
-
-                Text( userName, 
-                  style: TextStyle(fontSize: screenHeight * 0.03, 
-                  color: Colors.white, 
-                  fontWeight: FontWeight.w400, 
-                  overflow: TextOverflow.ellipsis,
-                )),
-
-              ],
-            ),
+                  ],
+                ),
+                child: CircleAvatar(
+                  radius: screenHeight * 0.065,
+                  backgroundImage: AssetImage(pathImage),
+                ),
+              ),
+              Text(userName,
+                  style: TextStyle(
+                    fontSize: screenHeight * 0.03,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w400,
+                    overflow: TextOverflow.ellipsis,
+                  )),
+            ],
           ),
         ),
-      )
-    );
+      ),
+    ));
   }
 }
