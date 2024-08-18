@@ -48,7 +48,7 @@ class RegisterPage extends StatelessWidget {
                           controller: authController.nameController,
                           hintText: 'Fullname',
                           obscureText: false,
-                          errorText: authController.emptyFullname
+                          errorText: authController.emptyFullName
                               ? 'Please enter fullname'
                               : '',
                         ),
