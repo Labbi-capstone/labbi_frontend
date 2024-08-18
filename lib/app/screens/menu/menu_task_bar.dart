@@ -10,73 +10,75 @@ class MenuTaskbar extends StatefulWidget {
   _MenuTaskbarState createState() => _MenuTaskbarState();
 }
 
-class _MenuTaskbarState extends State<MenuTaskbar>{
-  
-  final userName = 'User';
+class _MenuTaskbarState extends State<MenuTaskbar> {
+  final userName = 'User Nageg erwetr rew435t';
   final String pathImage = 'assets/images/man.png';
-  
+
   @override
   Widget build(BuildContext context) {
     dynamic screenHeight = MediaQuery.of(context).size.height;
     dynamic screenWidth = MediaQuery.of(context).size.width;
 
     return Drawer(
-      width: screenWidth*0.7,
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.02,vertical: screenHeight * 0.02),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                IconButton(
-                  onPressed: () {
-                    Navigator.pop(context); // Navigate back to the previous screen
-                  },
-                  icon: const Icon(Icons.menu, color: Colors.black,),
-                ),
-              ],
-            ),
-
-            // Line
-            const Divider(
-              color: Colors.black,
-            ),
-
-            // User Profile
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const UserProfilePage(listOfNotification: [],)),
-              );
-              },
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: screenWidth*0.02,vertical: screenHeight*0.02), // Remove default padding
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.zero,
-                ),
-              ),
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                  CircleAvatar(
-                    radius: screenHeight * 0.055,
-                    child: Image.asset(pathImage),
-                  ),
-                  SizedBox(width: screenWidth * 0.05),
-                  Text(userName, style: TextStyle(fontSize: screenHeight * 0.03, fontWeight: FontWeight.bold)),
-                ],
-              ),
-            ),
-
-            // Frame for a list of buttons
-            const Expanded(
-              child: NavButtonsList()
-            ),
-
-          ]
-        ),
+      width: screenWidth * 0.7,
+      child: Column(
+        children: [
+          buildHeader(context, screenHeight, screenWidth),
+          const Expanded(
+            child: NavButtonsList(),
+          ),
+        ],
       ),
     );
+  }
+
+  Widget buildHeader(BuildContext context, screenHeight, screenWidth) {
+    return Material(
+        child: InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  const UserProfilePage(listOfNotification: [])),
+        );
+      },
+      child: Container(
+        width: double.infinity,
+        height: screenHeight * 0.2,
+        color: Colors.blue,
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+              horizontal: screenWidth * 0.02, vertical: screenHeight * 0.012),
+          child: Column(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.3),
+                      spreadRadius: 2,
+                      blurRadius: 6,
+                    ),
+                  ],
+                ),
+                child: CircleAvatar(
+                  radius: screenHeight * 0.065,
+                  backgroundImage: AssetImage(pathImage),
+                ),
+              ),
+              Text(userName,
+                  style: TextStyle(
+                    fontSize: screenHeight * 0.03,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w400,
+                    overflow: TextOverflow.ellipsis,
+                  )),
+            ],
+          ),
+        ),
+      ),
+    ));
   }
 }

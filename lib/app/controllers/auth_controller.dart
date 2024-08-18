@@ -1,17 +1,17 @@
-// lib/app/controllers/auth_controller.dart
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:labbi_frontend/app/routes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:labbi_frontend/config/config.dart';
-import 'package:labbi_frontend/app/screens/authentication/login/login_page.dart';
-import 'package:labbi_frontend/app/screens/start_page/start_page.dart';
 
 class AuthController extends ChangeNotifier {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final nameController = TextEditingController();
   final confirmedPasswordController = TextEditingController();
+  String loginMessage = '';
+  bool loginSuccess = false;
+  String errorMessage = '';
 
   bool emptyEmail = false;
   bool emptyPassword = false;
@@ -32,130 +32,158 @@ class AuthController extends ChangeNotifier {
     prefs = await SharedPreferences.getInstance();
   }
 
-  Future<void> loginUser(BuildContext context) async {
-    if (emailController.text.isNotEmpty) {
-      emptyEmail = false;
-    }
-    if (passwordController.text.isNotEmpty) {
-      emptyPassword = false;
-    }
+  void setLoading(bool loading) {
+    isLoading = loading;
+    notifyListeners();
+  }
 
-    if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
-      var regBody = {
-        "email": emailController.text,
+  // Method to login user
+  Future<void> loginUser(BuildContext context) async {
+    setLoading(true);
+
+    try {
+      // Prepare the request body
+      var reqBody = {
+        "email": emailController.text.trim(),
         "password": passwordController.text,
       };
 
-      try {
-        var res = await http.post(
-          Uri.parse(login),
-          headers: {"Content-Type": "application/json"},
-          body: jsonEncode(regBody),
-        );
+      var res = await http.post(
+        Uri.parse('http://localhost:3000/api/users/login'),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(reqBody),
+      );
 
-        if (res.statusCode == 200) {
-          var jsonRes = jsonDecode(res.body);
+      var jsonRes = jsonDecode(res.body);
 
-          if (jsonRes['status'] == true) {
-            var myToken = jsonRes['token'] ?? '';
-            if (myToken.isNotEmpty) {
-              prefs.setString('token', myToken);
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => Dashboard(token: myToken)),
-              );
-            } else {
-              showError(context, "Invalid token received");
-            }
-          } else {
-            showError(context, "Login failed: ${jsonRes['message']}");
-          }
-        } else {
-          showError(context, "Error: ${res.statusCode}");
+      if (res.statusCode == 200 && jsonRes['status']) {
+        loginSuccess = true;
+        loginMessage = "Login successful!";
+        errorMessage = "";
+
+        // Navigate to the dashboard page
+        if (context.mounted) {
+          Navigator.pushReplacementNamed(context, Routes.dashboard);
         }
-      } catch (e) {
-        showError(context, "An error occurred during login. Please try again.");
+      } else {
+        loginSuccess = false;
+        loginMessage = "";
+        errorMessage = jsonRes['message'] ?? "Login failed. Please try again.";
+
+        // Show error message
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(errorMessage),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       }
-    } else {
-      if (emailController.text.isEmpty) emptyEmail = true;
-      if (passwordController.text.isEmpty) emptyPassword = true;
+    } catch (e) {
+      loginSuccess = false;
+      errorMessage = "An unexpected error occurred. Please try again.";
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorMessage),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      setLoading(false);
     }
-    notifyListeners(); // Updates the UI
   }
 
   // Method for registering a user
   Future<void> registerUser(BuildContext context) async {
-    
-  // Validate form fields before proceeding
-  if (nameController.text.isEmpty ||
-      emailController.text.isEmpty ||
-      passwordController.text.isEmpty ||
-      confirmedPasswordController.text.isEmpty) {
-    // Update error messages based on the specific empty fields
-    emptyFullname = nameController.text.isEmpty;
-    emptyEmail = emailController.text.isEmpty;
-    emptyPassword = passwordController.text.isEmpty;
-    emptyConfirmedPassword = confirmedPasswordController.text.isEmpty;
-    registrationMessage = "Please fill all fields correctly.";
-    notifyListeners();
-    return;
-  }
-
-  // Check if passwords match
-  if (confirmedPasswordController.text != passwordController.text) {
-    isNotMatch = true;
-    registrationMessage = "Passwords do not match.";
-    notifyListeners();
-    return;
-  }
-
-  // If validation passes, proceed with registration
-  isLoading = true;
-  notifyListeners();
-
-  try {
-    // Prepare the request body
-    var reqBody = {
-      "fullName": nameController.text.trim(),
-      "email": emailController.text.trim(),
-      "password": passwordController.text,
-    };
-
-    // Make the registration request
-    var res = await http.post(
-      Uri.parse('http://localhost:3000/api/users/register'),
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode(reqBody),
-    );
-
-    // Parse the response
-    var jsonRes = jsonDecode(res.body);
-
-    if (res.statusCode == 200 && jsonRes['status']) {
-      // Successful registration
-      registrationMessage = "Registration successful!";
-      isLoading = false;
+    // Validate form fields before proceeding
+    if (nameController.text.isEmpty ||
+        emailController.text.isEmpty ||
+        passwordController.text.isEmpty ||
+        confirmedPasswordController.text.isEmpty) {
+      // Update error messages based on the specific empty fields
+      emptyFullname = nameController.text.isEmpty;
+      emptyEmail = emailController.text.isEmpty;
+      emptyPassword = passwordController.text.isEmpty;
+      emptyConfirmedPassword = confirmedPasswordController.text.isEmpty;
+      registrationMessage = "Please fill all fields correctly.";
       notifyListeners();
+      return;
+    }
 
-      // Show success message
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(registrationMessage),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
+    // Check if passwords match
+    if (confirmedPasswordController.text != passwordController.text) {
+      isNotMatch = true;
+      registrationMessage = "Passwords do not match.";
+      notifyListeners();
+      return;
+    }
 
-      // Navigate to the login page after a short delay
-      await Future.delayed(const Duration(seconds: 1));
-      if (context.mounted) {
-        Navigator.pushReplacementNamed(context, '/login');
+    // If validation passes, proceed with registration
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      // Prepare the request body
+      var reqBody = {
+        "fullName": nameController.text.trim(),
+        "email": emailController.text.trim(),
+        "password": passwordController.text,
+      };
+
+      // Make the registration request
+      var res = await http.post(
+        Uri.parse('http://localhost:3000/api/users/register'),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(reqBody),
+      );
+
+      // Parse the response
+      var jsonRes = jsonDecode(res.body);
+
+      if (res.statusCode == 200 && jsonRes['status']) {
+        // Successful registration
+        registrationMessage = "Registration successful!";
+        isLoading = false;
+        notifyListeners();
+
+        // Show success message
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(registrationMessage),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+
+        // Navigate to the login page after a short delay
+        await Future.delayed(const Duration(seconds: 1));
+        if (context.mounted) {
+          Navigator.pushReplacementNamed(context, Routes.login);
+        }
+      } else {
+        // Handle registration failure
+        registrationMessage =
+            jsonRes['message'] ?? "Registration failed. Please try again.";
+        isLoading = false;
+        notifyListeners();
+
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(registrationMessage),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       }
-    } else {
-      // Handle registration failure
-      registrationMessage = jsonRes['message'] ?? "Registration failed. Please try again.";
+    } catch (e) {
+      // Handle any exceptions that might occur
+      registrationMessage = "An error occurred. Please try again.";
       isLoading = false;
       notifyListeners();
 
@@ -168,27 +196,15 @@ class AuthController extends ChangeNotifier {
         );
       }
     }
-  } catch (e) {
-    // Handle any exceptions that might occur
-    registrationMessage = "An error occurred. Please try again.";
-    isLoading = false;
-    notifyListeners();
-
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(registrationMessage),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
   }
-}
 
-  
+void logoutUser(BuildContext context) async {
+    // Clear any saved user data (like tokens or preferences)
+    prefs.clear();
 
-
-
+    // Navigate back to the login screen
+    Navigator.pushReplacementNamed(context, '/login');
+  }
 
 
   void showError(BuildContext context, String message) {

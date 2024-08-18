@@ -15,17 +15,17 @@ class MenuItemModel {
 
 final List<MenuItemModel> userMenuItems = [
   MenuItemModel(
-    icon: Icons.home,
+    icon: Icons.home_outlined,
     label: 'Dashboard',
     route: DashboardPage(),
   ),
   MenuItemModel(
-    icon: Icons.notifications,
+    icon: Icons.notifications_active_outlined,
     label: 'Notification',
     route: NotificationPage(),
   ),
   MenuItemModel(
-    icon: Icons.work,
+    icon: Icons.work_outline,
     label: 'Organization',
     route: UserOrgHomePage(),
   ),
@@ -33,22 +33,22 @@ final List<MenuItemModel> userMenuItems = [
 
 final List<MenuItemModel> adminMenuItems = [
   MenuItemModel(
-    icon: Icons.home,
+    icon: Icons.home_outlined,
     label: 'Dashboard',
     route: DashboardPage(),
   ),
   MenuItemModel(
-    icon: Icons.dashboard,
+    icon: Icons.dashboard_outlined,
     label: 'Control Panel',
     route: ControlPanelPage(),
   ),
   MenuItemModel(
-    icon: Icons.notifications,
+    icon: Icons.notifications_active_outlined,
     label: 'Notification',
     route: NotificationPage(),
   ),
   MenuItemModel(
-    icon: Icons.work,
+    icon: Icons.work_outline,
     label: 'Organization',
     route: AdminOrgHomePage(),
   ),
@@ -56,17 +56,17 @@ final List<MenuItemModel> adminMenuItems = [
 
 final List<MenuItemModel> orgAdminMenuItems = [
   MenuItemModel(
-    icon: Icons.home,
+    icon: Icons.home_outlined,
     label: 'Dashboard',
     route: DashboardPage(),
   ),
   MenuItemModel(
-    icon: Icons.notifications,
+    icon: Icons.notifications_active_outlined,
     label: 'Notification',
     route: NotificationPage(),
   ),
   MenuItemModel(
-    icon: Icons.work,
+    icon: Icons.work_outline,
     label: 'Organization',
     route: AdminOrgHomePage(),
   ),
