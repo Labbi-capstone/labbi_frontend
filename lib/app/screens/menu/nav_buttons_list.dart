@@ -11,22 +11,17 @@ class NavButtonsList extends StatelessWidget {
     dynamic screenHeight = MediaQuery.of(context).size.height;
     dynamic screenWidth = MediaQuery.of(context).size.width;
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center, // Center buttons vertically
-      crossAxisAlignment: CrossAxisAlignment.start, // Center buttons horizontally
+    return Column(  
       children: [
 
         MenuItem(
-          menuItem: userMenuItems,
+          // menuItem: userMenuItems,
           // menuItem: orgAdminMenuItems,
-          // menuItem: adminMenuItems,
+          menuItem: adminMenuItems,
 
           screenHeight: screenHeight,
           screenWidth: screenWidth,
         ),
-         
-        const Spacer(),
 
         // Line
         const Divider(
@@ -38,6 +33,8 @@ class NavButtonsList extends StatelessWidget {
           width: screenWidth,
           child: LogoutButton(),
         ),
+
+        SizedBox(height: screenHeight*0.01,)
       ],
     );
   }

@@ -19,8 +19,9 @@ class MenuItem extends StatelessWidget {
         itemCount: menuItem.length,
         itemBuilder: (context, index) {
           return Padding( 
-            padding: EdgeInsets.symmetric(vertical: screenHeight * 0.004),
+            padding: EdgeInsets.symmetric(vertical: screenHeight * 0.01),
             child: SizedBox(
+              height: screenHeight*0.08,
               child: TextButton.icon(
                 onPressed: () {
                   Navigator.push(
@@ -29,8 +30,8 @@ class MenuItem extends StatelessWidget {
                   );
                 },
                 icon: Padding(
-                  padding: EdgeInsets.only(right: screenWidth * 0.02),
-                  child: Icon(menuItem[index].icon, size: screenHeight * 0.08),
+                  padding: EdgeInsets.only(right: screenWidth * 0.04),
+                  child: Icon(menuItem[index].icon, size: screenHeight * 0.06),
                 ),
                 label: Text(menuItem[index].label, style: TextStyle(fontSize: screenHeight * 0.02)),
                 style: TextButton.styleFrom(
