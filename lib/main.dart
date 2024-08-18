@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
       routes: {
         Routes.login: (context) => const LoginPage(),
         Routes.register: (context) => const RegisterPage(),
-        Routes.dashboard: (context) =>  DashboardPage(),
+        Routes.dashboard: (context) => DashboardPage(),
       },
       onUnknownRoute: (settings) => MaterialPageRoute(
         builder: (context) => Scaffold(
