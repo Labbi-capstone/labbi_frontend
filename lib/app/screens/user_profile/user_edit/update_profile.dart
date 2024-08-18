@@ -30,7 +30,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
             child: IconButton(
               icon: const Icon(Icons.abc_rounded),
               onPressed: () {
-                Navigator.pushReplacementNamed(context, '/userProfile');
+                Navigator.popAndPushNamed(context, '/userProfilePage');
               },
             ),
           ),

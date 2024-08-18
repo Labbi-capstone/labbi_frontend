@@ -254,9 +254,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                 bottom: screenHeight * 0.008),
                             child: InkWell(
                               onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) =>
-                                        const EditUserProfilePage()));
+                                Navigator.pushNamed(
+                                    context, '/editUserProfilePage');
                               },
                               child: Container(
                                 height: screenHeight / 13,
