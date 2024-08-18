@@ -15,7 +15,7 @@ class LogoutButton extends StatelessWidget {
       },
       icon: Padding(
         padding: EdgeInsets.only(right: screenWidth * 0.025, left: screenWidth * 0.03),
-        child: Icon(Icons.logout, size:  screenHeight * 0.05),
+        child: Icon(Icons.logout, size:  screenHeight * 0.04),
       ),
       label: Text('Log out', style: TextStyle(fontSize:  screenHeight * 0.02)),
       style: TextButton.styleFrom(

@@ -1,127 +1,84 @@
 import 'package:flutter/material.dart';
-import 'package:labbi_frontend/app/components/logout_button.dart';
-import 'package:labbi_frontend/app/models/menu_item_model.dart';
+import 'package:labbi_frontend/app/screens/menu/nav_buttons_list.dart';
 import 'package:labbi_frontend/app/screens/user_profile/user_profile.dart';
 
-class MenuTaskbar extends StatelessWidget {
+class MenuTaskbar extends StatefulWidget {
   const MenuTaskbar({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
+  _MenuTaskbarState createState() => _MenuTaskbarState();
+}
+
+class _MenuTaskbarState extends State<MenuTaskbar> {
+  final userName = 'User Nageg erwetr rew435t';
+  final String pathImage = 'assets/images/man.png';
+
+  @override
   Widget build(BuildContext context) {
-    final double screenHeight = MediaQuery.of(context).size.height;
-    final double screenWidth = MediaQuery.of(context).size.width;
+    dynamic screenHeight = MediaQuery.of(context).size.height;
+    dynamic screenWidth = MediaQuery.of(context).size.width;
 
     return Drawer(
       width: screenWidth * 0.7,
-      child: Padding(
-        padding: EdgeInsets.symmetric(
-            horizontal: screenWidth * 0.02, vertical: screenHeight * 0.02),
-        child: Column(
-          children: [
-            // Menu Icon to close the drawer
-            Row(
-              children: [
-                IconButton(
-                  onPressed: () {
-                    Navigator.pop(context); // Close the drawer
-                  },
-                  icon: const Icon(
-                    Icons.menu,
-                    color: Colors.black,
-                  ),
-                ),
-              ],
-            ),
-
-            const Divider(color: Colors.black),
-
-            // User Profile Section
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const UserProfilePage(
-                      listOfNotification: [],
-                    ),
-                  ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(
-                    horizontal: screenWidth * 0.02,
-                    vertical: screenHeight * 0.02),
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.zero,
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  CircleAvatar(
-                    radius: screenHeight * 0.055,
-                    child: Image.asset('assets/images/man.png'),
-                  ),
-                  SizedBox(width: screenWidth * 0.05),
-                  Text(
-                    'User',
-                    style: TextStyle(
-                      fontSize: screenHeight * 0.03,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Menu Items
-            Expanded(
-              child: ListView.builder(
-                itemCount: userMenuItems.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding:
-                        EdgeInsets.symmetric(vertical: screenHeight * 0.004),
-                    child: TextButton.icon(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => userMenuItems[index].route,
-                          ),
-                        );
-                      },
-                      icon: Padding(
-                        padding: EdgeInsets.only(right: screenWidth * 0.02),
-                        child: Icon(userMenuItems[index].icon,
-                            size: screenHeight * 0.08),
-                      ),
-                      label: Text(
-                        userMenuItems[index].label,
-                        style: TextStyle(fontSize: screenHeight * 0.02),
-                      ),
-                      style: TextButton.styleFrom(
-                        foregroundColor: Colors.black,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-
-            const Divider(color: Colors.black),
-
-            // Log out Button
-            SizedBox(
-              width: screenWidth,
-              child: const LogoutButton(),
-            ),
-          ],
-        ),
+      child: Column(
+        children: [
+          buildHeader(context, screenHeight, screenWidth),
+          const Expanded(
+            child: NavButtonsList(),
+          ),
+        ],
       ),
     );
+  }
+
+  Widget buildHeader(BuildContext context, screenHeight, screenWidth) {
+    return Material(
+        child: InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  const UserProfilePage(listOfNotification: [])),
+        );
+      },
+      child: Container(
+        width: double.infinity,
+        height: screenHeight * 0.2,
+        color: Colors.blue,
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+              horizontal: screenWidth * 0.02, vertical: screenHeight * 0.012),
+          child: Column(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.3),
+                      spreadRadius: 2,
+                      blurRadius: 6,
+                    ),
+                  ],
+                ),
+                child: CircleAvatar(
+                  radius: screenHeight * 0.065,
+                  backgroundImage: AssetImage(pathImage),
+                ),
+              ),
+              Text(userName,
+                  style: TextStyle(
+                    fontSize: screenHeight * 0.03,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w400,
+                    overflow: TextOverflow.ellipsis,
+                  )),
+            ],
+          ),
+        ),
+      ),
+    ));
   }
 }
