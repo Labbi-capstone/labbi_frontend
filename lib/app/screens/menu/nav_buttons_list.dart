@@ -11,9 +11,8 @@ class NavButtonsList extends StatelessWidget {
     dynamic screenHeight = MediaQuery.of(context).size.height;
     dynamic screenWidth = MediaQuery.of(context).size.width;
 
-    return Column(  
+    return Column(
       children: [
-
         MenuItem(
           // menuItem: userMenuItems,
           // menuItem: orgAdminMenuItems,
@@ -34,7 +33,9 @@ class NavButtonsList extends StatelessWidget {
           child: LogoutButton(),
         ),
 
-        SizedBox(height: screenHeight*0.01,)
+        SizedBox(
+          height: screenHeight * 0.01,
+        )
       ],
     );
   }
