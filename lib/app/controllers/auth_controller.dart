@@ -9,20 +9,21 @@ class AuthController extends ChangeNotifier {
   final passwordController = TextEditingController();
   final nameController = TextEditingController();
   final confirmedPasswordController = TextEditingController();
+
   String loginMessage = '';
-  bool loginSuccess = false;
   String errorMessage = '';
+  String userRole = '';
+  String registrationMessage = '';
 
   bool emptyEmail = false;
   bool emptyPassword = false;
-  bool emptyFullname = false;
+  bool emptyFullName = false;
   bool emptyConfirmedPassword = false;
   bool isNotMatch = false;
   bool isLoading = false;
   bool isSnackBarShown = false;
 
   late SharedPreferences prefs;
-  String registrationMessage = "";
 
   AuthController() {
     initSharedPref();
@@ -42,58 +43,66 @@ class AuthController extends ChangeNotifier {
     setLoading(true);
 
     try {
-      // Prepare the request body
-      var reqBody = {
+      final reqBody = {
         "email": emailController.text.trim(),
         "password": passwordController.text,
       };
-
-      var res = await http.post(
+      print('Sending login request with body: $reqBody'); // Debugging
+      final response = await http.post(
         Uri.parse('http://localhost:3000/api/users/login'),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(reqBody),
       );
+      print(
+          'Received response with status code: ${response.statusCode}'); // Debugging
+      print('Response body: ${response.body}'); // Debugging
+      final jsonRes = jsonDecode(response.body);
 
-      var jsonRes = jsonDecode(res.body);
+      if (response.statusCode == 200 && jsonRes['status']) {
+        final userRole = jsonRes['user']['role'];
 
-      if (res.statusCode == 200 && jsonRes['status']) {
-        loginSuccess = true;
-        loginMessage = "Login successful!";
-        errorMessage = "";
-
-        // Navigate to the dashboard page
         if (context.mounted) {
-          Navigator.pushReplacementNamed(context, Routes.dashboard);
+          // Guarding with mounted check
+          // Navigate based on the user role
+          switch (userRole) {
+            case 'admin':
+              Navigator.pushReplacementNamed(context, '/dashboard');
+              break;
+            case 'developer':
+              Navigator.pushReplacementNamed(context, '/dashboard');
+              break;
+            case 'adminOrg':
+              Navigator.pushReplacementNamed(context, '/dashboard');
+              break;
+            default:
+              Navigator.pushReplacementNamed(context, '/dashboard');
+          }
         }
       } else {
-        loginSuccess = false;
-        loginMessage = "";
-        errorMessage = jsonRes['message'] ?? "Login failed. Please try again.";
-
-        // Show error message
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(errorMessage),
-              backgroundColor: Colors.red,
-            ),
-          );
+          _showErrorMessage(context, jsonRes['message'] ?? 'Login failed');
         }
       }
     } catch (e) {
-      loginSuccess = false;
-      errorMessage = "An unexpected error occurred. Please try again.";
-
+      print('Error during login: $e');
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(errorMessage),
-            backgroundColor: Colors.red,
-          ),
-        );
+        _showErrorMessage(
+            context, 'An unexpected error occurred. Please try again.');
       }
     } finally {
       setLoading(false);
+    }
+  }
+
+  // Method to show error messages
+  void _showErrorMessage(BuildContext context, String message) {
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
@@ -105,7 +114,7 @@ class AuthController extends ChangeNotifier {
         passwordController.text.isEmpty ||
         confirmedPasswordController.text.isEmpty) {
       // Update error messages based on the specific empty fields
-      emptyFullname = nameController.text.isEmpty;
+      emptyFullName = nameController.text.isEmpty;
       emptyEmail = emailController.text.isEmpty;
       emptyPassword = passwordController.text.isEmpty;
       emptyConfirmedPassword = confirmedPasswordController.text.isEmpty;
@@ -123,92 +132,66 @@ class AuthController extends ChangeNotifier {
     }
 
     // If validation passes, proceed with registration
-    isLoading = true;
-    notifyListeners();
+    setLoading(true);
 
     try {
-      // Prepare the request body
-      var reqBody = {
+      final reqBody = {
         "fullName": nameController.text.trim(),
         "email": emailController.text.trim(),
         "password": passwordController.text,
       };
 
-      // Make the registration request
-      var res = await http.post(
+      final response = await http.post(
         Uri.parse('http://localhost:3000/api/users/register'),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(reqBody),
       );
 
-      // Parse the response
-      var jsonRes = jsonDecode(res.body);
+      final jsonRes = jsonDecode(response.body);
 
-      if (res.statusCode == 200 && jsonRes['status']) {
-        // Successful registration
+      if (response.statusCode == 200 && jsonRes['status']) {
         registrationMessage = "Registration successful!";
-        isLoading = false;
-        notifyListeners();
-
-        // Show success message
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(registrationMessage),
-              backgroundColor: Colors.green,
-            ),
-          );
-        }
+          _showSuccessMessage(context, registrationMessage);
 
-        // Navigate to the login page after a short delay
-        await Future.delayed(const Duration(seconds: 1));
-        if (context.mounted) {
-          Navigator.pushReplacementNamed(context, Routes.login);
+          // Navigate to the login page after a short delay
+          await Future.delayed(const Duration(seconds: 1));
+          if (context.mounted) {
+            Navigator.pushReplacementNamed(context, Routes.login);
+          }
         }
       } else {
-        // Handle registration failure
-        registrationMessage =
-            jsonRes['message'] ?? "Registration failed. Please try again.";
-        isLoading = false;
-        notifyListeners();
-
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(registrationMessage),
-              backgroundColor: Colors.red,
-            ),
-          );
+          _showErrorMessage(context,
+              jsonRes['message'] ?? "Registration failed. Please try again.");
         }
       }
     } catch (e) {
-      // Handle any exceptions that might occur
-      registrationMessage = "An error occurred. Please try again.";
-      isLoading = false;
-      notifyListeners();
-
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(registrationMessage),
-            backgroundColor: Colors.red,
-          ),
-        );
+        _showErrorMessage(context, "An error occurred. Please try again.");
       }
+    } finally {
+      setLoading(false);
     }
   }
 
-void logoutUser(BuildContext context) async {
-    // Clear any saved user data (like tokens or preferences)
-    prefs.clear();
-
-    // Navigate back to the login screen
-    Navigator.pushReplacementNamed(context, '/login');
+  // Method to show success messages
+  void _showSuccessMessage(BuildContext context, String message) {
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: Colors.green,
+        ),
+      );
+    }
   }
 
-
-  void showError(BuildContext context, String message) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
+  // Method to log out the user
+  void logoutUser(BuildContext context) async {
+    await prefs.clear();
+    if (context.mounted) {
+      Navigator.pushReplacementNamed(context, Routes.login);
+    }
   }
 }

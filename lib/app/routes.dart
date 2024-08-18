@@ -6,6 +6,5 @@ class Routes {
   static const String dashboard = '/dashboard';
   static const String start = '/start';
   static const String UserOrgHomePage = '/UserOrgHomePage';
-
   // Add more routes as needed
 }
