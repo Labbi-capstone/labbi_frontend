@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+
+import 'package:labbi_frontend/app/screens/admin_org/add_create_org_page.dart';
+import 'package:labbi_frontend/app/screens/admin_org/admin_org_home_page.dart';
+
 import 'package:labbi_frontend/app/controllers/auth_controller.dart';
 import 'package:labbi_frontend/app/routes.dart';
+
 import 'package:labbi_frontend/app/screens/authentication/login/login_page.dart';
 import 'package:labbi_frontend/app/screens/authentication/register/register_page.dart';
 import 'package:labbi_frontend/app/screens/dashboard_page/dashboard_page.dart';
@@ -23,6 +28,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+    
       initialRoute: Routes.login,
       routes: {
         Routes.login: (context) => const LoginPage(),
@@ -39,6 +45,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
+
     );
   }
 }
