@@ -69,6 +69,7 @@ flutter:
   uses-material-design: true
   assets: 
     - assets/images/
+    - assets/images/ribon.png
     - assets/.env
     
 

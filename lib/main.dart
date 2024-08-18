@@ -8,6 +8,7 @@ import 'package:labbi_frontend/app/screens/authentication/register/register_page
 import 'package:labbi_frontend/app/screens/dashboard_page/dashboard_page.dart';
 import 'package:labbi_frontend/app/screens/start_page/start_page.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:labbi_frontend/app/screens/user_profile/user_profile.dart';
 import 'package:provider/provider.dart';
 
 Future<void> main() async {
@@ -33,6 +34,8 @@ class MyApp extends StatelessWidget {
         Routes.login: (context) => const LoginPage(),
         Routes.register: (context) => const RegisterPage(),
         Routes.dashboard: (context) => DashboardPage(),
+        Routes.userProfile: (context) =>  UserProfilePage(),
+        
       },
       onUnknownRoute: (settings) => MaterialPageRoute(
         builder: (context) => Scaffold(
