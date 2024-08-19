@@ -12,7 +12,6 @@ class NotificationPage extends StatefulWidget {
 class _NotificationPageState extends State<NotificationPage> {
   bool isChanged = false;
   int count = 0;
-  // bool isTap = false;
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +20,7 @@ class _NotificationPageState extends State<NotificationPage> {
 
     return Scaffold(
       // extendBodyBehindAppBar: true,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: const Color(0xff3ac7f9),
@@ -40,14 +40,22 @@ class _NotificationPageState extends State<NotificationPage> {
               fontSize: screenHeight / 35),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          height: null,
-          width: screenWidth,
-          decoration: const BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage("assets/images/app-background.jpg"),
-                  fit: BoxFit.fill)),
+      body: Container(
+        height: screenHeight,
+        width: screenWidth,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color.fromRGBO(83, 206, 255, 1),
+              Color.fromRGBO(0, 174, 255, 1),
+            ],
+            begin: FractionalOffset(0.0, 0.0),
+            end: FractionalOffset(1.0, 0.0),
+            stops: [0.0, 1.0],
+            tileMode: TileMode.clamp,
+          ),
+        ),
+        child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,

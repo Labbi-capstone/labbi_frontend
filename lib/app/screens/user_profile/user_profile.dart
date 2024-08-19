@@ -3,7 +3,6 @@ import 'package:labbi_frontend/app/components/menu_button.dart';
 import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
 import 'package:labbi_frontend/app/screens/notification/notification_page.dart';
 import 'package:labbi_frontend/app/models/notification_message.dart';
-import 'package:labbi_frontend/app/screens/user_profile/user_edit/edit_user_profile_page.dart';
 import 'package:labbi_frontend/app/utils/user_info_helper.dart';
 
 class UserProfilePage extends StatefulWidget {
@@ -42,7 +41,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
     return Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(
-
           elevation: 0,
           backgroundColor: Colors.transparent,
           centerTitle: true,
@@ -128,9 +126,17 @@ class _UserProfilePageState extends State<UserProfilePage> {
             height: (1 / 3) * screenHeight,
             width: screenWidth,
             decoration: const BoxDecoration(
-                image: DecorationImage(
-                    image: AssetImage("assets/images/app-background.jpg"),
-                    fit: BoxFit.cover)),
+              gradient: LinearGradient(
+                colors: [
+                  Color.fromRGBO(83, 206, 255, 1),
+                  Color.fromRGBO(0, 174, 255, 1),
+                ],
+                begin: FractionalOffset(0.0, 0.0),
+                end: FractionalOffset(1.0, 0.0),
+                stops: [0.0, 1.0],
+                tileMode: TileMode.clamp,
+              ),
+            ),
           ),
           /*Components in cover image */
           SizedBox(
@@ -264,17 +270,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                 decoration: const BoxDecoration(
                                     image: DecorationImage(
                                         image: AssetImage(
-                                            "assets/images/test-profile-image.jpg"),
+                                            "assets/images/edit-ribon.jpg"),
                                         fit: BoxFit.fill)),
-                                child: Container(
-                                  height: screenHeight / 40,
-                                  width: screenHeight / 40,
-                                  decoration: const BoxDecoration(
-                                      image: DecorationImage(
-                                          image: AssetImage(
-                                              "assets/images/hamburger-menu-white.png"),
-                                          fit: BoxFit.fill)),
-                                ),
                               ),
                             ),
                           ),
