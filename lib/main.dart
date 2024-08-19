@@ -5,6 +5,7 @@ import 'package:labbi_frontend/app/controllers/auth_controller.dart';
 import 'package:labbi_frontend/app/routes.dart';
 import 'package:labbi_frontend/app/screens/authentication/login/login_page.dart';
 import 'package:labbi_frontend/app/screens/authentication/register/register_page.dart';
+import 'package:labbi_frontend/app/screens/dashboard_page/create_dashboard_page.dart';
 import 'package:labbi_frontend/app/screens/dashboard_page/dashboard_page.dart';
 import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
 import 'package:labbi_frontend/app/screens/notification/notification_page.dart';
@@ -34,7 +35,7 @@ class MyApp extends StatelessWidget {
     
       initialRoute: Routes.login,
       routes: {
-        Routes.login: (context) => UserProfilePage(),
+        Routes.login: (context) => const CreateDashboardPage(),
         Routes.register: (context) => const RegisterPage(),
         Routes.dashboard: (context) => DashboardPage(),
         Routes.userProfilePage: (context) =>  UserProfilePage(),
