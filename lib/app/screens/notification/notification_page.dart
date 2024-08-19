@@ -21,6 +21,7 @@ class _NotificationPageState extends State<NotificationPage> {
 
     return Scaffold(
       // extendBodyBehindAppBar: true,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: const Color(0xff3ac7f9),
@@ -42,12 +43,23 @@ class _NotificationPageState extends State<NotificationPage> {
       ),
       body: SingleChildScrollView(
         child: Container(
-          height: null,
+          height: screenHeight,
           width: screenWidth,
           decoration: const BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage("assets/images/app-background.jpg"),
-                  fit: BoxFit.fill)),
+            // image: DecorationImage(
+            //     image: AssetImage("assets/images/app-background.jpg"),
+            //     fit: BoxFit.fill)
+            gradient: LinearGradient(
+              colors: [
+                Color.fromRGBO(83, 206, 255, 1),
+                Color.fromRGBO(0, 174, 255, 1),
+              ],
+              begin: FractionalOffset(0.0, 0.0),
+              end: FractionalOffset(1.0, 0.0),
+              stops: [0.0, 1.0],
+              tileMode: TileMode.clamp,
+            ),
+          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
