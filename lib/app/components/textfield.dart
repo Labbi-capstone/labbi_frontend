@@ -18,8 +18,11 @@ class MyTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    dynamic screenHeight = MediaQuery.of(context).size.height;
+    dynamic screenWidth = MediaQuery.of(context).size.width;
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 25.0),
+      padding: EdgeInsets.only(left: 0.15 * screenWidth, right: 0.15 * screenWidth, top: 0.005 * screenHeight),
       child: TextField(
         controller: controller,
         onChanged: onChanged,
