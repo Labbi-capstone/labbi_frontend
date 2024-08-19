@@ -49,7 +49,7 @@ class _CreateDashboardPageState extends State<CreateDashboardPage> {
                   left: 0.05 * screenWidth,
                   right: 0.05 * screenWidth),
               child: Container(
-                height: 480,
+                height: null,
                 width: (9 / 10) * screenWidth,
                 decoration: BoxDecoration(
                     color: Colors.white,
@@ -96,11 +96,11 @@ class _CreateDashboardPageState extends State<CreateDashboardPage> {
                                   fontWeight: FontWeight.bold,
                                   fontSize: 0.02 * screenHeight)),
                           Padding(
-                            padding: EdgeInsets.only(left: 0.06 * screenWidth),
+                            padding: EdgeInsets.only(left: 0.03 * screenWidth),
                             child: InkWell(
                               onTap: () {},
                               child: Text(
-                                '+ Add devices to dashboard',
+                                '+ Add devices',
                                 style: TextStyle(
                                     fontSize: 0.02 * screenHeight,
                                     color: Colors.blue),
@@ -133,11 +133,11 @@ class _CreateDashboardPageState extends State<CreateDashboardPage> {
                                   fontWeight: FontWeight.bold,
                                   fontSize: 0.02 * screenHeight)),
                           Padding(
-                            padding: EdgeInsets.only(left: 0.06 * screenWidth),
+                            padding: EdgeInsets.only(left: 0.03 * screenWidth),
                             child: InkWell(
                               onTap: () {},
                               child: Text(
-                                '+ Add users to dashboard',
+                                '+ Add users',
                                 style: TextStyle(
                                     fontSize: 0.02 * screenHeight,
                                     color: Colors.blue),
