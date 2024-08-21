@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
     
       initialRoute: Routes.login,
       routes: {
-        Routes.login: (context) => CPUUsagePage(),
+        Routes.login: (context) => const LoginPage(),
         Routes.register: (context) => const RegisterPage(),
         Routes.dashboard: (context) => DashboardPage(),
         Routes.userProfilePage: (context) =>  UserProfilePage(),
