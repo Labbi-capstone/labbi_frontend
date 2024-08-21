@@ -75,8 +75,7 @@ class _MenuTaskbarState extends State<MenuTaskbar> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                   UserProfilePage(),
+              builder: (context) => UserProfilePage(),
             ),
           );
         },

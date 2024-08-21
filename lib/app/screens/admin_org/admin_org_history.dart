@@ -5,14 +5,14 @@ import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
 import 'package:labbi_frontend/app/screens/admin_org/admin_org_home_page.dart';
 import 'package:labbi_frontend/app/components/list_box.dart';
 
-class AdminDeviceHistoryPage extends StatefulWidget {
-  const AdminDeviceHistoryPage({super.key});
+class AdminOrgDeviceHistoryPage extends StatefulWidget {
+  const AdminOrgDeviceHistoryPage({super.key});
 
   @override
   _AdminDeviceHistoryPageState createState() => _AdminDeviceHistoryPageState();
 }
 
-class _AdminDeviceHistoryPageState extends State<AdminDeviceHistoryPage> {
+class _AdminDeviceHistoryPageState extends State<AdminOrgDeviceHistoryPage> {
   @override
   Widget build(BuildContext context) {
     dynamic screenHeight = MediaQuery.of(context).size.height;
@@ -105,7 +105,7 @@ class _AdminDeviceHistoryPageState extends State<AdminDeviceHistoryPage> {
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
-                                const AdminDeviceHistoryPage()), // Stay page
+                                const AdminOrgDeviceHistoryPage()), // Stay page
                       );
                     },
                     icon: Icon(Icons.history, size: screenHeight * 0.05),
