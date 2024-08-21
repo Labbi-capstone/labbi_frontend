@@ -33,7 +33,7 @@ class _EditUserProfilePageState extends State<EditUserProfilePage> {
           leading: IconButton(
             icon: const Icon(
               Icons.arrow_back,
-              color: Colors.white,
+              color: Colors.white,  
             ),
             onPressed: () => Navigator.pushReplacementNamed(context, '/userProfilePage'),
           ),
