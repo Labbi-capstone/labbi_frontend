@@ -38,13 +38,16 @@ class _MenuTaskbarState extends State<MenuTaskbar> {
       width: screenWidth * 0.7,
       child: Column(
         children: [
+          // Header
           buildHeader(context, screenHeight, screenWidth),
+          
+          // Body
           Expanded(
             child: Column(
               children: [
                 // Menu Items
                 MenuItem(
-                  menuItem: adminMenuItems, // Choose based on user role
+                  menuItem: userMenuItems, // Choose based on user role
                   screenHeight: screenHeight,
                   screenWidth: screenWidth,
                 ),

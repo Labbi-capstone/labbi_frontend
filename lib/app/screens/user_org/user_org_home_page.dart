@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:labbi_frontend/app/components/list_box.dart';
 import 'package:labbi_frontend/app/components/menu_button.dart';
-import 'package:labbi_frontend/app/components/org_device_list.dart';
 import 'package:labbi_frontend/app/models/user_device_test.dart';
 import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
+import 'package:labbi_frontend/app/screens/user_org/user_org_device_detail_page.dart';
 import 'package:labbi_frontend/app/screens/user_org/users_in_org_page.dart';
 
 class UserOrgHomePage extends StatefulWidget {
@@ -13,6 +14,8 @@ class UserOrgHomePage extends StatefulWidget {
 }
 
 class _UserOrgHomePageState extends State<UserOrgHomePage>{
+  
+
   @override
   Widget build(BuildContext context) {
     dynamic screenHeight = MediaQuery.of(context).size.height;
@@ -142,8 +145,40 @@ class _UserOrgHomePageState extends State<UserOrgHomePage>{
 
               // List of user devices
               Expanded(
-                child: OrgDeviceList(
-                  devices: getUserDevices(),
+                child: ListBox(
+                  children: getUserDevices().map((device) {
+                    return 
+                    Container(
+                      margin:
+                          EdgeInsets.symmetric(vertical: screenHeight * 0.01),
+                      child: ListTile(
+                        minTileHeight: screenHeight*0.09,
+                        title: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Icon(Icons.memory, size: screenHeight * 0.1, color: Colors.black),
+                            SizedBox(width: screenWidth * 0.04), // Space between icon and text
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  device.name,
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                Text('ID: ${device.id}\nStatus: ${device.status}'),
+                              ],
+                            ),
+                          ],
+                        ),
+                        onTap: () => {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => UserOrgDeviceDetailPage(device: device,),),
+                          ),
+                        },
+                      ),
+                    );
+                  }).toList(),
                 ),
               ),
             ],
