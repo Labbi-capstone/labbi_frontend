@@ -17,5 +17,14 @@ List<UserDeviceHistory> getUserDeviceHistory() {
     UserDeviceHistory(
         username: 'User 3',
         addedOn: DateTime.now().subtract(Duration(days: 5))),
+    UserDeviceHistory(
+        username: 'User 4',
+        addedOn: DateTime.now().subtract(Duration(days: 8))),
+    UserDeviceHistory(
+        username: 'User 5',
+        addedOn: DateTime.now().subtract(Duration(days: 7))),
+    UserDeviceHistory(
+        username: 'User 6',
+        addedOn: DateTime.now().subtract(Duration(days: 11))),
   ];
 }
