@@ -45,5 +45,4 @@ static bool isListNullOrEmpty<T>(List<T>? list) => list == null || list.isEmpty;
     }
     return chunks;
   }
-
 }

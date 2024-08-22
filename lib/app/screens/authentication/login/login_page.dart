@@ -4,6 +4,7 @@ import 'package:labbi_frontend/app/controllers/auth_controller.dart';
 import 'package:labbi_frontend/app/screens/authentication/register/register_page.dart';
 import 'package:labbi_frontend/app/components/textfield.dart';
 import 'package:labbi_frontend/app/components/button.dart';
+import 'package:labbi_frontend/app/theme/app_colors.dart';
 import 'package:provider/provider.dart';
 
 class LoginPage extends StatelessWidget {
@@ -23,15 +24,7 @@ class LoginPage extends StatelessWidget {
               body: SafeArea(
                 child: Container(
                   decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                        colors: [
-                          Color.fromRGBO(175, 216, 237, 100),
-                          Color.fromRGBO(0, 184, 237, 100),
-                        ],
-                        begin: FractionalOffset(0.0, 0.0),
-                        end: FractionalOffset(1.0, 0.0),
-                        stops: [0.0, 1.0],
-                        tileMode: TileMode.clamp),
+                          color: AppColors.primary
                   ),
                   child: Center(
                     child: Column(
