@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/models/user_device_test.dart';
 
-class DeviceDetails extends StatelessWidget {
+class UserOrgDeviceDetailPage extends StatelessWidget {
   final UserDevice device;
-  const DeviceDetails({super.key, required this.device,});
+  const UserOrgDeviceDetailPage({super.key, required this.device,});
   
   @override
   Widget build(BuildContext context) {

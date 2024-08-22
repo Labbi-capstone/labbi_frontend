@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:labbi_frontend/app/components/list_box.dart';
 import 'package:labbi_frontend/app/components/menu_button.dart';
 import 'package:labbi_frontend/app/models/user_org_test.dart';
 import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
-import 'package:labbi_frontend/app/screens/user_org/list_user_org.dart';
 import 'package:labbi_frontend/app/screens/user_org/user_org_home_page.dart';
 
 class UsersInOrgPage extends StatefulWidget {
@@ -142,8 +142,39 @@ class _UsersInOrgPageState extends State<UsersInOrgPage>{
 
               // List of user devices
               Expanded(
-                child: ListUserOrg( // need to change
-                  users: getUserOrg(),
+                child: ListBox(
+                  children: getUserOrg().map((user) {
+                    return 
+                    Container(
+                      margin:
+                        EdgeInsets.symmetric(vertical: screenHeight * 0.01),
+                        child: ListTile(
+                          minTileHeight: screenHeight*0.09,
+                          title: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              CircleAvatar(
+                                radius: screenHeight * 0.05,
+                                backgroundImage: AssetImage(user.pathImage),
+                              ),
+
+                              SizedBox(width: screenWidth*0.04), // Space between icon and text
+                              
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    user.name,
+                                    style: const TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  Text('ID: ${user.id}'),
+                                ],
+                              ),
+                            ],
+                        ),
+                      )
+                    );
+                  }).toList(),
                 ),
               ),
             ],
@@ -152,5 +183,4 @@ class _UsersInOrgPageState extends State<UsersInOrgPage>{
       ),
     );
   }
-
 }
