@@ -12,7 +12,6 @@ class NotificationPage extends StatefulWidget {
 class _NotificationPageState extends State<NotificationPage> {
   bool isChanged = false;
   int count = 0;
-  // bool isTap = false;
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +20,7 @@ class _NotificationPageState extends State<NotificationPage> {
 
     return Scaffold(
       // extendBodyBehindAppBar: true,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: const Color(0xff3ac7f9),
@@ -40,51 +40,53 @@ class _NotificationPageState extends State<NotificationPage> {
               fontSize: screenHeight / 35),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Stack(
-          clipBehavior: Clip.none,
-          alignment: Alignment.topCenter,
-          children: <Widget>[
-            Container(
-              height: screenHeight,
-              width: screenWidth,
-              decoration: const BoxDecoration(
-                  image: DecorationImage(
-                      image: AssetImage("assets/images/app-background.jpg"),
-                      fit: BoxFit.fill)),
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Padding(
-                    padding: EdgeInsets.only(
-                        top: screenHeight / 30, bottom: screenHeight / 30),
-                    child: customTabBar(screenHeight, screenWidth)),
-                if (isChanged == false)
-                  for (var i = 0; i < notificationList.length; i++)
-                    if (notificationList[i].status == 'unread')
-                      Padding(
-                          padding: EdgeInsets.only(bottom: screenHeight / 35),
-                          child: NotificationContainer(
-                            notification: notificationList[i],
-                          ))
-                    else
-                      const SizedBox.shrink()
-                else
-                  for (var i = 0; i < notificationList.length; i++)
-                    if (notificationList[i].status == 'read')
-                      Padding(
-                          padding: EdgeInsets.only(bottom: screenHeight / 35),
-                          child: NotificationContainer(
-                            notification: notificationList[i],
-                          ))
-                    else
-                      const SizedBox.shrink()
-              ],
-            ),
-          ],
+      body: Container(
+        height: screenHeight,
+        width: screenWidth,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color.fromRGBO(83, 206, 255, 1),
+              Color.fromRGBO(0, 174, 255, 1),
+            ],
+            begin: FractionalOffset(0.0, 0.0),
+            end: FractionalOffset(1.0, 0.0),
+            stops: [0.0, 1.0],
+            tileMode: TileMode.clamp,
+          ),
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Padding(
+                  padding: EdgeInsets.only(
+                      top: screenHeight / 30, bottom: screenHeight / 30),
+                  child: customTabBar(screenHeight, screenWidth)),
+              if (isChanged == false)
+                for (var i = 0; i < notificationList.length; i++)
+                  if (notificationList[i].status == 'unread')
+                    Padding(
+                        padding: EdgeInsets.only(bottom: screenHeight / 35),
+                        child: NotificationContainer(
+                          notification: notificationList[i],
+                        ))
+                  else
+                    const SizedBox.shrink()
+              else
+                for (var i = 0; i < notificationList.length; i++)
+                  if (notificationList[i].status == 'read')
+                    Padding(
+                        padding: EdgeInsets.only(bottom: screenHeight / 35),
+                        child: NotificationContainer(
+                          notification: notificationList[i],
+                        ))
+                  else
+                    const SizedBox.shrink()
+            ],
+          ),
         ),
       ),
     );
@@ -92,7 +94,7 @@ class _NotificationPageState extends State<NotificationPage> {
 
   Widget customTabBar(double screenHeight, double screenWidth) => Container(
         height: (1 / 18) * screenHeight,
-        width: (4 / 5) * screenWidth,
+        width: (4.5 / 5) * screenWidth,
         decoration: const BoxDecoration(
             color: Color(0xffeaeaea),
             borderRadius: BorderRadius.all(Radius.circular(40))),
@@ -105,7 +107,7 @@ class _NotificationPageState extends State<NotificationPage> {
               padding: const EdgeInsets.all(0.0),
               child: SizedBox(
                 height: (1 / 18) * screenHeight,
-                width: ((4 / 5) * screenWidth) / 2,
+                width: ((4.5 / 5) * screenWidth) / 2,
                 child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                         elevation: 0,
@@ -130,7 +132,7 @@ class _NotificationPageState extends State<NotificationPage> {
               padding: const EdgeInsets.all(0.0),
               child: SizedBox(
                 height: (1 / 18) * screenHeight,
-                width: ((4 / 5) * screenWidth) / 2,
+                width: ((4.5 / 5) * screenWidth) / 2,
                 child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                         elevation: 0,

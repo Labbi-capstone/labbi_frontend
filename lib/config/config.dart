@@ -1,4 +1,4 @@
-final url = 'http://localhost:8080/';
-final registration = url + "signup";
-final signin = url + "signin";
+const url = 'http://localhost:3000/api/users/';
+const registration = "${url}register";
+const login = "${url}login";
 

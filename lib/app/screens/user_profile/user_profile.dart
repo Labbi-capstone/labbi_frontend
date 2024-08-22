@@ -1,33 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:labbi_frontend/app/components/menu_button.dart';
+import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
 import 'package:labbi_frontend/app/screens/notification/notification_page.dart';
 import 'package:labbi_frontend/app/models/notification_message.dart';
+import 'package:labbi_frontend/app/utils/user_info_helper.dart';
 
 class UserProfilePage extends StatefulWidget {
-  final List<NotificationMessage> listOfNotification;
-  const UserProfilePage({super.key, required this.listOfNotification});
   @override
   State<StatefulWidget> createState() => _UserProfilePageState();
 }
 
 class _UserProfilePageState extends State<UserProfilePage> {
+  String userName = '';
+  String userId = '';
+  String userEmail = '';
+  String userRole = '';
   late List<NotificationMessage> listOfNotification;
   int count = 0;
 
   @override
   void initState() {
     super.initState();
-    listOfNotification = widget.listOfNotification;
-    for (var i = 0; i < listOfNotification.length; i++) {
-      if (listOfNotification[i].status == 'unread') {
-        setState(() {
-          count += 1;
-        });
-      } else {
-        setState(() {
-          count = count;
-        });
-      }
-    }
+    _loadUserInfo();
+  }
+
+  Future<void> _loadUserInfo() async {
+    final userInfo = await UserInfoHelper.loadUserInfo();
+    setState(() {
+      userName = userInfo['userName']!;
+      userId = userInfo['userId']!;
+      userEmail = userInfo['userEmail']!;
+      userRole = userInfo['userRole']!;
+    });
   }
 
   @override
@@ -40,15 +44,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
           elevation: 0,
           backgroundColor: Colors.transparent,
           centerTitle: true,
-          leading: Padding(
-            padding: EdgeInsets.only(left: screenWidth * 0.045),
-            child: IconButton(
-              icon: const Icon(
-                Icons.arrow_back,
-                color: Colors.white,
-              ),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
+          leading: Builder(
+            builder: (BuildContext context) {
+              return const MenuButton();
+            },
           ),
           actions: [
             Padding(
@@ -60,7 +59,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 },
                 child: Container(
                   alignment: Alignment.bottomRight,
-                  height: 0.05 * screenHeight,
+                  height: 0.04 * screenHeight,
                   width: (1 / 12) * screenWidth,
                   decoration: const BoxDecoration(
                       // color: Colors.red,
@@ -70,8 +69,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
                           fit: BoxFit.fill)),
                   child: Container(
                     alignment: Alignment.center,
-                    height: (1 / 35) * screenHeight,
-                    width: (1 / 35) * screenHeight,
+                    height: (1 / 42) * screenHeight,
+                    width: (1 / 42) * screenHeight,
                     decoration: const BoxDecoration(
                         color: Colors.red, shape: BoxShape.circle),
                     child: Text(
@@ -85,33 +84,35 @@ class _UserProfilePageState extends State<UserProfilePage> {
             )
           ],
         ),
+        // Menu Bar
+        drawer: const MenuTaskbar(),
         body: SingleChildScrollView(
-          child: Stack(
-            clipBehavior: Clip.none,
-            alignment: Alignment.topCenter,
-            children: <Widget>[
-              Positioned(
-                top: ((1 / 3) * screenHeight),
-                child: Container(
-                  height: screenHeight,
-                  width: screenWidth,
-                  decoration: const BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage(
-                              "assets/images/user-profile-background.jpg"),
-                          fit: BoxFit.cover)),
+          child: Container(
+            height: null,
+            width: screenWidth,
+            decoration: const BoxDecoration(
+                image: DecorationImage(
+                    image:
+                        AssetImage("assets/images/user-profile-background.jpg"),
+                    fit: BoxFit.fill)),
+            child: Stack(
+              clipBehavior: Clip.none,
+              alignment: Alignment.topCenter,
+              children: <Widget>[
+                userCoverImage(context, screenHeight, screenWidth),
+                Padding(
+                  padding: EdgeInsets.only(
+                      top: ((1 / 3) * screenHeight) - (screenHeight / 9.7)),
+                  child: userProfileImage(context, screenHeight, screenWidth),
                 ),
-              ),
-              userCoverImage(context, screenHeight, screenWidth),
-              Positioned(
-                top: ((1 / 3) * screenHeight) - (screenHeight / 9.7),
-                child: userProfileImage(context, screenHeight, screenWidth),
-              ),
-              Positioned(
-                top: ((1 / 3) * screenHeight) + (screenHeight / 8.6),
-                child: userDetail(context, screenHeight, screenWidth),
-              )
-            ],
+                Padding(
+                  padding: EdgeInsets.only(
+                      top: ((1 / 3) * screenHeight) + (screenHeight / 8.6),
+                      bottom: screenHeight * 0.05),
+                  child: userDetail(context, screenHeight, screenWidth),
+                )
+              ],
+            ),
           ),
         ));
   }
@@ -125,9 +126,17 @@ class _UserProfilePageState extends State<UserProfilePage> {
             height: (1 / 3) * screenHeight,
             width: screenWidth,
             decoration: const BoxDecoration(
-                image: DecorationImage(
-                    image: AssetImage("assets/images/app-background.jpg"),
-                    fit: BoxFit.cover)),
+              gradient: LinearGradient(
+                colors: [
+                  Color.fromRGBO(83, 206, 255, 1),
+                  Color.fromRGBO(0, 174, 255, 1),
+                ],
+                begin: FractionalOffset(0.0, 0.0),
+                end: FractionalOffset(1.0, 0.0),
+                stops: [0.0, 1.0],
+                tileMode: TileMode.clamp,
+              ),
+            ),
           ),
           /*Components in cover image */
           SizedBox(
@@ -140,7 +149,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
               children: [
                 Container(
                   height: null,
-                  width: 0.9 * screenWidth,
+                  width: screenWidth,
                   decoration: const BoxDecoration(
                       // color: Colors.red,
                       image: DecorationImage(
@@ -184,26 +193,30 @@ class _UserProfilePageState extends State<UserProfilePage> {
       );
 
   /*User Information*/
-  Widget userDetail(context, screenHeight, screenWidth) => Stack(
-        clipBehavior: Clip.none,
-        alignment: Alignment.topCenter,
+  Widget userDetail(context, screenHeight, screenWidth) => Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Positioned(
+          Padding(
+            padding: const EdgeInsets.all(0),
             child: Text(
-              "Username",
+              '$userName',
               style: TextStyle(
                   fontSize: screenHeight / 26, fontWeight: FontWeight.bold),
             ),
           ),
-          Positioned(
-              top: screenHeight * 0.05,
+          Padding(
+              padding: EdgeInsets.only(top: screenHeight * 0.005),
               child: Text(
-                "Administrator",
+                "Role: $userRole",
                 style:
                     TextStyle(fontSize: screenHeight / 45, color: Colors.grey),
               )),
-          Positioned(
-            top: screenHeight * 0.12,
+          Padding(
+            padding: EdgeInsets.only(
+              top: screenHeight * 0.05,
+            ),
             child: Container(
               height: null,
               width: (9 / 10) * screenWidth,
@@ -216,7 +229,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         spreadRadius: 0.2,
                         offset: Offset(0, 4))
                   ],
-                  // border: Border.all(color: Colors.black),
                   borderRadius: BorderRadius.circular(20)),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -229,7 +241,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: EdgeInsets.only(left: screenWidth * 0.08, top: screenHeight * 0.028),
+                        padding: EdgeInsets.only(
+                            left: screenWidth * 0.08,
+                            top: screenHeight * 0.028),
                         child: Text(
                           "User's Information",
                           style: TextStyle(
@@ -237,28 +251,26 @@ class _UserProfilePageState extends State<UserProfilePage> {
                               fontWeight: FontWeight.bold),
                         ),
                       ),
-                      /*Ribon button */
                       Expanded(
                         child: Container(
                           alignment: Alignment.topRight,
                           child: Padding(
-                            padding: EdgeInsets.only(right: screenWidth * 0.08, bottom: screenHeight * 0.008),
-                            child: Container(
-                              height: screenHeight / 13,
-                              width: screenWidth / 10,
-                              alignment: Alignment.center,
-                              decoration: const BoxDecoration(
-                                  image: DecorationImage(
-                                      image:
-                                          AssetImage("assets/images/ribon.jpg"),
-                                      fit: BoxFit.fill)),
+                            padding: EdgeInsets.only(
+                                right: screenWidth * 0.08,
+                                bottom: screenHeight * 0.008),
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.pushReplacementNamed(
+                                    context, '/editUserProfilePage');
+                              },
                               child: Container(
-                                height: screenHeight / 40,
-                                width: screenHeight / 40,
+                                height: screenHeight / 13,
+                                width: screenWidth / 10,
+                                alignment: Alignment.center,
                                 decoration: const BoxDecoration(
                                     image: DecorationImage(
                                         image: AssetImage(
-                                            "assets/images/edit-icon.png"),
+                                            "assets/images/edit-ribon.jpg"),
                                         fit: BoxFit.fill)),
                               ),
                             ),
@@ -268,139 +280,36 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     ],
                   ),
                   Padding(
-                    padding:
-                        EdgeInsets.only(left: screenWidth * 0.08, right: screenWidth * 0.08, bottom: screenHeight * 0.028),
+                    padding: EdgeInsets.only(
+                        left: screenWidth * 0.08,
+                        right: screenWidth * 0.08,
+                        bottom: screenHeight * 0.025),
                     child: const Divider(),
                   ),
-                  /*Detailed components */
-                  /*1st Row */
-                  Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      /*Account's ID*/
-                      Padding(
-                        padding: EdgeInsets.only(left: screenWidth * 0.08, right: screenWidth * 0.08),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Account's ID",
-                              style: TextStyle(
-                                  fontSize: screenHeight / 40,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(
-                              height: screenHeight / 10,
-                              width: screenWidth / 4,
-                              child: Text(
-                                "admin012345",
-                                style: TextStyle(
-                                    fontSize: screenHeight / 45,
-                                    color: Colors.grey),
-                                overflow: TextOverflow.clip,
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      /*Creation Date*/
-                      Padding(
-                        padding: EdgeInsets.only(left: screenWidth * 0.08, right: screenWidth * 0.08),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Creation Date",
-                              style: TextStyle(
-                                  fontSize: screenHeight / 40,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(
-                              height: screenHeight / 10,
-                              width: screenWidth / 4,
-                              child: Text(
-                                "11/06/2024",
-                                style: TextStyle(
-                                    fontSize: screenHeight / 45,
-                                    color: Colors.grey),
-                                overflow: TextOverflow.clip,
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ],
+                  // Use the reusable UserInfoRow widget
+                  UserInfoRow(
+                    label: "Account's ID",
+                    value: "*Need update*",
+                    screenHeight: screenHeight,
+                    screenWidth: screenWidth,
                   ),
-
-                  /*2nd Row*/
-                  Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      /*Email*/
-                      Padding(
-                        padding: EdgeInsets.only(left: screenWidth * 0.08, right: screenWidth * 0.08),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Email",
-                              style: TextStyle(
-                                  fontSize: screenHeight / 40,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(
-                              height: screenHeight / 10,
-                              width: screenWidth / 4,
-                              child: Text(
-                                "admin@bestlab.com",
-                                style: TextStyle(
-                                    fontSize: screenHeight / 45,
-                                    color: Colors.grey),
-                                overflow: TextOverflow.clip,
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      /*Phone*/
-                      Padding(
-                        padding: EdgeInsets.only(left: screenWidth * 0.08, right: screenWidth * 0.08),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Phone",
-                              style: TextStyle(
-                                  fontSize: screenHeight / 40,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(
-                              height: screenHeight / 10,
-                              width: screenWidth / 4,
-                              child: Text(
-                                "09xxxxxxxx",
-                                style: TextStyle(
-                                    fontSize: screenHeight / 45,
-                                    color: Colors.grey),
-                                overflow: TextOverflow.clip,
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ],
+                  UserInfoRow(
+                    label: "Creation Date",
+                    value: "*Need update*",
+                    screenHeight: screenHeight,
+                    screenWidth: screenWidth,
+                  ),
+                  UserInfoRow(
+                    label: "Email",
+                    value: "$userEmail",
+                    screenHeight: screenHeight,
+                    screenWidth: screenWidth,
+                  ),
+                  UserInfoRow(
+                    label: "Phone",
+                    value: "*Need update*",
+                    screenHeight: screenHeight,
+                    screenWidth: screenWidth,
                   ),
                 ],
               ),
@@ -408,4 +317,55 @@ class _UserProfilePageState extends State<UserProfilePage> {
           )
         ],
       );
+}
+
+class UserInfoRow extends StatelessWidget {
+  final String label;
+  final String value;
+  final double screenHeight;
+  final double screenWidth;
+
+  const UserInfoRow({
+    Key? key,
+    required this.label,
+    required this.value,
+    required this.screenHeight,
+    required this.screenWidth,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(
+        left: screenWidth * 0.08,
+        right: screenWidth * 0.08,
+        bottom: screenHeight * 0.025,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "$label:",
+            style: TextStyle(
+              fontSize: screenHeight / 50,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: screenWidth * 0.02),
+            child: Text(
+              value,
+              style: TextStyle(
+                fontSize: screenHeight / 50,
+                color: Colors.grey,
+              ),
+              overflow: TextOverflow.clip,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
