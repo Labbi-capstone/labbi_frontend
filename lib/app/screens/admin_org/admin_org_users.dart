@@ -1,6 +1,5 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:labbi_frontend/app/Theme/app_colors.dart';
 import 'package:labbi_frontend/app/components/menu_button.dart';
 import 'package:labbi_frontend/app/models/user_org_test.dart';
 import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
@@ -12,10 +11,10 @@ class AdminOrgUsersPage extends StatefulWidget {
   const AdminOrgUsersPage({super.key});
 
   @override
-  _AdminDeviceHistoryPageState createState() => _AdminDeviceHistoryPageState();
+  _AdminOrgUsersPageState createState() => _AdminOrgUsersPageState();
 }
 
-class _AdminDeviceHistoryPageState extends State<AdminOrgUsersPage> {
+class _AdminOrgUsersPageState extends State<AdminOrgUsersPage> {
   List<UserOrg> userOrgList = getUserOrg(); // Fetch the initial list of users
 
   void _deleteUser(UserOrg user) {
@@ -24,26 +23,15 @@ class _AdminDeviceHistoryPageState extends State<AdminOrgUsersPage> {
     });
   }
 
-  void _addUser(String name, String id, String pathImage) {
+  void _addUser(String name, String id) {
     setState(() {
-      userOrgList.add(UserOrg(name: name, id: id, pathImage: pathImage));
+      userOrgList.add(UserOrg(name: name, id: id, pathImage: ''));
     });
   }
 
   void _showAddUserDialog() {
     final _nameController = TextEditingController();
     final _idController = TextEditingController();
-    String? _selectedImagePath;
-
-    Future<void> _pickImage() async {
-      final ImagePicker picker = ImagePicker();
-      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-      if (image != null) {
-        setState(() {
-          _selectedImagePath = image.path;
-        });
-      }
-    }
 
     showDialog(
       context: context,
@@ -51,33 +39,62 @@ class _AdminDeviceHistoryPageState extends State<AdminOrgUsersPage> {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: const Text('Add New User'),
+              backgroundColor: Colors.grey[850], // Set background color
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15), // Rounded corners
+              ),
+              title: const Text(
+                'Add New User',
+                style: TextStyle(
+                  color: Colors.white, // Title text color
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+              ),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   TextField(
                     controller: _nameController,
-                    decoration: const InputDecoration(labelText: 'Name'),
-                  ),
-                  TextField(
-                    controller: _idController,
-                    decoration: const InputDecoration(labelText: 'User ID'),
-                  ),
-                  const SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: _pickImage,
-                    child: const Text('Select Image from Gallery'),
-                  ),
-                  if (_selectedImagePath != null)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: Image.file(
-                        File(_selectedImagePath!),
-                        height: 100,
-                        width: 100,
-                        fit: BoxFit.cover,
+                    decoration: InputDecoration(
+                      labelText: 'Name',
+                      labelStyle:
+                          const TextStyle(color: Colors.white70), // Label color
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                            color: Colors.white70), // Border color
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                            color: Colors.blue), // Focused border color
+                        borderRadius: BorderRadius.circular(10),
                       ),
                     ),
+                    style: const TextStyle(
+                        color: Colors.white), // Input text color
+                  ),
+                  const SizedBox(height: 10),
+                  TextField(
+                    controller: _idController,
+                    decoration: InputDecoration(
+                      labelText: 'User ID',
+                      labelStyle:
+                          const TextStyle(color: Colors.white70), // Label color
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                            color: Colors.white70), // Border color
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                            color: Colors.blue), // Focused border color
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    style: const TextStyle(
+                        color: Colors.white), // Input text color
+                  ),
                 ],
               ),
               actions: [
@@ -85,26 +102,38 @@ class _AdminDeviceHistoryPageState extends State<AdminOrgUsersPage> {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: const Text('Cancel'),
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(
+                      color: Colors.redAccent, // Cancel button text color
+                    ),
+                  ),
                 ),
                 ElevatedButton(
                   onPressed: () {
                     if (_nameController.text.isNotEmpty &&
-                        _idController.text.isNotEmpty &&
-                        _selectedImagePath != null) {
-                      _addUser(_nameController.text, _idController.text,
-                          _selectedImagePath!);
+                        _idController.text.isNotEmpty) {
+                      _addUser(
+                        _nameController.text,
+                        _idController.text,
+                      );
                       Navigator.of(context).pop();
                     } else {
                       // Handle the case where not all fields are filled
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text(
-                              'Please fill all fields and select an image'),
+                            'Please fill all fields',
+                          ),
                         ),
                       );
                     }
                   },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        Colors.green, // Add button background color
+                    foregroundColor: Colors.white, // Add button text color
+                  ),
                   child: const Text('Add'),
                 ),
               ],
@@ -126,8 +155,8 @@ class _AdminDeviceHistoryPageState extends State<AdminOrgUsersPage> {
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Color.fromRGBO(83, 206, 255, 0.801),
-                Color.fromRGBO(0, 174, 255, 0.959),
+                AppColors.primary,
+                AppColors.secondary,
               ],
               begin: FractionalOffset(0.0, 0.0),
               end: FractionalOffset(1.0, 0.0),
@@ -138,21 +167,24 @@ class _AdminDeviceHistoryPageState extends State<AdminOrgUsersPage> {
         ),
         leading: Builder(
           builder: (BuildContext context) {
-            return MenuButton();
+            return const MenuButton();
           },
         ),
         title: SizedBox(
           height: screenHeight * 0.18,
           width: screenWidth * 0.3,
           child: Image.asset(
-            'assets/images/company-logo-color.png',
+            'assets/images/company-logo-white.png',
             fit: BoxFit.contain,
           ),
         ),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.history),
+            icon: const Icon(
+              Icons.history,
+              color: Colors.white,
+            ),
             tooltip: 'History',
             onPressed: () {
               Navigator.push(
@@ -172,8 +204,8 @@ class _AdminDeviceHistoryPageState extends State<AdminOrgUsersPage> {
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Color.fromRGBO(83, 206, 255, 0.801),
-              Color.fromRGBO(0, 174, 255, 0.959),
+              AppColors.primary,
+              AppColors.secondary,
             ],
             begin: FractionalOffset(0.0, 0.0),
             end: FractionalOffset(1.0, 0.0),
@@ -219,14 +251,9 @@ class _AdminDeviceHistoryPageState extends State<AdminOrgUsersPage> {
                   SizedBox(
                     child: TextButton.icon(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  const AdminOrgUsersPage()), // Stay on the current page
-                        );
+                        // Do nothing if the current page is selected
                       },
-                      icon: Icon(Icons.history, size: screenHeight * 0.05),
+                      icon: Icon(Icons.person, size: screenHeight * 0.05),
                       label: Text('View Users',
                           style: TextStyle(fontSize: screenHeight * 0.02)),
                       style: TextButton.styleFrom(
@@ -265,7 +292,7 @@ class _AdminDeviceHistoryPageState extends State<AdminOrgUsersPage> {
                         vertical: screenHeight * 0.02,
                       ),
                       backgroundColor:
-                          Colors.blueAccent, // Button background color
+                          AppColors.primary, // Button background color
                       shape: RoundedRectangleBorder(
                         borderRadius:
                             BorderRadius.circular(30.0), // Rounded corners
@@ -277,7 +304,7 @@ class _AdminDeviceHistoryPageState extends State<AdminOrgUsersPage> {
                 ],
               ),
               const Divider(
-                  color: Colors.black), // Divider placed below the button
+                  color: Colors.white), // Divider placed below the button
               Expanded(
                 child: ListBox(
                   children:
@@ -287,10 +314,6 @@ class _AdminDeviceHistoryPageState extends State<AdminOrgUsersPage> {
                           EdgeInsets.symmetric(vertical: screenHeight * 0.01),
                       child: ListTile(
                         contentPadding: EdgeInsets.all(screenHeight * 0.02),
-                        leading: CircleAvatar(
-                          radius: screenHeight * 0.04,
-                          backgroundImage: AssetImage(user.pathImage),
-                        ),
                         title: Text(
                           user.name,
                           style: TextStyle(
@@ -298,17 +321,11 @@ class _AdminDeviceHistoryPageState extends State<AdminOrgUsersPage> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(height: screenHeight * 0.005),
-                            Text(
-                              'User ID: ${user.id}',
-                              style: TextStyle(
-                                fontSize: screenHeight * 0.02,
-                              ),
-                            ),
-                          ],
+                        subtitle: Text(
+                          'User ID: ${user.id}',
+                          style: TextStyle(
+                            fontSize: screenHeight * 0.02,
+                          ),
                         ),
                         trailing: IconButton(
                           icon: const Icon(Icons.delete, color: Colors.red),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/Theme/app_colors.dart';
 import 'package:labbi_frontend/app/models/user_device_test.dart';
+import 'package:labbi_frontend/app/screens/admin_org/admin_org_home_page.dart';
 
 class AdminOrgDeviceDetailsPage extends StatefulWidget {
   final UserDevice device;
@@ -39,34 +40,29 @@ class _DeviceDetailsPageState extends State<AdminOrgDeviceDetailsPage> {
             ),
           ),
         ),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: screenHeight * 0.05, // Adjust the height of the logo
-              width: screenWidth * 0.3, // Adjust the width of the logo
-              child: Image.asset(
-                'assets/images/company-logo-white.png',
-                fit: BoxFit.contain,
-              ),
-            ),
-            SizedBox(
-                width:
-                    screenWidth * 0.02), // Space between the logo and the text
-            Expanded(
-              child: Text(
-                widget.device.name,
-                style: TextStyle(
-                  fontSize: screenHeight * 0.03, // Adjusted font size
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+        leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AdminOrgHomePage(),
                 ),
-                overflow: TextOverflow.ellipsis,
-              ),
+              );
+            }),
+        title: Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            widget.device.name,
+            style: TextStyle(
+              fontSize: 20, // Adjusted font size
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
-          ],
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
-        centerTitle: true, // Ensures the content is centered in the AppBar
+        centerTitle: false, // Disable centering to align to the left
       ),
       body: Container(
         decoration: const BoxDecoration(

@@ -41,6 +41,9 @@ class _AdminHomeOrgState extends State<AdminOrgHomePage> {
             ),
           ),
         ),
+        iconTheme: const IconThemeData(
+          color: Colors.white, // This changes the back button color to white
+        ),
         leading: Builder(
           builder: (BuildContext context) {
             return const MenuButton();
@@ -57,7 +60,7 @@ class _AdminHomeOrgState extends State<AdminOrgHomePage> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.history),
+            icon: const Icon(Icons.history, color: Colors.white),
             tooltip: 'History',
             onPressed: () {
               Navigator.push(
@@ -161,7 +164,8 @@ class _AdminHomeOrgState extends State<AdminOrgHomePage> {
                       .map((device) => ListTile(
                             title: Text(
                               device.name,
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             subtitle: Text(
                                 'Type: ${device.type}\nStatus: ${device.status}'),
@@ -188,11 +192,26 @@ class _AdminHomeOrgState extends State<AdminOrgHomePage> {
                             onTap: () {
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
+                                PageRouteBuilder(
+                                  pageBuilder: (context, animation,
+                                          secondaryAnimation) =>
                                       AdminOrgDeviceDetailsPage(
                                     device: device,
                                   ),
+                                  transitionsBuilder: (context, animation,
+                                      secondaryAnimation, child) {
+                                    const begin = Offset(0.0, 1.0);
+                                    const end = Offset.zero;
+                                    const curve = Curves.ease;
+
+                                    var tween = Tween(begin: begin, end: end)
+                                        .chain(CurveTween(curve: curve));
+
+                                    return SlideTransition(
+                                      position: animation.drive(tween),
+                                      child: child,
+                                    );
+                                  },
                                 ),
                               );
                             },
