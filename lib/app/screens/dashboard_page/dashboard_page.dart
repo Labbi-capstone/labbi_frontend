@@ -53,8 +53,8 @@ class _DashboardPageState extends State<DashboardPage> {
             final dashboard = sampleDashboards[index];
             return DashboardItem(
               title: dashboard.name,
-              lineChartData: dashboard.lineChartData,
-              pieChartData: dashboard.pieChartData,
+              // lineChartData: dashboard.lineChartData,
+              // pieChartData: dashboard.pieChartData,
             );
           },
         ),

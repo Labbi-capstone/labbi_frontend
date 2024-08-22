@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-// <<<<<<< HEAD
-import 'package:labbi_frontend/app/screens/dashboard_and_control_panel_page/chart_giang.dart';
-// =======
 import 'package:labbi_frontend/app/screens/admin_system/add_create_org_page.dart';
 import 'package:labbi_frontend/app/screens/admin_org/admin_org_home_page.dart';
 import 'package:labbi_frontend/app/controllers/auth_controller.dart';
@@ -27,9 +24,6 @@ import 'package:labbi_frontend/app/screens/start_page/start_page.dart';
 import 'app/screens/authentication/login/login_page.dart';
 // import 'authentication/register/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:labbi_frontend/app/screens/dashboard_and_control_panel_page/dashboard_page.dart';
-import 'package:labbi_frontend/app/screens/dashboard_and_control_panel_page/dashboard_giang.dart';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -74,7 +68,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
 // <<<<<<< HEAD
-//       home: Chart(title: 'Demo'), // Check for null and use token safely
+      // home: Chart(title: 'Demo'), // Check for null and use token safely
   //     initialRoute: Routes.login,
   //     routes: {
   //       Routes.login: (context) => const LoginPage(),
