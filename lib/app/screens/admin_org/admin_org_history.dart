@@ -48,6 +48,20 @@ class _AdminDeviceHistoryPageState extends State<AdminOrgDeviceHistoryPage> {
           ),
         ),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.redo),
+            tooltip: 'Exit',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AdminOrgHomePage(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       drawer: const MenuTaskbar(),
       body: Container(
@@ -74,30 +88,6 @@ class _AdminDeviceHistoryPageState extends State<AdminOrgDeviceHistoryPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-                SizedBox(
-                  child: TextButton.icon(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const AdminOrgHomePage()),
-                      );
-                    },
-                    icon: Icon(Icons.devices, size: screenHeight * 0.05),
-                    label: Text('Devices',
-                        style: TextStyle(fontSize: screenHeight * 0.02)),
-                    style: TextButton.styleFrom(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: screenWidth * 0.04,
-                          vertical: screenHeight * 0.03),
-                      backgroundColor: Colors.grey,
-                      foregroundColor: Colors.black,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                  ),
-                ),
                 SizedBox(
                   child: TextButton.icon(
                     onPressed: () {

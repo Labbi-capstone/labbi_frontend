@@ -2,8 +2,14 @@ class UserOrg {
   final String name;
   final String id;
   final String pathImage;
+  bool isDeleted;
 
-  UserOrg({required this.name, required this.id, required this.pathImage});
+  UserOrg({
+    required this.name,
+    required this.id,
+    required this.pathImage,
+    this.isDeleted = false,
+  });
 }
 
 List<UserOrg> getUserOrg() {
