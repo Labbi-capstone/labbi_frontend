@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/components/menu_button.dart';
 import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
 import 'package:labbi_frontend/app/screens/notification/notification_page.dart';
-import 'package:labbi_frontend/app/models/notification_message.dart';
 import 'package:labbi_frontend/app/utils/user_info_helper.dart';
 
 class UserProfilePage extends StatefulWidget {
@@ -15,7 +14,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
   String userId = '';
   String userEmail = '';
   String userRole = '';
-  late List<NotificationMessage> listOfNotification;
   int count = 0;
 
   @override

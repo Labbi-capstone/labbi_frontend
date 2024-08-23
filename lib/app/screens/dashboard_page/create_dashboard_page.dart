@@ -78,6 +78,9 @@ class _CreateDashboardPageState extends State<CreateDashboardPage> {
                           border: UnderlineInputBorder(),
                           labelText: 'Enter dashboard name',
                         ),
+                        onTapOutside: (_) {
+                          FocusManager.instance.primaryFocus?.unfocus();
+                        },
                       ),
                     ),
                     Padding(
