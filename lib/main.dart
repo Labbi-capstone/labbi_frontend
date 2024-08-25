@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: Routes.AdminOrgHomePage,
       routes: {
-        Routes.login: (context) => const LoginPage(),
+        Routes.login: (context) =>  const LoginPage(),
         Routes.register: (context) => const RegisterPage(),
         Routes.dashboard: (context) => DashboardPage(),
         Routes.userProfilePage: (context) => UserProfilePage(),
