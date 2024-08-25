@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/status.dart' as websocket_status;
+import '../../utils/utils.dart';
 
 class CPUUsagePage extends StatefulWidget {
   @override
@@ -51,11 +52,15 @@ class _CPUUsagePageState extends State<CPUUsagePage> {
 
                       // Ensure that value is a list with at least two elements
                       if (value != null && value is List && value.length > 1) {
+                        // Use Utils class to format the timestamp
+                        String formattedTime = Utils.formatTimestamp(value[0]);
+
                         return ListTile(
                           title: Text(
                             'Instance: ${metric['instance']}, Job: ${metric['job']}, Quantile: ${metric['quantile']}',
                           ),
-                          subtitle: Text('Value: ${value[1]}'),
+                          subtitle:
+                              Text('Value: ${value[1]}, Time: $formattedTime'),
                         );
                       } else {
                         return ListTile(
