@@ -34,13 +34,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-    
-      initialRoute: Routes.login,
+      initialRoute: Routes.AdminOrgHomePage,
       routes: {
         Routes.login: (context) =>  const LoginPage(),
         Routes.register: (context) => const RegisterPage(),
         Routes.dashboard: (context) => DashboardPage(),
-        Routes.userProfilePage: (context) =>  UserProfilePage(),
+        Routes.userProfilePage: (context) => UserProfilePage(),
         Routes.editUserProfilePage: (context) => const EditUserProfilePage(),
         Routes.notificationPage: (context) => const NotificationPage(),
         Routes.menuTaskbar: (context) => const MenuTaskbar(),
