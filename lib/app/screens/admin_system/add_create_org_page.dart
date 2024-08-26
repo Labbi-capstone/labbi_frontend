@@ -1,7 +1,7 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:labbi_frontend/app/controllers/org_controller.dart';
+import 'package:provider/provider.dart';
+
 
 class AddCreateOrgPage extends StatefulWidget {
   const AddCreateOrgPage({super.key});
@@ -14,75 +14,11 @@ class _AddCreateOrgPageState extends State<AddCreateOrgPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _orgNameController = TextEditingController();
 
-  bool isLoading = false;
-  String? errorMessage;
-
-  Future<void> _createOrganization() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
-
-    setState(() {
-      isLoading = true;
-      errorMessage = null;
-    });
-
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('token'); // Retrieve token from prefs
-    String? role = prefs.getString('userRole'); // Retrieve role from prefs
-
-    if (token == null || role == null) {
-      setState(() {
-        errorMessage = 'User token or role not found. Please login again.';
-        isLoading = false;
-      });
-      return;
-    }
-
-    final url = Uri.parse('http://localhost:3000/api/organizations/create');
-    try {
-      final response = await http.post(
-        url,
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token", // Add token in the header
-          "Role": role, // Add role in the header (if required by backend)
-        },
-        body: jsonEncode({"name": _orgNameController.text.trim()}),
-      );
-
-      if (response.statusCode == 201) {
-        // Handle success (you might want to show a success message or redirect)
-        setState(() {
-          isLoading = false;
-        });
-        // You can show a success message or navigate to another page
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Organization created successfully!')),
-        );
-      } else if (response.statusCode == 403) {
-        setState(() {
-          errorMessage = 'Access denied. Admins only.';
-          isLoading = false;
-        });
-      } else {
-        setState(() {
-          errorMessage = 'Failed to create organization. Please try again.';
-          isLoading = false;
-        });
-      }
-    } catch (e) {
-      setState(() {
-        errorMessage = 'An error occurred. Please try again.';
-        isLoading = false;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     dynamic screenHeight = MediaQuery.of(context).size.height;
     dynamic screenWidth = MediaQuery.of(context).size.width;
+    final orgController = Provider.of<OrgController>(context);
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -171,13 +107,13 @@ class _AddCreateOrgPageState extends State<AddCreateOrgPage> {
                       child: const Divider(color: Colors.grey),
                     ),
                     // Error Message (if any)
-                    if (errorMessage != null)
+                    if (orgController.errorMessage != null)
                       Padding(
                         padding: EdgeInsets.symmetric(
                             vertical: 0.01 * screenHeight,
                             horizontal: 0.07 * screenWidth),
                         child: Text(
-                          errorMessage!,
+                          orgController.errorMessage!,
                           style: TextStyle(color: Colors.red),
                         ),
                       ),
@@ -198,12 +134,17 @@ class _AddCreateOrgPageState extends State<AddCreateOrgPage> {
                             elevation: 0,
                             backgroundColor: const Color(0xff3ac7f9),
                           ),
-                          onPressed: isLoading
+                          onPressed: orgController.isLoading
                               ? null
                               : () {
-                                  _createOrganization();
+                                  if (_formKey.currentState!.validate()) {
+                                    orgController.createOrganization(
+                                      _orgNameController.text,
+                                      context,
+                                    );
+                                  }
                                 },
-                          child: isLoading
+                          child: orgController.isLoading
                               ? CircularProgressIndicator(
                                   color: Colors.white,
                                 )

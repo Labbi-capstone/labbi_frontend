@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:labbi_frontend/app/controllers/org_controller.dart';
 import 'package:labbi_frontend/app/screens/admin_system/add_create_org_page.dart';
 import 'package:labbi_frontend/app/screens/admin_org/admin_org_home_page.dart';
 import 'package:labbi_frontend/app/controllers/auth_controller.dart';
@@ -20,12 +21,17 @@ import 'package:labbi_frontend/app/screens/admin_system/list_org_page.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: "assets/.env");
-  runApp(
-    ChangeNotifierProvider(
-      create: (_) => AuthController(),
-      child: MyApp(),
-    ),
-  );
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(
+        create: (_) => AuthController(),
+      ),
+      ChangeNotifierProvider(
+        create: (_) => OrgController(),
+      ),
+    ],
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -35,9 +41,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: Routes.AdminOrgHomePage,
+      initialRoute: Routes.login,
       routes: {
-        Routes.login: (context) =>  const LoginPage(),
+        Routes.login: (context) => const LoginPage(),
         Routes.register: (context) => const RegisterPage(),
         Routes.dashboard: (context) => DashboardPage(),
         Routes.userProfilePage: (context) => UserProfilePage(),
