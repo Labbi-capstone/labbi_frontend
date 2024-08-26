@@ -73,13 +73,13 @@ class AuthController extends ChangeNotifier {
           // Navigate based on the user role
           switch (userRole) {
             case 'admin':
-              Navigator.pushReplacementNamed(context, '/AdminOrgHomePage');
+              Navigator.pushReplacementNamed(context, '/dashboard');
               break;
             case 'developer':
               Navigator.pushReplacementNamed(context, '/dashboard');
               break;
             case 'adminOrg':
-              Navigator.pushReplacementNamed(context, '/AdminOrgHomePage');
+              Navigator.pushReplacementNamed(context, '/dashboard');
               break;
             default:
               Navigator.pushReplacementNamed(context, '/dashboard');
