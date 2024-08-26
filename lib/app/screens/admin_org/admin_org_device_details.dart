@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/Theme/app_colors.dart';
-import 'package:labbi_frontend/app/models/user_device_test.dart';
+import 'package:labbi_frontend/app/mockDatas/user_device_test.dart';
 
 class AdminOrgDeviceDetailsPage extends StatefulWidget {
   final UserDevice device;

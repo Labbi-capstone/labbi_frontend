@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/components/list_box.dart';
 import 'package:labbi_frontend/app/components/menu_button.dart';
-import 'package:labbi_frontend/app/models/user_device_test.dart';
+import 'package:labbi_frontend/app/mockDatas/user_device_test.dart';
 import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
 import 'package:labbi_frontend/app/screens/user_org/user_org_device_detail_page.dart';
 import 'package:labbi_frontend/app/screens/user_org/users_in_org_page.dart';
