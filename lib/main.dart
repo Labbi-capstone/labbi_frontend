@@ -16,6 +16,7 @@ import 'package:labbi_frontend/app/screens/user_org/user_org_home_page.dart';
 import 'package:labbi_frontend/app/screens/user_profile/user_edit/edit_user_profile_page.dart';
 import 'package:labbi_frontend/app/screens/user_profile/user_profile.dart';
 import 'package:provider/provider.dart';
+import 'package:labbi_frontend/app/screens/admin_system/list_org_page.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: "assets/.env");
