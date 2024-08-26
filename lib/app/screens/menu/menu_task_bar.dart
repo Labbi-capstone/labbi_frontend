@@ -3,7 +3,7 @@ import 'package:labbi_frontend/app/components/logout_button.dart';
 import 'package:labbi_frontend/app/models/menu_item_model.dart';
 import 'package:labbi_frontend/app/screens/menu/menu_item.dart';
 import 'package:labbi_frontend/app/screens/user_profile/user_profile.dart';
-import 'package:labbi_frontend/app/utils/user_info_helper.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MenuTaskbar extends StatefulWidget {
   const MenuTaskbar({super.key});
@@ -14,6 +14,7 @@ class MenuTaskbar extends StatefulWidget {
 
 class _MenuTaskbarState extends State<MenuTaskbar> {
   String userName = '';
+  String userRole = '';
   final String pathImage = 'assets/images/man.png';
 
   @override
@@ -23,10 +24,25 @@ class _MenuTaskbarState extends State<MenuTaskbar> {
   }
 
   Future<void> _loadUserInfo() async {
-    final userInfo = await UserInfoHelper.loadUserInfo();
+    final prefs = await SharedPreferences.getInstance();
     setState(() {
-      userName = userInfo['userName']!;
+      userName = prefs.getString('userName') ?? '';
+      userRole = prefs.getString('userRole') ??
+          'user'; // Default to 'user' if no role found
     });
+  }
+
+  List<MenuItemModel> getMenuItems() {
+    switch (userRole) {
+      case 'admin':
+        return adminMenuItems;
+      case 'orgAdmin':
+        return orgAdminMenuItems;
+      case 'developer':
+        return developerMenuItems;
+      default:
+        return userMenuItems;
+    }
   }
 
   @override
@@ -40,14 +56,15 @@ class _MenuTaskbarState extends State<MenuTaskbar> {
         children: [
           // Header
           buildHeader(context, screenHeight, screenWidth),
-          
+
           // Body
           Expanded(
             child: Column(
               children: [
                 // Menu Items
                 MenuItem(
-                  menuItem: userMenuItems, // Choose based on user role
+                  menuItem:
+                      getMenuItems(), // Dynamically choose based on user role
                   screenHeight: screenHeight,
                   screenWidth: screenWidth,
                 ),

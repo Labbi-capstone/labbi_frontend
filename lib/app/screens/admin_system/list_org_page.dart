@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/components/org_search_bar.dart';
 import 'package:labbi_frontend/app/models/organisation.dart';
 import 'package:labbi_frontend/app/components/org_container.dart';
+import 'package:labbi_frontend/app/screens/admin_system/add_create_org_page.dart';
 
 class ListOrgPage extends StatefulWidget {
   const ListOrgPage({super.key});
@@ -105,7 +106,15 @@ class _ListOrgPageState extends State<ListOrgPage> {
                       horizontal: 0.06 * screenWidth,
                       vertical: 0.02 * screenHeight),
                   child: InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      // Navigate to AddCreateOrgPage
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AddCreateOrgPage(),
+                        ),
+                      );
+                    },
                     child: CircleAvatar(
                       radius: (screenHeight / 12.5) / 2,
                       backgroundColor: Colors.white,
