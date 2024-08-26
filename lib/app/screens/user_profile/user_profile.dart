@@ -172,7 +172,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
           boxShadow: [
             BoxShadow(
                 blurRadius: 8,
-                color: Color(0xff0094ff),
+                color: AppColors.primary,
                 spreadRadius: 0,
                 offset: Offset(0, 2))
           ],
