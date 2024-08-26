@@ -45,6 +45,7 @@ class RegisterPage extends StatelessWidget {
                                     fontWeight: FontWeight.w600))),
                         const SizedBox(height: 50),
                         MyTextField(
+                          title: 'Fullname',
                           controller: authController.nameController,
                           hintText: 'Fullname',
                           obscureText: false,
@@ -54,6 +55,7 @@ class RegisterPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 30),
                         MyTextField(
+                          title: 'Email',
                           controller: authController.emailController,
                           hintText: 'Email',
                           obscureText: false,
@@ -63,6 +65,7 @@ class RegisterPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 30),
                         MyTextField(
+                          title: 'Password',
                           controller: authController.passwordController,
                           hintText: 'Password',
                           obscureText: false,
@@ -72,6 +75,7 @@ class RegisterPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 30),
                         MyTextField(
+                          title: 'Confirm Password',
                           controller:
                               authController.confirmedPasswordController,
                           hintText: 'Confirm Password',

@@ -6,6 +6,7 @@ class MyTextField extends StatelessWidget {
   final String hintText;
   final bool obscureText;
   final String errorText;
+  final String title;
 
   const MyTextField({
     super.key,
@@ -14,6 +15,7 @@ class MyTextField extends StatelessWidget {
     required this.hintText,
     required this.obscureText,
     required this.errorText,
+    required this.title,
   });
 
   @override
@@ -23,23 +25,32 @@ class MyTextField extends StatelessWidget {
 
     return Padding(
       padding: EdgeInsets.only(left: 0.15 * screenWidth, right: 0.15 * screenWidth, top: 0.005 * screenHeight),
-      child: TextField(
-        controller: controller,
-        onChanged: onChanged,
-        obscureText: obscureText,
-        decoration: InputDecoration(
-            enabledBorder: const OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey.shade400),
-            ),
-            fillColor: Colors.grey.shade200,
-            filled: true,
-            errorText: errorText,
-            errorStyle: const TextStyle(color: Color.fromARGB(255, 255, 0, 0)),
-            hintText: hintText,
-            hintStyle: TextStyle(color: Colors.grey[500])),
+      child: Column (
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: screenHeight* 0.022,
+          )),
+          TextField(
+            controller: controller,
+            onChanged: onChanged,
+            obscureText: obscureText,
+            decoration: InputDecoration(
+                enabledBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey.shade400),
+                ),
+                fillColor: Colors.grey.shade200,
+                filled: true,
+                errorText: errorText,
+                errorStyle: const TextStyle(color: Color.fromARGB(255, 255, 0, 0)),
+                hintText: hintText,
+                hintStyle: TextStyle(color: Colors.grey[500])),
+          ),
+        ]
       ),
     );
   }
