@@ -15,33 +15,7 @@ class EditButtons extends StatelessWidget {
         SizedBox(
           child: TextButton(
             onPressed: () => {
-
-              // // Update the profile data
-              // if (model.usernameController.text.isNotEmpty) {
-              //   // Update username if new data is provided
-              //   model.updateUsername(model.usernameController.text);
-              // }
-
-              // if (model.emailController.text.isNotEmpty) {
-              //   // Update email if new data is provided
-              //   model.updateEmail(model.emailController.text);
-              // }
-
-              // if (model.newPhoneController.text.isNotEmpty) {
-              //   // Update phone number if new data is provided
-              //   model.updatePhoneNum(model.newPhoneController.text);
-              // }
-
-               // Validate OTP first
-              // if (model.otpController.text.isEmpty) {
-              //   model.updateOtpError('OTP is required');
-              //   return;
-              // } else if (model.otpController.text != 'expectedOTP') { // Replace with actual OTP validation logic
-              //   model.updateOtpError('Invalid OTP');
-              //   return;
-              // }
-
-              
+              // Logic update
             }, 
             style: TextButton.styleFrom(
               foregroundColor: Colors.white, backgroundColor: const Color.fromARGB(255, 41, 42, 43), padding: EdgeInsets.all(screenHeight*0.015),
