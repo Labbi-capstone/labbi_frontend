@@ -24,7 +24,16 @@ class LoginPage extends StatelessWidget {
               body: SafeArea(
                 child: Container(
                   decoration: const BoxDecoration(
-                          color: AppColors.primary
+                    gradient: LinearGradient(
+                      colors: [
+                        AppColors.primary,
+                        AppColors.secondary,
+                      ],
+                      begin: FractionalOffset(0.0, 0.0),
+                      end: FractionalOffset(1.0, 0.0),
+                      stops: [0.0, 1.0],
+                      tileMode: TileMode.clamp,
+                    ),
                   ),
                   child: Center(
                     child: Column(
@@ -174,7 +183,8 @@ class LoginPage extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Text('Don\'t have an account? '),
+                            const Text('Don\'t have an account? ',
+                                style: TextStyle(color: Colors.white)),
                             const SizedBox(width: 4),
                             MyButton(
                               onTap: () {

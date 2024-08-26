@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:labbi_frontend/app/Theme/app_colors.dart';
 import 'package:labbi_frontend/app/components/menu_button.dart';
 import 'package:labbi_frontend/app/models/dashboard.dart';
 import 'package:labbi_frontend/app/screens/dashboard_page/dashboard_items.dart';
@@ -33,12 +34,27 @@ class _DashboardPageState extends State<DashboardPage> {
     return Scaffold(
       appBar: AppBar(
         // Menu button
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                AppColors.primary,
+                AppColors.secondary,
+              ],
+              begin: FractionalOffset(0.0, 0.0),
+              end: FractionalOffset(1.0, 0.0),
+              stops: [0.0, 1.0],
+              tileMode: TileMode.clamp,
+            ),
+          ),
+        ),
         leading: Builder(
           builder: (BuildContext context) {
             return const MenuButton();
           },
         ),
-        title: Text('Dashboard, Welcome $userName'),
+        title: Text('Dashboard, Welcome $userName',
+            style: TextStyle(color: Colors.white)),
         centerTitle: true,
       ),
 
@@ -46,7 +62,18 @@ class _DashboardPageState extends State<DashboardPage> {
       drawer: const MenuTaskbar(),
 
       body: Container(
-        color: Colors.lightBlue[50],
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              AppColors.primary,
+              AppColors.secondary,
+            ],
+            begin: FractionalOffset(0.0, 0.0),
+            end: FractionalOffset(1.0, 0.0),
+            stops: [0.0, 1.0],
+            tileMode: TileMode.clamp,
+          ),
+        ),
         child: ListView.builder(
           itemCount: sampleDashboards.length,
           itemBuilder: (context, index) {

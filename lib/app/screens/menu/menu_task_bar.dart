@@ -40,7 +40,7 @@ class _MenuTaskbarState extends State<MenuTaskbar> {
         children: [
           // Header
           buildHeader(context, screenHeight, screenWidth),
-          
+
           // Body
           Expanded(
             child: Column(
