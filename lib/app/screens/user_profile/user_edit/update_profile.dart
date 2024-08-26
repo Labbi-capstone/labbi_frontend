@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/components/textfield.dart';
-import 'package:labbi_frontend/app/models/edit_User_Profile_Test.dart';
+import 'package:labbi_frontend/app/controllers/edit_user_profile_controller.dart';
 import 'package:labbi_frontend/app/screens/user_profile/user_edit/edit_buttons.dart';
 
 class UpdateProfile extends StatefulWidget {
@@ -17,6 +17,45 @@ class UpdateProfile extends StatefulWidget {
 }
 
 class _UpdateProfileState extends State<UpdateProfile> {
+   final ScrollController _scrollController = ScrollController();
+
+  // FocusNodes for each text field
+  final FocusNode _usernameFocusNode = FocusNode();
+  final FocusNode _emailFocusNode = FocusNode();
+  final FocusNode _otpFocusNode = FocusNode();
+  final FocusNode _newPhoneFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Add listeners to scroll the view when a text field gains focus
+    _usernameFocusNode.addListener(() => _scrollToField(_usernameFocusNode));
+    _emailFocusNode.addListener(() => _scrollToField(_emailFocusNode));
+    _otpFocusNode.addListener(() => _scrollToField(_otpFocusNode));
+    _newPhoneFocusNode.addListener(() => _scrollToField(_newPhoneFocusNode));
+  }
+
+  void _scrollToField(FocusNode focusNode) {
+    if (focusNode.hasFocus) {
+      _scrollController.animateTo(
+        _scrollController.position.pixels + 100,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _usernameFocusNode.dispose();
+    _emailFocusNode.dispose();
+    _otpFocusNode.dispose();
+    _newPhoneFocusNode.dispose();
+    super.dispose();
+  }
+  
   @override
   Widget build(BuildContext context) {
     final model = widget.model;
@@ -67,23 +106,12 @@ class _UpdateProfileState extends State<UpdateProfile> {
         ),
         MyTextField(
           controller: model.usernameController,
-          onChanged: (value) {
-            setState(() {
-              model.usernameError =
-                  value.isEmpty ? 'Username cannot be empty' : '';
-            });
-          },
-          hintText: model.username,
+          hintText: model.username, 
           obscureText: false,
           errorText: model.usernameError,
         ),
         MyTextField(
           controller: model.emailController,
-          onChanged: (value) {
-            setState(() {
-              model.emailError = value.isEmpty ? 'Email cannot be empty' : '';
-            });
-          },
           hintText: model.email,
           obscureText: false,
           errorText: model.emailError,
@@ -145,24 +173,13 @@ class _UpdateProfileState extends State<UpdateProfile> {
         ),
         MyTextField(
           controller: model.otpController,
-          onChanged: (value) {
-            setState(() {
-              model.otpError = value.isEmpty ? 'OTP cannot be empty' : '';
-            });
-          },
-          hintText: model.otpNum,
+          hintText: 'Enter OTP',
           obscureText: false,
           errorText: model.otpError,
         ),
         MyTextField(
           controller: model.newPhoneController,
-          onChanged: (value) {
-            setState(() {
-              model.newPhoneError =
-                  value.isEmpty ? 'New phone number cannot be empty' : '';
-            });
-          },
-          hintText: model.newPhoneNum,
+          hintText: 'New Phone Number',
           obscureText: false,
           errorText: model.newPhoneError,
         ),
@@ -171,7 +188,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
               left: 0.15 * screenWidth,
               right: 0.15 * screenWidth,
               top: 0.005 * screenHeight),
-          child: const EditButtons(),
+          child: EditButtons(model: model),
         )
       ],
     );

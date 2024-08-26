@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:labbi_frontend/app/models/edit_User_Profile_Test.dart';
+import 'package:labbi_frontend/app/controllers/edit_user_profile_controller.dart';
 import 'package:labbi_frontend/app/screens/user_profile/user_edit/update_profile.dart';
 
 class EditUserProfilePage extends StatefulWidget {
@@ -15,14 +15,8 @@ class _EditUserProfilePageState extends State<EditUserProfilePage> {
     // Initialize UserProfileModel
     dynamic screenHeight = MediaQuery.of(context).size.height;
     dynamic screenWidth = MediaQuery.of(context).size.width;
-    UserProfileModel userProfileModel = UserProfileModel(
-      pathImage: 'assets/images/man.png',
-      username: 'Updated Name',
-      email: 'updatedemail@example.com',
-      phoneNum: '0987654321',
-      otpNum: 'Updated OTP',
-      newPhoneNum: 'Updated Phone Number',
-    );
+    
+    UserProfileModel userProfileModel = getUserProfile();
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
