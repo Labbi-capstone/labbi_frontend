@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/components/textfield.dart';
-import 'package:labbi_frontend/app/controllers/edit_user_profile_controller.dart';
-import 'package:labbi_frontend/app/screens/user_profile/user_edit/edit_buttons.dart';
+import 'package:labbi_frontend/app/models/edit_user_profile_Model.dart';
+import 'package:labbi_frontend/app/components/edit_buttons.dart';
 
 class UpdateProfile extends StatefulWidget {
   final UserProfileModel model;

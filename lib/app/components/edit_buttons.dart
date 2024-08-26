@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:labbi_frontend/app/controllers/edit_user_profile_controller.dart';
+import 'package:labbi_frontend/app/models/edit_user_profile_Model.dart';
 
 class EditButtons extends StatelessWidget {
   final UserProfileModel model;
