@@ -31,6 +31,7 @@ dependencies:
   flutter:
     sdk: flutter
   google_fonts: ^6.2.1
+  image_picker: ^0.8.5+3
   velocity_x:
   shared_preferences:
   jwt_decoder:

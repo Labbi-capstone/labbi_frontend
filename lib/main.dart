@@ -68,6 +68,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
 // <<<<<<< HEAD
+// <<<<<<< HEAD
       // home: Chart(title: 'Demo'), // Check for null and use token safely
   //     initialRoute: Routes.login,
   //     routes: {
@@ -92,12 +93,15 @@ class MyApp extends StatelessWidget {
   //     ),
 // =======
     
-      initialRoute: Routes.login,
+//       initialRoute: Routes.login,
+// =======
+      initialRoute: Routes.AdminOrgHomePage,
+// >>>>>>> origin/main
       routes: {
-        Routes.login: (context) => const LoginPage(),
+        Routes.login: (context) =>  const LoginPage(),
         Routes.register: (context) => const RegisterPage(),
         Routes.dashboard: (context) => DashboardPage(),
-        Routes.userProfilePage: (context) =>  UserProfilePage(),
+        Routes.userProfilePage: (context) => UserProfilePage(),
         Routes.editUserProfilePage: (context) => const EditUserProfilePage(),
         Routes.notificationPage: (context) => const NotificationPage(),
         Routes.menuTaskbar: (context) => const MenuTaskbar(),

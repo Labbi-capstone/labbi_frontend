@@ -5,14 +5,14 @@ import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
 import 'package:labbi_frontend/app/screens/admin_org/admin_org_home_page.dart';
 import 'package:labbi_frontend/app/components/list_box.dart';
 
-class AdminDeviceHistoryPage extends StatefulWidget {
-  const AdminDeviceHistoryPage({super.key});
+class AdminOrgDeviceHistoryPage extends StatefulWidget {
+  const AdminOrgDeviceHistoryPage({super.key});
 
   @override
   _AdminDeviceHistoryPageState createState() => _AdminDeviceHistoryPageState();
 }
 
-class _AdminDeviceHistoryPageState extends State<AdminDeviceHistoryPage> {
+class _AdminDeviceHistoryPageState extends State<AdminOrgDeviceHistoryPage> {
   @override
   Widget build(BuildContext context) {
     dynamic screenHeight = MediaQuery.of(context).size.height;
@@ -48,6 +48,20 @@ class _AdminDeviceHistoryPageState extends State<AdminDeviceHistoryPage> {
           ),
         ),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.redo),
+            tooltip: 'Exit',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AdminOrgHomePage(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       drawer: const MenuTaskbar(),
       body: Container(
@@ -80,32 +94,8 @@ class _AdminDeviceHistoryPageState extends State<AdminDeviceHistoryPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const AdminOrgHomePage()),
-                      );
-                    },
-                    icon: Icon(Icons.devices, size: screenHeight * 0.05),
-                    label: Text('Devices',
-                        style: TextStyle(fontSize: screenHeight * 0.02)),
-                    style: TextButton.styleFrom(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: screenWidth * 0.04,
-                          vertical: screenHeight * 0.03),
-                      backgroundColor: Colors.grey,
-                      foregroundColor: Colors.black,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  child: TextButton.icon(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
                             builder: (context) =>
-                                const AdminDeviceHistoryPage()), // Stay page
+                                const AdminOrgDeviceHistoryPage()), // Stay page
                       );
                     },
                     icon: Icon(Icons.history, size: screenHeight * 0.05),

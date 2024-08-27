@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/status.dart' as websocket_status;
-import 'package:labbi_frontend/app/utils/utils.dart'; // Import the utils.dart file
+import '../../utils/utils.dart';
 
 class CPUUsagePage extends StatefulWidget {
   @override
@@ -10,8 +10,9 @@ class CPUUsagePage extends StatefulWidget {
 }
 
 class _CPUUsagePageState extends State<CPUUsagePage> {
+  // WebSocket connection URL
   final channel = WebSocketChannel.connect(
-    Uri.parse('ws://localhost:3000'),
+    Uri.parse('ws://localhost:3000'), // Ensure this matches your server setup
   );
 
   @override
@@ -26,15 +27,18 @@ class _CPUUsagePageState extends State<CPUUsagePage> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
+            // Handle any connection errors
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (snapshot.hasData) {
             var receivedData = snapshot.data;
             print('Received Data: $receivedData'); // Debugging print
 
-            if (receivedData != null) {
+            // Check if the received data is a valid string
+            if (receivedData != null && receivedData is String) {
               try {
-                var decodedData = jsonDecode(receivedData as String);
+                var decodedData = jsonDecode(receivedData);
 
+                // Check if the decoded data contains the expected structure
                 if (decodedData['data'] != null &&
                     decodedData['data']['result'] != null &&
                     decodedData['data']['result'].isNotEmpty) {
@@ -46,21 +50,32 @@ class _CPUUsagePageState extends State<CPUUsagePage> {
                       var metric = resultData[index]['metric'];
                       var value = resultData[index]['value'];
 
-                      // Format the timestamp using the Utils class
-                      String formattedTime = Utils.formatTimestamp(value[0]);
+                      // Ensure that value is a list with at least two elements
+                      if (value != null && value is List && value.length > 1) {
+                        // Use Utils class to format the timestamp
+                        String formattedTime = Utils.formatTimestamp(value[0]);
 
-                      return ListTile(
-                        title: Text(
-                          'Instance: ${metric['instance']}, Job: ${metric['job']}, Quantile: ${metric['quantile']}',
-                        ),
-                        subtitle: Text('Value: ${value[1]} at $formattedTime'),
-                      );
+                        return ListTile(
+                          title: Text(
+                            'Instance: ${metric['instance']}, Job: ${metric['job']}, Quantile: ${metric['quantile']}',
+                          ),
+                          subtitle:
+                              Text('Value: ${value[1]}, Time: $formattedTime'),
+                        );
+                      } else {
+                        return ListTile(
+                          title: const Text('Invalid Data Format'),
+                          subtitle: Text('Value: $value'),
+                        );
+                      }
                     },
                   );
                 } else {
                   return const Center(child: Text('No data available'));
                 }
               } catch (e) {
+                // Handle JSON decoding errors
+                print('Error parsing JSON: $e');
                 return Center(child: Text('Error parsing data: $e'));
               }
             } else {
@@ -76,7 +91,7 @@ class _CPUUsagePageState extends State<CPUUsagePage> {
 
   @override
   void dispose() {
-    // Close the WebSocket connection
+    // Close the WebSocket connection when the widget is disposed
     channel.sink.close(websocket_status.goingAway);
     super.dispose();
   }
