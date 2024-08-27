@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:labbi_frontend/app/models/organisation.dart';
+import 'package:labbi_frontend/app/models/organization.dart';
 
 class OrgContainer extends StatefulWidget {
-  final Organisation organisation;
-  const OrgContainer({super.key, required this.organisation});
+  final Organization organization;
+
+  const OrgContainer({required this.organization, Key? key}) : super(key: key);
   @override
   State<StatefulWidget> createState() => _OrgContainerState();
 }
 
 class _OrgContainerState extends State<OrgContainer> {
-  late Organisation organisation;
+  late Organization organization;
 
   @override
   void initState() {
     super.initState();
-    organisation = widget.organisation;
+    organization = widget.organization;
   }
 
   @override
@@ -56,7 +57,7 @@ class _OrgContainerState extends State<OrgContainer> {
                     padding:
                         EdgeInsets.symmetric(vertical: 0.015 * screenHeight),
                     child: Text(
-                      organisation.name,
+                      organization.name,
                       style: TextStyle(
                           fontSize: screenHeight / 50,
                           fontWeight: FontWeight.bold),
@@ -64,7 +65,7 @@ class _OrgContainerState extends State<OrgContainer> {
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 0.015 * screenHeight),
                   child: Text(
-                    'Number of Dashboard: ${organisation.dashboardList.length}',
+                    'Number of Dashboard: ${organization.dashboardList.length}',
                     style: TextStyle(
                         fontSize: screenHeight / 50,
                         color: Colors.grey,

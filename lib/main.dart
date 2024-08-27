@@ -30,6 +30,9 @@ Future<void> main() async {
       ChangeNotifierProvider(
         create: (_) => OrgController(),
       ),
+      ChangeNotifierProvider(
+        create: (_) => OrgController(),
+      ),
     ],
     child: const MyApp(),
   ));
