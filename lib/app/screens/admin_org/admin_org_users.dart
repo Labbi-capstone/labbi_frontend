@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:labbi_frontend/app/Theme/app_colors.dart';
 import 'package:labbi_frontend/app/components/menu_button.dart';
 import 'package:labbi_frontend/app/mockDatas/user_org_test.dart';
 import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
@@ -31,85 +32,90 @@ class _AdminDeviceHistoryPageState extends State<AdminOrgUsersPage> {
   }
 
   void _showAddUserDialog() {
-    final _nameController = TextEditingController();
-    final _idController = TextEditingController();
-    String? _selectedImagePath;
-
-    Future<void> _pickImage() async {
-      final ImagePicker picker = ImagePicker();
-      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-      if (image != null) {
-        setState(() {
-          _selectedImagePath = image.path;
-        });
-      }
-    }
+    final TextEditingController _nameController = TextEditingController();
+    final TextEditingController _idController = TextEditingController();
 
     showDialog(
       context: context,
       builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: const Text('Add New User'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextField(
-                    controller: _nameController,
-                    decoration: const InputDecoration(labelText: 'Name'),
-                  ),
-                  TextField(
-                    controller: _idController,
-                    decoration: const InputDecoration(labelText: 'User ID'),
-                  ),
-                  const SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: _pickImage,
-                    child: const Text('Select Image from Gallery'),
-                  ),
-                  if (_selectedImagePath != null)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: Image.file(
-                        File(_selectedImagePath!),
-                        height: 100,
-                        width: 100,
-                        fit: BoxFit.cover,
-                      ),
+        return AlertDialog(
+          title: const Text(
+            'Add New User',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: _nameController,
+                  decoration: InputDecoration(
+                    labelText: 'Name',
+                    hintText: 'Enter user name',
+                    prefixIcon: const Icon(Icons.person),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                ],
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Cancel'),
+                  ),
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    if (_nameController.text.isNotEmpty &&
-                        _idController.text.isNotEmpty &&
-                        _selectedImagePath != null) {
-                      _addUser(_nameController.text, _idController.text,
-                          _selectedImagePath!);
-                      Navigator.of(context).pop();
-                    } else {
-                      // Handle the case where not all fields are filled
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                              'Please fill all fields and select an image'),
-                        ),
-                      );
-                    }
-                  },
-                  child: const Text('Add'),
+                const SizedBox(height: 15),
+                TextField(
+                  controller: _idController,
+                  decoration: InputDecoration(
+                    labelText: 'User ID',
+                    hintText: 'Enter unique user ID',
+                    prefixIcon: const Icon(Icons.badge),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
                 ),
               ],
-            );
-          },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text(
+                'Cancel',
+                style:
+                    TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+              ),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              onPressed: () {
+                if (_nameController.text.isNotEmpty &&
+                    _idController.text.isNotEmpty) {
+                  _addUser(_nameController.text, _idController.text,
+                      ''); // Empty image path
+                  Navigator.of(context).pop();
+                } else {
+                  // Handle the case where not all fields are filled
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Please fill all fields'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              },
+              child: const Text(
+                'Add User',
+                style:
+                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
         );
       },
     );
@@ -126,8 +132,8 @@ class _AdminDeviceHistoryPageState extends State<AdminOrgUsersPage> {
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Color.fromRGBO(83, 206, 255, 0.801),
-                Color.fromRGBO(0, 174, 255, 0.959),
+                AppColors.primary,
+                AppColors.secondary,
               ],
               begin: FractionalOffset(0.0, 0.0),
               end: FractionalOffset(1.0, 0.0),
@@ -145,14 +151,14 @@ class _AdminDeviceHistoryPageState extends State<AdminOrgUsersPage> {
           height: screenHeight * 0.18,
           width: screenWidth * 0.3,
           child: Image.asset(
-            'assets/images/company-logo-color.png',
+            'assets/images/company-logo-white.png',
             fit: BoxFit.contain,
           ),
         ),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.history),
+            icon: const Icon(Icons.history, color: Colors.white),
             tooltip: 'History',
             onPressed: () {
               Navigator.push(
@@ -172,8 +178,8 @@ class _AdminDeviceHistoryPageState extends State<AdminOrgUsersPage> {
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Color.fromRGBO(83, 206, 255, 0.801),
-              Color.fromRGBO(0, 174, 255, 0.959),
+              AppColors.primary,
+              AppColors.secondary,
             ],
             begin: FractionalOffset(0.0, 0.0),
             end: FractionalOffset(1.0, 0.0),
@@ -277,7 +283,7 @@ class _AdminDeviceHistoryPageState extends State<AdminOrgUsersPage> {
                 ],
               ),
               const Divider(
-                  color: Colors.black), // Divider placed below the button
+                  color: Colors.white), // Divider placed below the button
               Expanded(
                 child: ListBox(
                   children:

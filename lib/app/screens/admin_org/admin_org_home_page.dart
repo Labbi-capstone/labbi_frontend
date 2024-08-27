@@ -57,7 +57,7 @@ class _AdminHomeOrgState extends State<AdminOrgHomePage> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.history),
+            icon: Icon(Icons.history, color: Colors.white),
             tooltip: 'History',
             onPressed: () {
               Navigator.push(

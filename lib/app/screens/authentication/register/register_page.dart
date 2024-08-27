@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:labbi_frontend/app/Theme/app_colors.dart';
 import 'package:labbi_frontend/app/components/textfield.dart';
 import 'package:labbi_frontend/app/components/button.dart';
 import 'package:labbi_frontend/app/controllers/auth_controller.dart';
@@ -14,35 +15,33 @@ class RegisterPage extends StatelessWidget {
       create: (_) => AuthController(),
       child: Consumer<AuthController>(
         builder: (context, authController, child) {
-          return MaterialApp(
-            theme: ThemeData(
-              textTheme: GoogleFonts.barlowSemiCondensedTextTheme(),
-            ),
-            home: Scaffold(
-              body: SafeArea(
-                child: Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Color.fromRGBO(175, 216, 237, 100),
-                        Color.fromRGBO(0, 184, 237, 100),
-                      ],
-                      begin: FractionalOffset(0.0, 0.0),
-                      end: FractionalOffset(1.0, 0.0),
-                      stops: [0.0, 1.0],
-                      tileMode: TileMode.clamp,
-                    ),
+          return Scaffold(
+            body: SafeArea(
+              child: Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      AppColors.primary,
+                      AppColors.secondary,
+                    ],
+                    begin: FractionalOffset(0.0, 0.0),
+                    end: FractionalOffset(1.0, 0.0),
+                    stops: [0.0, 1.0],
+                    tileMode: TileMode.clamp,
                   ),
-                  child: Center(
+                ),
+                child: Center(
+                  child: SingleChildScrollView(
                     child: Column(
                       children: [
                         const SizedBox(height: 50),
                         Text('Sign Up',
                             style: GoogleFonts.barlowSemiCondensed(
-                                textStyle: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 40.0,
-                                    fontWeight: FontWeight.w600))),
+                              textStyle: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 40.0,
+                                  fontWeight: FontWeight.w600),
+                            )),
                         const SizedBox(height: 50),
                         MyTextField(
                           controller: authController.nameController,
@@ -65,7 +64,7 @@ class RegisterPage extends StatelessWidget {
                         MyTextField(
                           controller: authController.passwordController,
                           hintText: 'Password',
-                          obscureText: false,
+                          obscureText: true, // Ensure password is hidden
                           errorText: authController.emptyPassword
                               ? 'Please enter password'
                               : '',
@@ -99,14 +98,15 @@ class RegisterPage extends StatelessWidget {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              const Text('Already have an account? '),
+                              const Text('Already have an account? ',
+                                  style: TextStyle(color: Colors.white)),
                               const SizedBox(width: 4),
-                              MyButton(
+                              GestureDetector(
                                 onTap: () {
                                   Navigator.pop(
                                       context); // Navigate back to login
                                 },
-                                text: const Text(
+                                child: const Text(
                                   'Sign in',
                                   style: TextStyle(
                                       color: Colors.blue,
@@ -118,80 +118,76 @@ class RegisterPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 20),
                         // Sign up button with context handling
-                        Builder(
-                          builder: (innerContext) => Container(
-                            padding: const EdgeInsets.all(25),
-                            margin: const EdgeInsets.symmetric(horizontal: 25),
-                            decoration: BoxDecoration(
-                              color: authController.isLoading
-                                  ? Colors
-                                      .grey // Change button color when loading
-                                  : Colors.black,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: MyButton(
-                              onTap: authController.isLoading
-                                  ? null // Disable button while loading
-                                  : () async {
-                                      if (authController.isLoading)
-                                        return; // Debounce click
+                        Container(
+                          padding: const EdgeInsets.all(25),
+                          margin: const EdgeInsets.symmetric(horizontal: 25),
+                          decoration: BoxDecoration(
+                            color: authController.isLoading
+                                ? Colors
+                                    .grey // Change button color when loading
+                                : Colors.black,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: MyButton(
+                            onTap: authController.isLoading
+                                ? null // Disable button while loading
+                                : () async {
+                                    if (authController.isLoading)
+                                      return; // Debounce click
 
-                                      // Perform registration
-                                      await authController
-                                          .registerUser(innerContext);
+                                    // Perform registration
+                                    await authController.registerUser(context);
 
-                                      // Ensure only one SnackBar is shown
-                                      if (innerContext.mounted &&
-                                          !authController.isSnackBarShown) {
-                                        authController.isSnackBarShown = true;
-                                        ScaffoldMessenger.of(innerContext)
-                                            .showSnackBar(
-                                          SnackBar(
-                                            content: Text(authController
-                                                .registrationMessage),
-                                            backgroundColor: authController
-                                                    .registrationMessage
-                                                    .contains("successful")
-                                                ? Colors.green
-                                                : Colors.red,
-                                          ),
-                                        );
-                                      }
+                                    // Ensure only one SnackBar is shown
+                                    if (context.mounted &&
+                                        !authController.isSnackBarShown) {
+                                      authController.isSnackBarShown = true;
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text(authController
+                                              .registrationMessage),
+                                          backgroundColor: authController
+                                                  .registrationMessage
+                                                  .contains("successful")
+                                              ? Colors.green
+                                              : Colors.red,
+                                        ),
+                                      );
+                                    }
 
-                                      // Delay before navigating (if successful)
+                                    // Delay before navigating (if successful)
+                                    if (authController.registrationMessage
+                                            .contains("successful") &&
+                                        context.mounted) {
                                       await Future.delayed(
                                           const Duration(seconds: 1));
+                                      Navigator.pushReplacementNamed(
+                                          context, '/login');
+                                    }
 
-                                      if (authController.registrationMessage
-                                              .contains("successful") &&
-                                          innerContext.mounted) {
-                                        Navigator.pushReplacementNamed(
-                                            innerContext, '/login');
-                                      }
-
-                                      // Reset the snack bar state after a delay to avoid spamming
-                                      await Future.delayed(
-                                          const Duration(seconds: 2));
-                                      authController.isSnackBarShown = false;
-                                    },
-                              text: authController.isLoading
-                                  ? const SizedBox(
-                                      width: 20,
-                                      height: 20,
-                                      child: CircularProgressIndicator(
-                                        color: Colors.white,
-                                        strokeWidth: 2,
-                                      ),
-                                    )
-                                  : const Text(
-                                      'Sign up',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                      ),
+                                    // Reset the snack bar state after a delay to avoid spamming
+                                    await Future.delayed(
+                                        const Duration(seconds: 2));
+                                    authController.isSnackBarShown = false;
+                                  },
+                            text: authController.isLoading
+                                ? const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
                                     ),
-                            ),
+                                  )
+                                : const Text(
+                                    'Sign up',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
                           ),
                         ),
                         const SizedBox(height: 30),
@@ -203,7 +199,7 @@ class RegisterPage extends StatelessWidget {
                               Expanded(
                                 child: Divider(
                                   thickness: 2,
-                                  color: Color.fromARGB(255, 255, 255, 255),
+                                  color: Colors.white,
                                 ),
                               ),
                               Padding(
@@ -217,7 +213,7 @@ class RegisterPage extends StatelessWidget {
                               Expanded(
                                 child: Divider(
                                   thickness: 2,
-                                  color: Color.fromARGB(255, 255, 255, 255),
+                                  color: Colors.white,
                                 ),
                               ),
                               SizedBox(width: 40),
@@ -240,13 +236,14 @@ class RegisterPage extends StatelessWidget {
                                 children: [
                                   Image.asset(
                                     'assets/images/google-icon.png',
-                                    height: 50,
+                                    height: 30, // Adjusted for better alignment
                                     fit: BoxFit.contain,
                                   ),
                                   const SizedBox(width: 10),
                                   GestureDetector(
                                     onTap: () {
                                       print('Sign up with Google');
+                                      // Handle Google sign up here
                                     },
                                     child: const Text(
                                       'Sign up with Google',

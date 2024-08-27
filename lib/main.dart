@@ -5,6 +5,7 @@ import 'package:labbi_frontend/app/controllers/auth_controller.dart';
 import 'package:labbi_frontend/app/routes.dart';
 import 'package:labbi_frontend/app/screens/authentication/login/login_page.dart';
 import 'package:labbi_frontend/app/screens/authentication/register/register_page.dart';
+import 'package:labbi_frontend/app/screens/control_panel_page/control_panel_page.dart';
 import 'package:labbi_frontend/app/screens/dashboard_page/create_dashboard_page.dart';
 import 'package:labbi_frontend/app/screens/dashboard_page/dashboard_page.dart';
 import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
@@ -35,9 +36,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: Routes.AdminOrgHomePage,
+      initialRoute: Routes.login,
       routes: {
-        Routes.login: (context) =>  const LoginPage(),
+        Routes.login: (context) => const LoginPage(),
         Routes.register: (context) => const RegisterPage(),
         Routes.dashboard: (context) => DashboardPage(),
         Routes.userProfilePage: (context) => UserProfilePage(),
@@ -46,6 +47,9 @@ class MyApp extends StatelessWidget {
         Routes.menuTaskbar: (context) => const MenuTaskbar(),
         Routes.AdminOrgHomePage: (context) => const AdminOrgHomePage(),
         Routes.UserOrgHomePage: (context) => const UserOrgHomePage(),
+        Routes.AddCreateOrgPage: (context) => const AddCreateOrgPage(),
+        Routes.ControlPanelPage: (context) => ControlPanelPage(),
+        Routes.CreateDashboardPage: (context) => const CreateDashboardPage(),
       },
       onUnknownRoute: (settings) => MaterialPageRoute(
         builder: (context) => Scaffold(
