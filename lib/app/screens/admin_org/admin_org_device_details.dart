@@ -43,14 +43,6 @@ class _DeviceDetailsPageState extends State<AdminOrgDeviceDetailsPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-              height: screenHeight * 0.05, // Adjust the height of the logo
-              width: screenWidth * 0.3, // Adjust the width of the logo
-              child: Image.asset(
-                'assets/images/company-logo-white.png',
-                fit: BoxFit.contain,
-              ),
-            ),
-            SizedBox(
                 width:
                     screenWidth * 0.02), // Space between the logo and the text
             Expanded(
