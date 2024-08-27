@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:labbi_frontend/app/Theme/app_colors.dart';
 import 'package:labbi_frontend/app/models/notification_message.dart';
 import 'package:labbi_frontend/app/screens/notification/notification_container.dart';
 
@@ -23,7 +24,20 @@ class _NotificationPageState extends State<NotificationPage> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: const Color(0xff3ac7f9),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                AppColors.primary,
+                AppColors.secondary,
+              ],
+              begin: FractionalOffset(0.0, 0.0),
+              end: FractionalOffset(1.0, 0.0),
+              stops: [0.0, 1.0],
+              tileMode: TileMode.clamp,
+            ),
+          ),
+        ),
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(
@@ -46,8 +60,8 @@ class _NotificationPageState extends State<NotificationPage> {
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Color.fromRGBO(83, 206, 255, 1),
-              Color.fromRGBO(0, 174, 255, 1),
+              AppColors.primary,
+              AppColors.secondary,
             ],
             begin: FractionalOffset(0.0, 0.0),
             end: FractionalOffset(1.0, 0.0),

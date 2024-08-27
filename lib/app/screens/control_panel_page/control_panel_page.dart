@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:labbi_frontend/app/Theme/app_colors.dart';
 import 'package:labbi_frontend/app/components/charts/two_line_chart_component.dart';
 import 'package:labbi_frontend/app/components/control_sliders/control_slider_component.dart';
 import 'package:labbi_frontend/app/mockDatas/device_data.dart'; // Import the device data
@@ -13,31 +14,60 @@ class ControlPanelPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Control Panel'),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                AppColors.primary,
+                AppColors.secondary,
+              ],
+              begin: FractionalOffset(0.0, 0.0),
+              end: FractionalOffset(1.0, 0.0),
+              stops: [0.0, 1.0],
+              tileMode: TileMode.clamp,
+            ),
+          ),
+        ),
+        title: Text('Control Panel', style: TextStyle(color: Colors.white)),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
       ),
-      body: ListView.builder(
-        padding: EdgeInsets.all(10),
-        itemCount: devices.length,
-        itemBuilder: (context, index) {
-          final device = devices[index];
-          return DeviceCard(
-            deviceName: device.deviceName,
-            status: device.status,
-            version: device.version,
-            humidityData: device.humidityData,
-            temperatureData: device.temperatureData,
-            motorSpeed: device.motorSpeed,
-            fanSpeed: device.fanSpeed,
-            isActive: device.isActive,
-            deviceId: device.deviceId, // Added deviceId
-          );
-        },
+
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              AppColors.primary,
+              AppColors.secondary,
+            ],
+            begin: FractionalOffset(0.0, 0.0),
+            end: FractionalOffset(1.0, 0.0),
+            stops: [0.0, 1.0],
+            tileMode: TileMode.clamp,
+          ),
+        ),
+        child: ListView.builder(
+          padding: EdgeInsets.all(10),
+          itemCount: devices.length,
+          itemBuilder: (context, index) {
+            final device = devices[index];
+            return DeviceCard(
+              deviceName: device.deviceName,
+              status: device.status,
+              version: device.version,
+              humidityData: device.humidityData,
+              temperatureData: device.temperatureData,
+              motorSpeed: device.motorSpeed,
+              fanSpeed: device.fanSpeed,
+              isActive: device.isActive,
+            );
+          },
+        ),
+
       ),
     );
   }
