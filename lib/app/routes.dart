@@ -11,6 +11,7 @@ class Routes {
   static const String notificationPage = '/notificationPage';
   static const String menuTaskbar = '/menuTaskbar';
   static const String AdminOrgHomePage = '/AdminOrgHomePage';
-   static const String UserOrgHomePage = '/UserOrgHomePage';
+  static const String UserOrgHomePage = '/UserOrgHomePage';
+  static const String cpuUsagePage = '/CPUUsagePage';
   // Add more routes as needed
 }

@@ -12,7 +12,7 @@ class CPUUsagePage extends StatefulWidget {
 class _CPUUsagePageState extends State<CPUUsagePage> {
   // WebSocket connection URL
   final channel = WebSocketChannel.connect(
-    Uri.parse('ws://localhost:3000'), // Ensure this matches your server setup
+    Uri.parse('ws://localhost:8000'), // Ensure this matches your server setup
   );
 
   @override

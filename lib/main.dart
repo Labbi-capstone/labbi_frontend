@@ -95,7 +95,7 @@ class MyApp extends StatelessWidget {
     
 //       initialRoute: Routes.login,
 // =======
-      initialRoute: Routes.AdminOrgHomePage,
+      initialRoute: Routes.dashboard,
 // >>>>>>> origin/main
       routes: {
         Routes.login: (context) =>  const LoginPage(),
@@ -107,6 +107,7 @@ class MyApp extends StatelessWidget {
         Routes.menuTaskbar: (context) => const MenuTaskbar(),
         Routes.AdminOrgHomePage: (context) => const AdminOrgHomePage(),
         Routes.UserOrgHomePage: (context) => const UserOrgHomePage(),
+        Routes.cpuUsagePage: (context) => CPUUsagePage(),
       },
       onUnknownRoute: (settings) => MaterialPageRoute(
         builder: (context) => Scaffold(
