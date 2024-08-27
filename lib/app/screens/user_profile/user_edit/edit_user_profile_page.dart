@@ -16,14 +16,6 @@ class _EditUserProfilePageState extends State<EditUserProfilePage> {
     // Initialize UserProfileModel
     dynamic screenHeight = MediaQuery.of(context).size.height;
     dynamic screenWidth = MediaQuery.of(context).size.width;
-    UserProfileModel userProfileModel = UserProfileModel(
-      pathImage: 'assets/images/man.png',
-      username: 'Updated Name',
-      email: 'updatedemail@example.com',
-      phoneNum: '0987654321',
-      otpNum: 'Updated OTP',
-      newPhoneNum: 'Updated Phone Number',
-    );
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -76,7 +68,7 @@ class _EditUserProfilePageState extends State<EditUserProfilePage> {
           ),
         ),
         child: SingleChildScrollView(
-          child: UpdateProfile(model: userProfileModel),
+          child: UpdateProfile(),
         ),
       ),
     );

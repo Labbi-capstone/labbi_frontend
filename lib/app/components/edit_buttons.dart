@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class EditButtons extends StatelessWidget {
+
   const EditButtons({super.key});
 
   @override
@@ -14,7 +15,7 @@ class EditButtons extends StatelessWidget {
         SizedBox(
           child: TextButton(
             onPressed: () => {
-              // update
+              // Logic update
             }, 
             style: TextButton.styleFrom(
               foregroundColor: Colors.white, backgroundColor: const Color.fromARGB(255, 41, 42, 43), padding: EdgeInsets.all(screenHeight*0.015),
