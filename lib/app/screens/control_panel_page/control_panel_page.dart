@@ -6,6 +6,8 @@ import 'package:labbi_frontend/app/Theme/app_colors.dart';
 import 'package:labbi_frontend/app/components/charts/two_line_chart_component.dart';
 import 'package:labbi_frontend/app/components/control_sliders/control_slider_component.dart';
 import 'package:labbi_frontend/app/mockDatas/device_data.dart'; // Import the device data
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class ControlPanelPage extends StatelessWidget {
   @override
@@ -34,6 +36,7 @@ class ControlPanelPage extends StatelessWidget {
           },
         ),
       ),
+
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -64,12 +67,13 @@ class ControlPanelPage extends StatelessWidget {
             );
           },
         ),
+
       ),
     );
   }
 }
 
-class DeviceCard extends StatelessWidget {
+class DeviceCard extends StatefulWidget {
   final String deviceName;
   final String status;
   final String version;
@@ -77,7 +81,8 @@ class DeviceCard extends StatelessWidget {
   final List<double> temperatureData;
   final int motorSpeed;
   final int fanSpeed;
-  final bool isActive;
+  bool isActive; // This needs to be mutable
+  final String deviceId;
 
   DeviceCard({
     required this.deviceName,
@@ -88,7 +93,56 @@ class DeviceCard extends StatelessWidget {
     required this.motorSpeed,
     required this.fanSpeed,
     required this.isActive,
+    required this.deviceId,
   });
+
+  @override
+  _DeviceCardState createState() => _DeviceCardState();
+}
+
+class _DeviceCardState extends State<DeviceCard> {
+  late bool _isActive;
+  bool _isLoading = false; // Show a loader while making an API call
+
+  @override
+  void initState() {
+    super.initState();
+    _isActive = widget.isActive;
+  }
+
+  Future<void> _toggleDeviceStatus(bool newStatus) async {
+    setState(() {
+      _isLoading = true; // Show loading indicator
+    });
+
+    final url = Uri.parse(
+        'http://your-backend-api-url.com/devices/${widget.deviceId}/toggle'); // Replace with your API endpoint
+
+    try {
+      final response = await http.put(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"isActive": newStatus}),
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          _isActive = newStatus;
+          widget.isActive = newStatus;
+        });
+      } else {
+        // Handle error response
+        print('Failed to update status: ${response.body}');
+      }
+    } catch (e) {
+      // Handle network or other errors
+      print('Error: $e');
+    } finally {
+      setState(() {
+        _isLoading = false; // Hide loading indicator
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -108,52 +162,55 @@ class DeviceCard extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Device: $deviceName',
+                    Text('Device: ${widget.deviceName}',
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold)),
                     Row(
                       children: [
                         Text('Status: ', style: TextStyle(fontSize: 14)),
-                        Text(status,
+                        Text(widget.status,
                             style: TextStyle(
                                 fontSize: 14,
-                                color: status == 'online'
+                                color: widget.status == 'online'
                                     ? Colors.green
                                     : Colors.red)),
                       ],
                     ),
-                    Text('Version: $version', style: TextStyle(fontSize: 14)),
+                    Text('Version: ${widget.version}',
+                        style: TextStyle(fontSize: 14)),
                   ],
                 ),
-                FlutterSwitch(
-                  width: 55.0,
-                  height: 25.0,
-                  value: isActive,
-                  onToggle: (val) {
-                    // Handle toggle
-                  },
-                ),
+                _isLoading
+                    ? CircularProgressIndicator() // Show loading indicator when making API call
+                    : FlutterSwitch(
+                        width: 55.0,
+                        height: 25.0,
+                        value: _isActive,
+                        onToggle: (val) {
+                          _toggleDeviceStatus(val);
+                        },
+                      ),
               ],
             ),
             SizedBox(height: 10),
-            humidityData.isNotEmpty && temperatureData.isNotEmpty
+            widget.humidityData.isNotEmpty && widget.temperatureData.isNotEmpty
                 ? TwoLineChartComponent(
-                    humidityData: humidityData,
-                    temperatureData: temperatureData)
+                    humidityData: widget.humidityData,
+                    temperatureData: widget.temperatureData)
                 : Center(child: Text('No data available')),
             SizedBox(height: 10),
             ControlSliderComponent(
               icon: FontAwesomeIcons.cog,
-              label: 'Motor speed: $motorSpeed RPM',
-              value: motorSpeed.toDouble(),
+              label: 'Motor speed: ${widget.motorSpeed} RPM',
+              value: widget.motorSpeed.toDouble(),
               onChanged: (val) {
                 // Handle motor speed change
               },
             ),
             ControlSliderComponent(
               icon: FontAwesomeIcons.fan,
-              label: 'Fan speed: $fanSpeed RPM',
-              value: fanSpeed.toDouble(),
+              label: 'Fan speed: ${widget.fanSpeed} RPM',
+              value: widget.fanSpeed.toDouble(),
               onChanged: (val) {
                 // Handle fan speed change
               },
