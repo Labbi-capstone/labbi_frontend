@@ -36,7 +36,6 @@ class ControlPanelPage extends StatelessWidget {
           },
         ),
       ),
-
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -56,6 +55,7 @@ class ControlPanelPage extends StatelessWidget {
           itemBuilder: (context, index) {
             final device = devices[index];
             return DeviceCard(
+              deviceId: device.deviceId,
               deviceName: device.deviceName,
               status: device.status,
               version: device.version,
@@ -67,7 +67,6 @@ class ControlPanelPage extends StatelessWidget {
             );
           },
         ),
-
       ),
     );
   }

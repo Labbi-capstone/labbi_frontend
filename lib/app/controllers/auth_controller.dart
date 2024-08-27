@@ -62,12 +62,14 @@ class AuthController extends ChangeNotifier {
         final userId = jsonRes['user']['id'];
         final userName = jsonRes['user']['fullName'];
         final userEmail = jsonRes['user']['email'];
+        final token = jsonRes['token']; // Retrieve the token
 
-        // Store user information in SharedPreferences
+        // Store user information and token in SharedPreferences
         prefs.setString('userName', userName);
         prefs.setString('userId', userId);
         prefs.setString('userRole', userRole);
         prefs.setString('userEmail', userEmail);
+        prefs.setString('token', token); // Store the token
 
         if (context.mounted) {
           // Navigate based on the user role
@@ -99,6 +101,7 @@ class AuthController extends ChangeNotifier {
       setLoading(false);
     }
   }
+
 
   // Method to show error messages
   void _showErrorMessage(BuildContext context, String message) {

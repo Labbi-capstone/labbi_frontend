@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/Theme/app_colors.dart';
-import 'package:labbi_frontend/app/mockDatas/edit_User_Profile_Test.dart';
 import 'package:labbi_frontend/app/screens/user_profile/user_edit/update_profile.dart';
 
 class EditUserProfilePage extends StatefulWidget {
