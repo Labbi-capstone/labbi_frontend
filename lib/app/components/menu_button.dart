@@ -6,8 +6,13 @@ class MenuButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      icon: const Icon( Icons.menu, color: Colors.blue,),
-      onPressed: () {Scaffold.of(context).openDrawer();},
+      icon: const Icon(
+        Icons.menu,
+        color: Colors.white,
+      ),
+      onPressed: () {
+        Scaffold.of(context).openDrawer();
+      },
     );
   }
 }

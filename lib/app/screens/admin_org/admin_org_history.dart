@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:labbi_frontend/app/Theme/app_colors.dart';
 import 'package:labbi_frontend/app/components/menu_button.dart';
-import 'package:labbi_frontend/app/models/user_device_history.dart';
+import 'package:labbi_frontend/app/mockDatas/user_device_history.dart';
 import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
 import 'package:labbi_frontend/app/screens/admin_org/admin_org_home_page.dart';
 import 'package:labbi_frontend/app/components/list_box.dart';
@@ -24,8 +25,8 @@ class _AdminDeviceHistoryPageState extends State<AdminOrgDeviceHistoryPage> {
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Color.fromRGBO(83, 206, 255, 0.801),
-                Color.fromRGBO(0, 174, 255, 0.959),
+                AppColors.primary,
+                AppColors.secondary,
               ],
               begin: FractionalOffset(0.0, 0.0),
               end: FractionalOffset(1.0, 0.0),
@@ -43,14 +44,14 @@ class _AdminDeviceHistoryPageState extends State<AdminOrgDeviceHistoryPage> {
           height: screenHeight * 0.18,
           width: screenWidth * 0.3,
           child: Image.asset(
-            'assets/images/company-logo-color.png',
+            'assets/images/company-logo-white.png',
             fit: BoxFit.contain,
           ),
         ),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.redo),
+            icon: Icon(Icons.redo, color: Colors.white),
             tooltip: 'Exit',
             onPressed: () {
               Navigator.push(
@@ -70,8 +71,8 @@ class _AdminDeviceHistoryPageState extends State<AdminOrgDeviceHistoryPage> {
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Color.fromRGBO(83, 206, 255, 0.801),
-              Color.fromRGBO(0, 174, 255, 0.959),
+              AppColors.primary,
+              AppColors.secondary,
             ],
             begin: FractionalOffset(0.0, 0.0),
             end: FractionalOffset(1.0, 0.0),
@@ -115,7 +116,7 @@ class _AdminDeviceHistoryPageState extends State<AdminOrgDeviceHistoryPage> {
                 ),
               ]),
               SizedBox(height: screenHeight * 0.025),
-              const Divider(color: Colors.black),
+              const Divider(color: Colors.white),
               Expanded(
                 child: ListBox(
                   children: getUserDeviceHistory().map((history) {

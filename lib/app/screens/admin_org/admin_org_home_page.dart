@@ -7,7 +7,7 @@ import 'package:labbi_frontend/app/screens/admin_org/admin_org_users.dart';
 import 'package:labbi_frontend/app/screens/admin_system/add_create_org_page.dart';
 import 'package:labbi_frontend/app/screens/admin_org/admin_org_history.dart';
 import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
-import 'package:labbi_frontend/app/models/user_device_test.dart';
+import 'package:labbi_frontend/app/mockDatas/user_device_test.dart';
 
 class AdminOrgHomePage extends StatefulWidget {
   const AdminOrgHomePage({super.key});
@@ -57,7 +57,7 @@ class _AdminHomeOrgState extends State<AdminOrgHomePage> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.history),
+            icon: Icon(Icons.history, color: Colors.white),
             tooltip: 'History',
             onPressed: () {
               Navigator.push(

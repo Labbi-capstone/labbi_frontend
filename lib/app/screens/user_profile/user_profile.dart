@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:labbi_frontend/app/Theme/app_colors.dart';
 import 'package:labbi_frontend/app/components/menu_button.dart';
 import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
 import 'package:labbi_frontend/app/screens/notification/notification_page.dart';
-import 'package:labbi_frontend/app/models/notification_message.dart';
 import 'package:labbi_frontend/app/utils/user_info_helper.dart';
 
 class UserProfilePage extends StatefulWidget {
@@ -15,7 +15,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
   String userId = '';
   String userEmail = '';
   String userRole = '';
-  late List<NotificationMessage> listOfNotification;
   int count = 0;
 
   @override
@@ -128,8 +127,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Color.fromRGBO(83, 206, 255, 1),
-                  Color.fromRGBO(0, 174, 255, 1),
+                  AppColors.primary,
+                  AppColors.secondary,
                 ],
                 begin: FractionalOffset(0.0, 0.0),
                 end: FractionalOffset(1.0, 0.0),
@@ -173,7 +172,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
           boxShadow: [
             BoxShadow(
                 blurRadius: 8,
-                color: Color(0xff0094ff),
+                color: AppColors.primary,
                 spreadRadius: 0,
                 offset: Offset(0, 2))
           ],

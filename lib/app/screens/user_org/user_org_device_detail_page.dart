@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:labbi_frontend/app/models/user_device_test.dart';
+import 'package:labbi_frontend/app/mockDatas/user_device_test.dart';
 
 class UserOrgDeviceDetailPage extends StatelessWidget {
   final UserDevice device;

@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/components/textfield.dart';
-import 'package:labbi_frontend/app/models/edit_User_Profile_Test.dart';
-import 'package:labbi_frontend/app/screens/user_profile/user_edit/edit_buttons.dart';
+import 'package:labbi_frontend/app/components/edit_buttons.dart';
 
 class UpdateProfile extends StatefulWidget {
-  final UserProfileModel model;
 
   const UpdateProfile({
     super.key,
-    required this.model,
   });
 
   @override
@@ -17,9 +14,10 @@ class UpdateProfile extends StatefulWidget {
 }
 
 class _UpdateProfileState extends State<UpdateProfile> {
+  final String pathImage = 'assets/images/man.png';
+  
   @override
   Widget build(BuildContext context) {
-    final model = widget.model;
     dynamic screenHeight = MediaQuery.of(context).size.height;
     dynamic screenWidth = MediaQuery.of(context).size.width;
 
@@ -39,7 +37,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                   child: Opacity(
                     opacity: 0.5,
                     child: Image.asset(
-                      model.pathImage,
+                      pathImage,
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -66,27 +64,16 @@ class _UpdateProfileState extends State<UpdateProfile> {
           ),
         ),
         MyTextField(
-          controller: model.usernameController,
-          onChanged: (value) {
-            setState(() {
-              model.usernameError =
-                  value.isEmpty ? 'Username cannot be empty' : '';
-            });
-          },
-          hintText: model.username,
+          title: 'User name',
+          hintText: "", 
           obscureText: false,
-          errorText: model.usernameError,
+          errorText: '',
         ),
         MyTextField(
-          controller: model.emailController,
-          onChanged: (value) {
-            setState(() {
-              model.emailError = value.isEmpty ? 'Email cannot be empty' : '';
-            });
-          },
-          hintText: model.email,
+          title: 'Email',
+          hintText: '',
           obscureText: false,
-          errorText: model.emailError,
+          errorText: '',
         ),
         Padding(
           padding: EdgeInsets.only(
@@ -100,6 +87,8 @@ class _UpdateProfileState extends State<UpdateProfile> {
               color: const Color.fromARGB(255, 233, 233, 233),
               borderRadius: BorderRadius.circular(5.0),
             ),
+            
+            // Phone number
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -109,7 +98,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                         vertical: screenHeight * 0.018,
                         horizontal: screenWidth * 0.02),
                     child: Text(
-                      model.maskedPhoneNumber,
+                      "Phone Number",
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: screenHeight * 0.02,
@@ -144,34 +133,23 @@ class _UpdateProfileState extends State<UpdateProfile> {
           ),
         ),
         MyTextField(
-          controller: model.otpController,
-          onChanged: (value) {
-            setState(() {
-              model.otpError = value.isEmpty ? 'OTP cannot be empty' : '';
-            });
-          },
-          hintText: model.otpNum,
+          title: 'Enter OTP',
+          hintText: '',
           obscureText: false,
-          errorText: model.otpError,
+          errorText: '',
         ),
         MyTextField(
-          controller: model.newPhoneController,
-          onChanged: (value) {
-            setState(() {
-              model.newPhoneError =
-                  value.isEmpty ? 'New phone number cannot be empty' : '';
-            });
-          },
-          hintText: model.newPhoneNum,
+          title: 'New Phone Number',
+          hintText: '',
           obscureText: false,
-          errorText: model.newPhoneError,
+          errorText: '',
         ),
         Padding(
           padding: EdgeInsets.only(
               left: 0.15 * screenWidth,
               right: 0.15 * screenWidth,
               top: 0.005 * screenHeight),
-          child: const EditButtons(),
+          child: EditButtons(),
         )
       ],
     );

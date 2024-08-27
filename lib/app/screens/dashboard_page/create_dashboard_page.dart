@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:labbi_frontend/app/Theme/app_colors.dart';
 
 class CreateDashboardPage extends StatefulWidget {
   const CreateDashboardPage({super.key});
@@ -16,7 +17,20 @@ class _CreateDashboardPageState extends State<CreateDashboardPage> {
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           elevation: 0,
-          backgroundColor: const Color(0xff3ac7f9),
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  AppColors.primary,
+                  AppColors.secondary,
+                ],
+                begin: FractionalOffset(0.0, 0.0),
+                end: FractionalOffset(1.0, 0.0),
+                stops: [0.0, 1.0],
+                tileMode: TileMode.clamp,
+              ),
+            ),
+          ),
           centerTitle: true,
           leading: IconButton(
             icon: const Icon(
@@ -78,6 +92,9 @@ class _CreateDashboardPageState extends State<CreateDashboardPage> {
                           border: UnderlineInputBorder(),
                           labelText: 'Enter dashboard name',
                         ),
+                        onTapOutside: (_) {
+                          FocusManager.instance.primaryFocus?.unfocus();
+                        },
                       ),
                     ),
                     Padding(
