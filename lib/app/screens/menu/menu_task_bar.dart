@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:labbi_frontend/app/components/logout_button.dart';
+import 'package:labbi_frontend/app/components/buttons/logout_button.dart';
 import 'package:labbi_frontend/app/models/menu_item_model.dart';
 import 'package:labbi_frontend/app/screens/menu/menu_item.dart';
 import 'package:labbi_frontend/app/screens/user_profile/user_profile.dart';

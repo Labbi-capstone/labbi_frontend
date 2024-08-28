@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:labbi_frontend/app/models/organization.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class OrgController extends ChangeNotifier {
   bool isLoading = false;
   String? errorMessage;
+  List<Organization> organizationList = [];
 
   Future<void> createOrganization(String orgName, BuildContext context) async {
     if (orgName.isEmpty) {
@@ -60,6 +62,48 @@ class OrgController extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<void> fetchOrganizations() async {
+    setLoading(true);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? role = prefs.getString('userRole');
+
+    if (token == null || role == null) {
+      setLoading(false);
+      errorMessage = 'User token or role not found. Please login again.';
+      notifyListeners();
+      return;
+    }
+
+    final url = Uri.parse('http://localhost:3000/api/organizations/list');
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+          "Role": role,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        organizationList =
+            data.map((org) => Organization.fromJson(org)).toList();
+        errorMessage = null; // Clear any existing error message
+      } else {
+        errorMessage = 'Failed to fetch organizations. Please try again.';
+      }
+    } catch (e) {
+      errorMessage = 'An error occurred. Please try again.';
+      print("Error: $e"); // Useful for debugging
+    } finally {
+      setLoading(false);
+      notifyListeners();
+    }
+  }
+
 
   void setLoading(bool loading) {
     isLoading = loading;

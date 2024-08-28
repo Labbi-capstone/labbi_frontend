@@ -1,20 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/components/org_search_bar.dart';
-import 'package:labbi_frontend/app/models/organisation.dart';
+import 'package:labbi_frontend/app/controllers/org_controller.dart';
 import 'package:labbi_frontend/app/components/org_container.dart';
-import 'package:labbi_frontend/app/screens/admin_system/add_create_org_page.dart';
+import 'package:labbi_frontend/app/components/buttons/add_button.dart'; // Import the new component
+import 'package:labbi_frontend/app/screens/admin_system/create_org_page.dart';
+import 'package:labbi_frontend/app/screens/admin_system/user_list_in_org_page.dart';
+import 'package:provider/provider.dart';
 
 class ListOrgPage extends StatefulWidget {
   const ListOrgPage({super.key});
 
   @override
-  State<StatefulWidget> createState() => _ListOrgPageState();
+  State<ListOrgPage> createState() => _ListOrgPageState();
 }
 
 class _ListOrgPageState extends State<ListOrgPage> {
   String searchKeyWord = '';
 
-  void callback(newValue) {
+  @override
+  void initState() {
+    super.initState();
+    // Fetch organizations when the page is loaded
+    Provider.of<OrgController>(context, listen: false).fetchOrganizations();
+  }
+
+  void updateSearchKey(String newValue) {
     setState(() {
       searchKeyWord = newValue;
     });
@@ -22,8 +32,9 @@ class _ListOrgPageState extends State<ListOrgPage> {
 
   @override
   Widget build(BuildContext context) {
-    dynamic screenHeight = MediaQuery.of(context).size.height;
-    dynamic screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final orgController = Provider.of<OrgController>(context);
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -32,106 +43,73 @@ class _ListOrgPageState extends State<ListOrgPage> {
         backgroundColor: const Color(0xff3ac7f9),
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            color: Colors.white,
-          ),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          "List of Organisation",
+          "List of Organizations",
           style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: screenHeight / 35),
-        ),
-      ),
-      body: Container(
-        height: screenHeight,
-        width: screenWidth,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Color.fromRGBO(83, 206, 255, 1),
-              Color.fromRGBO(0, 174, 255, 1),
-            ],
-            begin: FractionalOffset(0.0, 0.0),
-            end: FractionalOffset(1.0, 0.0),
-            stops: [0.0, 1.0],
-            tileMode: TileMode.clamp,
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: screenHeight / 35,
           ),
         ),
-        child: Stack(
-          clipBehavior: Clip.none,
-          alignment: Alignment.topCenter,
-          children: [
-            SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  OrgSearchBar(
-                    callback: callback,
-                  ),
-                  if (searchKeyWord == '')
-                    for (var i = 0; i < organisationList.length; i++)
-                      Padding(
-                          padding: EdgeInsets.only(bottom: screenHeight / 35),
-                          child: OrgContainer(
-                            organisation: organisationList[i],
-                          ))
-                  else
-                    for (var i = 0; i < organisationList.length; i++)
-                      if (organisationList[i]
-                          .name
-                          .toLowerCase()
-                          .contains(searchKeyWord.toLowerCase()))
-                        Padding(
-                            padding: EdgeInsets.only(bottom: screenHeight / 35),
-                            child: OrgContainer(
-                              organisation: organisationList[i],
-                            ))
-                      else
-                        const SizedBox.shrink()
-                ],
-              ),
-            ),
-            Container(
-              height: screenHeight,
-              width: screenWidth,
-              alignment: Alignment.bottomRight,
-              child: Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 0.06 * screenWidth,
-                      vertical: 0.02 * screenHeight),
-                  child: InkWell(
-                    onTap: () {
-                      // Navigate to AddCreateOrgPage
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AddCreateOrgPage(),
-                        ),
-                      );
-                    },
-                    child: CircleAvatar(
-                      radius: (screenHeight / 12.5) / 2,
-                      backgroundColor: Colors.white,
-                      child: Container(
-                        height: screenHeight / 7,
-                        width: screenWidth / 7,
-                        decoration: const BoxDecoration(
-                            image: DecorationImage(
-                                image: AssetImage('assets/images/add.png'),
-                                fit: BoxFit.contain)),
-                      ),
-                    ),
-                  )),
-            ),
-          ],
-        ),
       ),
+      body: orgController.isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : orgController.errorMessage != null
+              ? Center(child: Text(orgController.errorMessage!))
+              : Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Color.fromRGBO(83, 206, 255, 1),
+                        Color.fromRGBO(0, 174, 255, 1),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    alignment: Alignment.topCenter,
+                    children: [
+                      SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            OrgSearchBar(callback: updateSearchKey),
+                            ...orgController.organizationList
+                                .where((org) => org.name
+                                    .toLowerCase()
+                                    .contains(searchKeyWord.toLowerCase()))
+                                .map((org) => Padding(
+                                      padding: EdgeInsets.only(
+                                          bottom: screenHeight / 35),
+                                      child: OrgContainer(
+                                        organization: org,
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  UserListPage(), // Navigate to UserListPage
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ))
+                                .toList(),
+                          ],
+                        ),
+                      ),
+                      AddButton(
+                        screenHeight: screenHeight,
+                        screenWidth: screenWidth,
+                        pageToNavigate: const CreateOrgPage(),
+                      ), // Use the new AddButton component
+                    ],
+                  ),
+                ),
     );
   }
 }

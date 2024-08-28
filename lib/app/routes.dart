@@ -10,10 +10,10 @@ class Routes {
   static const String editUserProfilePage = '/editUserProfilePage';
   static const String notificationPage = '/notificationPage';
   static const String menuTaskbar = '/menuTaskbar';
-  static const String AdminOrgHomePage = '/AdminOrgHomePage';
-  static const String UserOrgHomePage = '/UserOrgHomePage';
-  static const String AddCreateOrgPage = '/AddCreateOrgPage';
-  static const String ControlPanelPage = '/ControlPanelPage';
-  static const String CreateDashboardPage = '/CreateDashboardPagee';
+  static const String adminOrgHomePage = '/adminOrgHomePage';
+  static const String createOrgPage = '/createOrgPage';
+  static const String controlPanelPage = '/controlPanelPage';
+  static const String createDashboardPage = '/createDashboardPage';
+  static const String userListPage = '/userListPage';
   // Add more routes as needed
 }
