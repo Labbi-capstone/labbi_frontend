@@ -55,7 +55,7 @@ class MyApp extends StatelessWidget {
         Routes.login: (context) => const LoginPage(),
         Routes.register: (context) => const RegisterPage(),
         Routes.dashboard: (context) => DashboardPage(),
-        Routes.userProfilePage: (context) => UserProfilePage(),
+        Routes.userProfilePage: (context) => const UserProfilePage(),
         Routes.editUserProfilePage: (context) => const EditUserProfilePage(),
         Routes.notificationPage: (context) => const NotificationPage(),
         Routes.menuTaskbar: (context) => const MenuTaskbar(),
