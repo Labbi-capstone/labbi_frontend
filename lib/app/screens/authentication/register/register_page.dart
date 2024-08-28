@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:labbi_frontend/app/Theme/app_colors.dart';
-import 'package:labbi_frontend/app/components/textfield.dart';
-import 'package:labbi_frontend/app/components/button.dart';
+import 'package:labbi_frontend/app/components/text_fields/textfield.dart';
+import 'package:labbi_frontend/app/components/buttons/button.dart';
 import 'package:labbi_frontend/app/controllers/auth_controller.dart';
 import 'package:provider/provider.dart';
 

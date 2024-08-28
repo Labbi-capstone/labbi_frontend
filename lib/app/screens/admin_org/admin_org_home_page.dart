@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/Theme/app_colors.dart';
 import 'package:labbi_frontend/app/components/list_box.dart';
-import 'package:labbi_frontend/app/components/menu_button.dart';
+import 'package:labbi_frontend/app/components/buttons/menu_button.dart';
 import 'package:labbi_frontend/app/screens/admin_org/admin_org_device_details.dart';
 import 'package:labbi_frontend/app/screens/admin_org/admin_org_users.dart';
 import 'package:labbi_frontend/app/screens/admin_system/add_create_org_page.dart';
