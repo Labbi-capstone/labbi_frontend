@@ -2,26 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/components/org_search_bar.dart';
 import 'package:labbi_frontend/app/controllers/org_controller.dart';
 import 'package:labbi_frontend/app/components/org_container.dart';
-import 'package:labbi_frontend/app/components/buttons/add_button.dart'; // Import the new component
+import 'package:labbi_frontend/app/components/buttons/add_button.dart';
 import 'package:labbi_frontend/app/screens/admin_system/create_org_page.dart';
 import 'package:labbi_frontend/app/screens/admin_system/user_list_in_org_page.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ListOrgPage extends StatefulWidget {
+class ListOrgPage extends ConsumerStatefulWidget {
   const ListOrgPage({super.key});
 
   @override
-  State<ListOrgPage> createState() => _ListOrgPageState();
+  ConsumerState<ListOrgPage> createState() => _ListOrgPageState();
 }
 
-class _ListOrgPageState extends State<ListOrgPage> {
+class _ListOrgPageState extends ConsumerState<ListOrgPage> {
   String searchKeyWord = '';
 
   @override
   void initState() {
     super.initState();
     // Fetch organizations when the page is loaded
-    Provider.of<OrgController>(context, listen: false).fetchOrganizations();
+    ref.read(orgControllerProvider.notifier).fetchOrganizations();
   }
 
   void updateSearchKey(String newValue) {
@@ -34,7 +34,13 @@ class _ListOrgPageState extends State<ListOrgPage> {
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
-    final orgController = Provider.of<OrgController>(context);
+    final orgController = ref.watch(orgControllerProvider.notifier);
+    final isLoading = ref.watch(orgControllerLoadingProvider);
+    final errorMessage = ref.watch(orgControllerErrorMessageProvider);
+    final organizationList = ref.watch(orgControllerProvider).organizationList;
+    final orgState = ref.watch(orgControllerProvider);
+
+
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -55,10 +61,10 @@ class _ListOrgPageState extends State<ListOrgPage> {
           ),
         ),
       ),
-      body: orgController.isLoading
+      body: isLoading
           ? const Center(child: CircularProgressIndicator())
-          : orgController.errorMessage != null
-              ? Center(child: Text(orgController.errorMessage!))
+          : errorMessage != null
+              ? Center(child: Text(errorMessage))
               : Container(
                   decoration: const BoxDecoration(
                     gradient: LinearGradient(
@@ -78,7 +84,7 @@ class _ListOrgPageState extends State<ListOrgPage> {
                         child: Column(
                           children: [
                             OrgSearchBar(callback: updateSearchKey),
-                            ...orgController.organizationList
+                            ...organizationList
                                 .where((org) => org.name
                                     .toLowerCase()
                                     .contains(searchKeyWord.toLowerCase()))
@@ -92,7 +98,7 @@ class _ListOrgPageState extends State<ListOrgPage> {
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
-                                                  UserListPage(), // Navigate to UserListPage
+                                                   UserListPage(), // Navigate to UserListPage
                                             ),
                                           );
                                         },
@@ -106,7 +112,7 @@ class _ListOrgPageState extends State<ListOrgPage> {
                         screenHeight: screenHeight,
                         screenWidth: screenWidth,
                         pageToNavigate: const CreateOrgPage(),
-                      ), // Use the new AddButton component
+                      ),
                     ],
                   ),
                 ),

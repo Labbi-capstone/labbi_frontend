@@ -1,52 +1,49 @@
-import 'package:flutter/material.dart';
-import 'package:labbi_frontend/app/models/user.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:labbi_frontend/app/view_model/user_view_model.dart';
 
-class UserController with ChangeNotifier {
-  List<UserViewModel> _allUsers = [];
-  List<UserViewModel> filteredUsers = [];
-  bool isLoading = false;
-  String? errorMessage;
+class UserController extends StateNotifier<List<UserViewModel>> {
+  UserController() : super([]);
 
-  UserController() {
-    // Initialize users (you would normally fetch this from an API)
-    _allUsers = [
-      UserViewModel(User(
-          "Brooklyn Simmons", "brooklyns@ahffagon.com", "password", "Admin")),
-      UserViewModel(
-          User("Esther Howard", "estherh@ahffagon.com", "password", "Admin")),
-      // Add more users here...
-    ];
-    filteredUsers = List.from(_allUsers);
-  }
+  bool _isLoading = false;
+  String? _errorMessage;
+
+  bool get isLoading => _isLoading;
+  String? get errorMessage => _errorMessage;
 
   void filterUsers(String keyword) {
-    if (keyword.isEmpty) {
-      filteredUsers = List.from(_allUsers);
-    } else {
-      filteredUsers = _allUsers
-          .where((userViewModel) =>
-              userViewModel.user.fullName
-                  .toLowerCase()
-                  .contains(keyword.toLowerCase()) ||
-              userViewModel.user.email
-                  .toLowerCase()
-                  .contains(keyword.toLowerCase()))
-          .toList();
-    }
-    notifyListeners();
+    // Logic to filter users based on the keyword
   }
 
   void toggleUserSelection(UserViewModel userViewModel) {
-    userViewModel.isSelected = !userViewModel.isSelected;
-    notifyListeners();
+    // Logic to toggle user selection
   }
 
-  void addUsersToOrganization() {
-    // Handle adding users to the organization here
-    // For example, filter the selected users and send them to an API
-    final selectedUsers =
-        _allUsers.where((userViewModel) => userViewModel.isSelected).toList();
-    // Add the selected users to the organization...
+  Future<void> addUsersToOrganization() async {
+    _isLoading = true;
+    _errorMessage = null;
+    state = [...state]; // Trigger a state update
+
+    try {
+      // Perform the operation to add users to the organization
+      // If successful, reset the isLoading flag
+      _isLoading = false;
+    } catch (e) {
+      // On error, set the errorMessage
+      _errorMessage = e.toString();
+      _isLoading = false;
+    }
+
+    state = [...state]; // Trigger a state update
   }
 }
+
+final userControllerProvider =
+    StateNotifierProvider<UserController, List<UserViewModel>>((ref) {
+  return UserController();
+});
+
+final filteredUsersProvider = Provider<List<UserViewModel>>((ref) {
+  final userController = ref.watch(userControllerProvider);
+  // Logic to return filtered users based on some criteria
+  return userController; // This should return the actual filtered list
+});

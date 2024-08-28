@@ -19,27 +19,13 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:labbi_frontend/app/screens/user_org/user_org_home_page.dart';
 import 'package:labbi_frontend/app/screens/user_profile/user_edit/edit_user_profile_page.dart';
 import 'package:labbi_frontend/app/screens/user_profile/user_profile.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:labbi_frontend/app/screens/admin_system/list_org_page.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: "assets/.env");
-  runApp(MultiProvider(
-    providers: [
-      ChangeNotifierProvider(
-        create: (_) => AuthController(),
-      ),
-      ChangeNotifierProvider(
-        create: (_) => OrgController(),
-      ),
-      ChangeNotifierProvider(
-        create: (_) => OrgController(),
-      ),
-      ChangeNotifierProvider(
-        create: (_) => UserController(),
-      ),
-    ],
-    child: const MyApp(),
+  runApp(const ProviderScope(
+    child: MyApp(),
   ));
 }
 

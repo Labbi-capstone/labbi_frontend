@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/controllers/user_controller.dart';
 import 'package:labbi_frontend/app/view_model/user_view_model.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class AddUserToOrgPage extends StatefulWidget {
+class AddUserToOrgPage extends ConsumerStatefulWidget {
   const AddUserToOrgPage({super.key});
 
   @override
-  State<AddUserToOrgPage> createState() => _AddUserToOrgPageState();
+  ConsumerState<AddUserToOrgPage> createState() => _AddUserToOrgPageState();
 }
 
-class _AddUserToOrgPageState extends State<AddUserToOrgPage> {
+class _AddUserToOrgPageState extends ConsumerState<AddUserToOrgPage> {
   final _formKey = GlobalKey<FormState>();
   String searchKeyword = '';
 
@@ -18,7 +18,8 @@ class _AddUserToOrgPageState extends State<AddUserToOrgPage> {
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
-    final userController = Provider.of<UserController>(context);
+    final userController = ref.watch(userControllerProvider.notifier);
+    final filteredUsers = ref.watch(filteredUsersProvider);
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -117,10 +118,9 @@ class _AddUserToOrgPageState extends State<AddUserToOrgPage> {
                           horizontal: 0.07 * screenWidth,
                         ),
                         child: ListView.builder(
-                          itemCount: userController.filteredUsers.length,
+                          itemCount: filteredUsers.length,
                           itemBuilder: (context, index) {
-                            UserViewModel userViewModel =
-                                userController.filteredUsers[index];
+                            UserViewModel userViewModel = filteredUsers[index];
                             return ListTile(
                               title: Text(userViewModel.user.fullName),
                               subtitle: Text(userViewModel.user.email),
