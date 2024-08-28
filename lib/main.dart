@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/controllers/org_controller.dart';
-import 'package:labbi_frontend/app/screens/admin_system/add_create_org_page.dart';
+import 'package:labbi_frontend/app/controllers/user_controller.dart';
+import 'package:labbi_frontend/app/screens/admin_system/create_org_page.dart';
 import 'package:labbi_frontend/app/screens/admin_org/admin_org_home_page.dart';
 import 'package:labbi_frontend/app/controllers/auth_controller.dart';
 import 'package:labbi_frontend/app/routes.dart';
@@ -34,6 +35,9 @@ Future<void> main() async {
       ChangeNotifierProvider(
         create: (_) => OrgController(),
       ),
+      ChangeNotifierProvider(
+        create: (_) => UserController(),
+      ),
     ],
     child: const MyApp(),
   ));
@@ -46,7 +50,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: Routes.userListPage,
+      initialRoute: Routes.login,
       routes: {
         Routes.login: (context) => const LoginPage(),
         Routes.register: (context) => const RegisterPage(),
@@ -57,11 +61,10 @@ class MyApp extends StatelessWidget {
         Routes.menuTaskbar: (context) => const MenuTaskbar(),
         Routes.adminOrgHomePage: (context) => const AdminOrgHomePage(),
         Routes.userOrgHomePage: (context) => const UserOrgHomePage(),
-        Routes.createOrgPage: (context) => const AddCreateOrgPage(),
+        Routes.createOrgPage: (context) => const CreateOrgPage(),
         Routes.controlPanelPage: (context) => ControlPanelPage(),
         Routes.createDashboardPage: (context) => const CreateDashboardPage(),
         Routes.userListPage: (context) => UserListPage(),
-      
       },
       onUnknownRoute: (settings) => MaterialPageRoute(
         builder: (context) => Scaffold(

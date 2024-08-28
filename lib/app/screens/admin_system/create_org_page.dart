@@ -3,14 +3,14 @@ import 'package:labbi_frontend/app/controllers/org_controller.dart';
 import 'package:provider/provider.dart';
 
 
-class AddCreateOrgPage extends StatefulWidget {
-  const AddCreateOrgPage({super.key});
+class CreateOrgPage extends StatefulWidget {
+  const CreateOrgPage({super.key});
 
   @override
   State<StatefulWidget> createState() => _AddCreateOrgPageState();
 }
 
-class _AddCreateOrgPageState extends State<AddCreateOrgPage> {
+class _AddCreateOrgPageState extends State<CreateOrgPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _orgNameController = TextEditingController();
 

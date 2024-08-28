@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/components/org_search_bar.dart';
 import 'package:labbi_frontend/app/controllers/org_controller.dart';
 import 'package:labbi_frontend/app/components/org_container.dart';
-import 'package:labbi_frontend/app/screens/admin_system/add_create_org_page.dart';
+import 'package:labbi_frontend/app/components/buttons/add_button.dart'; // Import the new component
+import 'package:labbi_frontend/app/screens/admin_system/create_org_page.dart';
+import 'package:labbi_frontend/app/screens/admin_system/user_list_in_org_page.dart';
 import 'package:provider/provider.dart';
 
 class ListOrgPage extends StatefulWidget {
@@ -83,34 +85,28 @@ class _ListOrgPageState extends State<ListOrgPage> {
                                 .map((org) => Padding(
                                       padding: EdgeInsets.only(
                                           bottom: screenHeight / 35),
-                                      child: OrgContainer(organization: org),
+                                      child: OrgContainer(
+                                        organization: org,
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  UserListPage(), // Navigate to UserListPage
+                                            ),
+                                          );
+                                        },
+                                      ),
                                     ))
                                 .toList(),
                           ],
                         ),
                       ),
-                      Positioned(
-                        bottom: screenHeight * 0.02,
-                        right: screenWidth * 0.06,
-                        child: InkWell(
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const AddCreateOrgPage(),
-                            ),
-                          ),
-                          child: CircleAvatar(
-                            radius: screenHeight / 25,
-                            backgroundColor: Colors.white,
-                            child: Image.asset(
-                              'assets/images/add.png',
-                              height: screenHeight / 7,
-                              width: screenWidth / 7,
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                        ),
-                      ),
+                      AddButton(
+                        screenHeight: screenHeight,
+                        screenWidth: screenWidth,
+                        pageToNavigate: const CreateOrgPage(),
+                      ), // Use the new AddButton component
                     ],
                   ),
                 ),

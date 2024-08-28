@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:labbi_frontend/app/models/User.dart';
+import 'package:labbi_frontend/app/models/user.dart';
+import 'package:labbi_frontend/app/screens/admin_system/add_user_to_org.dart';
 import '../../components/pagination.dart';
+import '../../components/buttons/add_button.dart'; // Import the AddButton// Import the AddUserToOrgPage
 
 class UserListPage extends StatefulWidget {
   @override
@@ -9,20 +11,6 @@ class UserListPage extends StatefulWidget {
 
 class _UserListPageState extends State<UserListPage> {
   final List<User> users = [
-    User("Brooklyn Simmons", "brooklyns@ahffagon.com", "password", "Admin"),
-    User("Esther Howard", "estherh@ahffagon.com", "password", "Admin"),
-    User("Leslie Alexander", "lesliea@ahffagon.com", "password", "Admin"),
-    User("Wade Warren", "wadew@ahffagon.com", "password", "User"),
-    User("Jenny Wilson", "jennyw@ahffagon.com", "password", "User"),
-    User("Robert Fox", "robertf@ahffagon.com", "password", "User"),
-    User("Jacob Jones", "jacobj@ahffagon.com", "password", "User"),
-    User("Brooklyn Simmons", "brooklyns@ahffagon.com", "password", "Admin"),
-    User("Esther Howard", "estherh@ahffagon.com", "password", "Admin"),
-    User("Leslie Alexander", "lesliea@ahffagon.com", "password", "Admin"),
-    User("Wade Warren", "wadew@ahffagon.com", "password", "User"),
-    User("Jenny Wilson", "jennyw@ahffagon.com", "password", "User"),
-    User("Robert Fox", "robertf@ahffagon.com", "password", "User"),
-    User("Jacob Jones", "jacobj@ahffagon.com", "password", "User"),
     User("Brooklyn Simmons", "brooklyns@ahffagon.com", "password", "Admin"),
     User("Esther Howard", "estherh@ahffagon.com", "password", "Admin"),
     User("Leslie Alexander", "lesliea@ahffagon.com", "password", "Admin"),
@@ -40,7 +28,6 @@ class _UserListPageState extends State<UserListPage> {
   List<User> _getPaginatedUsers() {
     final startIndex = (_currentPage - 1) * _usersPerPage;
 
-    // Ensure startIndex is within the bounds of the list
     if (startIndex >= users.length) {
       return [];
     }
@@ -49,7 +36,6 @@ class _UserListPageState extends State<UserListPage> {
 
     return users.sublist(startIndex, endIndex.clamp(0, users.length));
   }
-
 
   void _handlePrev() {
     setState(() {
@@ -76,7 +62,7 @@ class _UserListPageState extends State<UserListPage> {
   @override
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
-    var isMobile = screenWidth < 600;
+    var screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       appBar: AppBar(
@@ -98,7 +84,6 @@ class _UserListPageState extends State<UserListPage> {
         padding: EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // Removed column headers
             Expanded(
               child: ListView.builder(
                 itemCount: _getPaginatedUsers().length,
@@ -176,12 +161,10 @@ class _UserListPageState extends State<UserListPage> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Add user action here
-        },
-        child: Icon(Icons.add),
-        tooltip: 'Add User',
+      floatingActionButton: AddButton(
+        screenHeight: screenHeight,
+        screenWidth: screenWidth,
+        pageToNavigate: const AddUserToOrgPage(),
       ),
     );
   }
