@@ -2,41 +2,65 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:labbi_frontend/app/models/organization.dart';
+import 'package:riverpod/riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class OrgController extends ChangeNotifier {
-  bool isLoading = false;
-  String? errorMessage;
-  List<Organization> organizationList = [];
+// State class to manage the organization-related state
+class OrgState {
+  final bool isLoading;
+  final String? errorMessage;
+  final List<Organization> organizationList;
+
+  OrgState({
+    this.isLoading = false,
+    this.errorMessage,
+    this.organizationList = const [],
+  });
+
+  OrgState copyWith({
+    bool? isLoading,
+    String? errorMessage,
+    List<Organization>? organizationList,
+  }) {
+    return OrgState(
+      isLoading: isLoading ?? this.isLoading,
+      errorMessage: errorMessage ?? this.errorMessage,
+      organizationList: organizationList ?? this.organizationList,
+    );
+  }
+}
+
+class OrgController extends StateNotifier<OrgState> {
+  OrgController() : super(OrgState());
 
   Future<void> createOrganization(String orgName, BuildContext context) async {
     if (orgName.isEmpty) {
-      errorMessage = 'Please enter the organization name';
-      notifyListeners();
+      state =
+          state.copyWith(errorMessage: 'Please enter the organization name');
       return;
     }
 
     setLoading(true);
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('token'); // Retrieve token from prefs
-    String? role = prefs.getString('userRole'); // Retrieve role from prefs
-
-    if (token == null || role == null) {
-      setLoading(false);
-      errorMessage = 'User token or role not found. Please login again.';
-      notifyListeners();
-      return;
-    }
-
-    final url = Uri.parse('http://localhost:3000/api/organizations/create');
     try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      String? role = prefs.getString('userRole');
+
+      if (token == null || role == null) {
+        setLoading(false);
+        state = state.copyWith(
+            errorMessage: 'User token or role not found. Please login again.');
+        return;
+      }
+
+      final url = Uri.parse('http://localhost:3000/api/organizations/create');
       final response = await http.post(
         url,
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer $token", // Add token in the header
-          "Role": role, // Add role in the header (if required by backend)
+          "Authorization": "Bearer $token",
+          "Role": role,
         },
         body: jsonEncode({"name": orgName.trim()}),
       );
@@ -49,35 +73,37 @@ class OrgController extends ChangeNotifier {
         // Perform additional actions like redirecting if needed.
       } else if (response.statusCode == 403) {
         setLoading(false);
-        errorMessage = 'Access denied. Admins only.';
-        notifyListeners();
+        state = state.copyWith(errorMessage: 'Access denied. Admins only.');
       } else {
         setLoading(false);
-        errorMessage = 'Failed to create organization. Please try again.';
-        notifyListeners();
+        state = state.copyWith(
+            errorMessage: 'Failed to create organization. Please try again.');
       }
     } catch (e) {
       setLoading(false);
-      errorMessage = 'An error occurred. Please try again.';
-      notifyListeners();
+      state =
+          state.copyWith(errorMessage: 'An error occurred. Please try again.');
     }
   }
 
   Future<void> fetchOrganizations() async {
     setLoading(true);
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('token');
-    String? role = prefs.getString('userRole');
 
-    if (token == null || role == null) {
-      setLoading(false);
-      errorMessage = 'User token or role not found. Please login again.';
-      notifyListeners();
-      return;
-    }
-
-    final url = Uri.parse('http://localhost:3000/api/organizations/list');
     try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      String? role = prefs.getString('userRole');
+
+
+      if (token == null || role == null) {
+        setLoading(false);
+        state = state.copyWith(
+            errorMessage: 'User token or role not found. Please login again.');
+        return;
+      }
+
+      final url = Uri.parse('http://localhost:3000/api/organizations/list');
+      print('Fetching organizations...');
       final response = await http.get(
         url,
         headers: {
@@ -86,27 +112,44 @@ class OrgController extends ChangeNotifier {
           "Role": role,
         },
       );
+      print('Response status: ${response.statusCode}');
+      print('Response status: ${response.body}');
 
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
-        organizationList =
+        final organizations =
             data.map((org) => Organization.fromJson(org)).toList();
-        errorMessage = null; // Clear any existing error message
+        state =
+            state.copyWith(organizationList: organizations, errorMessage: null);
       } else {
-        errorMessage = 'Failed to fetch organizations. Please try again.';
+        state = state.copyWith(
+            errorMessage: 'Failed to fetch organizations. Please try again.');
       }
+
     } catch (e) {
-      errorMessage = 'An error occurred. Please try again.';
-      print("Error: $e"); // Useful for debugging
+      state =
+          state.copyWith(errorMessage: 'An error occurred. Please try again.');
     } finally {
       setLoading(false);
-      notifyListeners();
     }
   }
 
-
   void setLoading(bool loading) {
-    isLoading = loading;
-    notifyListeners();
+    state = state.copyWith(isLoading: loading);
   }
 }
+
+final orgControllerProvider =
+    StateNotifierProvider<OrgController, OrgState>((ref) {
+  return OrgController();
+});
+
+final orgControllerLoadingProvider = Provider<bool>((ref) {
+  final orgController = ref.watch(orgControllerProvider);
+  return orgController.isLoading;
+});
+
+final orgControllerErrorMessageProvider = Provider<String?>((ref) {
+  final orgController = ref.watch(orgControllerProvider);
+  return orgController.errorMessage;
+});

@@ -1,52 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:labbi_frontend/app/components/buttons/logout_button.dart';
 import 'package:labbi_frontend/app/models/menu_item_model.dart';
 import 'package:labbi_frontend/app/screens/menu/menu_item.dart';
 import 'package:labbi_frontend/app/screens/user_profile/user_profile.dart';
+import 'package:riverpod/riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class MenuTaskbar extends StatefulWidget {
+// Provider to load user information
+final userInfoProvider = FutureProvider<Map<String, String>>((ref) async {
+  final prefs = await SharedPreferences.getInstance();
+  return {
+    'userName': prefs.getString('userName') ?? '',
+    'userRole': prefs.getString('userRole') ?? 'user',
+  };
+});
+
+class MenuTaskbar extends ConsumerWidget {
   const MenuTaskbar({super.key});
 
   @override
-  _MenuTaskbarState createState() => _MenuTaskbarState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final userInfoAsyncValue = ref.watch(userInfoProvider);
 
-class _MenuTaskbarState extends State<MenuTaskbar> {
-  String userName = '';
-  String userRole = '';
-  final String pathImage = 'assets/images/man.png';
-
-  @override
-  void initState() {
-    super.initState();
-    _loadUserInfo();
+    return userInfoAsyncValue.when(
+      data: (userInfo) {
+        final userName = userInfo['userName']!;
+        final userRole = userInfo['userRole']!;
+        return buildDrawer(context, userName, userRole);
+      },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stack) =>
+          const Center(child: Text('Error loading user info')),
+    );
   }
 
-  Future<void> _loadUserInfo() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      userName = prefs.getString('userName') ?? '';
-      userRole = prefs.getString('userRole') ??
-          'user'; // Default to 'user' if no role found
-    });
-  }
-
-  List<MenuItemModel> getMenuItems() {
-    switch (userRole) {
-      case 'admin':
-        return adminMenuItems;
-      case 'orgAdmin':
-        return orgAdminMenuItems;
-      case 'developer':
-        return developerMenuItems;
-      default:
-        return userMenuItems;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget buildDrawer(BuildContext context, String userName, String userRole) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
 
@@ -55,7 +44,7 @@ class _MenuTaskbarState extends State<MenuTaskbar> {
       child: Column(
         children: [
           // Header
-          buildHeader(context, screenHeight, screenWidth),
+          buildHeader(context, screenHeight, screenWidth, userName),
 
           // Body
           Expanded(
@@ -63,8 +52,8 @@ class _MenuTaskbarState extends State<MenuTaskbar> {
               children: [
                 // Menu Items
                 MenuItem(
-                  menuItem:
-                      getMenuItems(), // Dynamically choose based on user role
+                  menuItem: getMenuItems(
+                      userRole), // Dynamically choose based on user role
                   screenHeight: screenHeight,
                   screenWidth: screenWidth,
                 ),
@@ -87,8 +76,8 @@ class _MenuTaskbarState extends State<MenuTaskbar> {
     );
   }
 
-  Widget buildHeader(
-      BuildContext context, double screenHeight, double screenWidth) {
+  Widget buildHeader(BuildContext context, double screenHeight,
+      double screenWidth, String userName) {
     return Material(
       child: InkWell(
         onTap: () {
@@ -123,7 +112,7 @@ class _MenuTaskbarState extends State<MenuTaskbar> {
                   ),
                   child: CircleAvatar(
                     radius: screenHeight * 0.065,
-                    backgroundImage: AssetImage(pathImage),
+                    backgroundImage: const AssetImage('assets/images/man.png'),
                   ),
                 ),
                 Text(
@@ -141,5 +130,18 @@ class _MenuTaskbarState extends State<MenuTaskbar> {
         ),
       ),
     );
+  }
+
+  List<MenuItemModel> getMenuItems(String userRole) {
+    switch (userRole) {
+      case 'admin':
+        return adminMenuItems;
+      case 'orgAdmin':
+        return orgAdminMenuItems;
+      case 'developer':
+        return developerMenuItems;
+      default:
+        return userMenuItems;
+    }
   }
 }

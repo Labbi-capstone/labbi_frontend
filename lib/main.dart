@@ -6,8 +6,8 @@ import 'package:labbi_frontend/app/screens/admin_org/admin_org_home_page.dart';
 import 'package:labbi_frontend/app/controllers/auth_controller.dart';
 import 'package:labbi_frontend/app/routes.dart';
 import 'package:labbi_frontend/app/screens/admin_system/user_list_in_org_page.dart';
-import 'package:labbi_frontend/app/screens/authentication/login/login_page.dart';
-import 'package:labbi_frontend/app/screens/authentication/register/register_page.dart';
+import 'package:labbi_frontend/app/screens/authentication/login_page.dart';
+import 'package:labbi_frontend/app/screens/authentication/register_page.dart';
 import 'package:labbi_frontend/app/screens/control_panel_page/control_panel_page.dart';
 import 'package:labbi_frontend/app/screens/dashboard_page/create_dashboard_page.dart';
 import 'package:labbi_frontend/app/screens/dashboard_page/dashboard_page.dart';
@@ -19,27 +19,13 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:labbi_frontend/app/screens/user_org/user_org_home_page.dart';
 import 'package:labbi_frontend/app/screens/user_profile/user_edit/edit_user_profile_page.dart';
 import 'package:labbi_frontend/app/screens/user_profile/user_profile.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:labbi_frontend/app/screens/admin_system/list_org_page.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: "assets/.env");
-  runApp(MultiProvider(
-    providers: [
-      ChangeNotifierProvider(
-        create: (_) => AuthController(),
-      ),
-      ChangeNotifierProvider(
-        create: (_) => OrgController(),
-      ),
-      ChangeNotifierProvider(
-        create: (_) => OrgController(),
-      ),
-      ChangeNotifierProvider(
-        create: (_) => UserController(),
-      ),
-    ],
-    child: const MyApp(),
+  runApp(const ProviderScope(
+    child: MyApp(),
   ));
 }
 

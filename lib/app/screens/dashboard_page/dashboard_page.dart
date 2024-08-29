@@ -1,39 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:labbi_frontend/app/Theme/app_colors.dart';
 import 'package:labbi_frontend/app/components/buttons/menu_button.dart';
 import 'package:labbi_frontend/app/models/dashboard.dart';
 import 'package:labbi_frontend/app/screens/dashboard_page/dashboard_items.dart';
 import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
+import 'package:labbi_frontend/app/state/dashboard_state.dart';
 import 'package:labbi_frontend/app/utils/user_info_helper.dart';
+import 'package:riverpod/riverpod.dart';
 
-class DashboardPage extends StatefulWidget {
+// Provider to load user information
+final userInfoProvider = FutureProvider<Map<String, String>>((ref) async {
+  return await UserInfoHelper.loadUserInfo();
+});
+
+class DashboardPage extends ConsumerWidget {
   @override
-  _DashboardPageState createState() => _DashboardPageState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final userInfoAsyncValue = ref.watch(userInfoProvider);
 
-class _DashboardPageState extends State<DashboardPage> {
-  String userName = '';
-  String userId = '';
-
-  @override
-  void initState() {
-    super.initState();
-    _loadUserInfo();
-  }
-
-  Future<void> _loadUserInfo() async {
-    final userInfo = await UserInfoHelper.loadUserInfo();
-    setState(() {
-      userName = userInfo['userName']!;
-      userId = userInfo['userId']!;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // Menu button
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -53,14 +40,17 @@ class _DashboardPageState extends State<DashboardPage> {
             return const MenuButton();
           },
         ),
-        title: Text('Dashboard, Welcome $userName',
-            style: TextStyle(color: Colors.white)),
+        title: userInfoAsyncValue.when(
+          data: (userInfo) => Text('Dashboard, Welcome ${userInfo['userName']}',
+              style: TextStyle(color: Colors.white)),
+          loading: () =>
+              Text('Loading...', style: TextStyle(color: Colors.white)),
+          error: (error, stack) =>
+              Text('Error', style: TextStyle(color: Colors.white)),
+        ),
         centerTitle: true,
       ),
-
-      // Menu Bar
       drawer: const MenuTaskbar(),
-
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -75,9 +65,9 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
         ),
         child: ListView.builder(
-          itemCount: sampleDashboards.length,
+          itemCount: initialDashboards.length,
           itemBuilder: (context, index) {
-            final dashboard = sampleDashboards[index];
+            final dashboard = initialDashboards[index];
             return DashboardItem(
               title: dashboard.name,
               lineChartData: dashboard.lineChartData,

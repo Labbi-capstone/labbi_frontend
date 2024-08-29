@@ -1,16 +1,97 @@
 import 'package:flutter/material.dart';
-import 'package:labbi_frontend/app/controllers/user_controller.dart';
-import 'package:labbi_frontend/app/view_model/user_view_model.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_dropdown/flutter_dropdown.dart';
 
-class AddUserToOrgPage extends StatefulWidget {
+class MockUser {
+  final String id;
+  final String fullName;
+  final String email;
+  String role; // Mutable role field
+  bool isSelected;
+
+  MockUser({
+    required this.id,
+    required this.fullName,
+    required this.email,
+    this.role = 'User', // Default role is "User"
+    this.isSelected = false,
+  });
+
+  // Method to create a copy of the current user with modified fields
+  MockUser copyWith({String? role, bool? isSelected}) {
+    return MockUser(
+      id: id,
+      fullName: fullName,
+      email: email,
+      role: role ?? this.role,
+      isSelected: isSelected ?? this.isSelected,
+    );
+  }
+}
+
+final userProvider = StateNotifierProvider<UserController, List<MockUser>>(
+  (ref) => UserController(),
+);
+
+class UserController extends StateNotifier<List<MockUser>> {
+  UserController()
+      : super([
+          MockUser(id: '1', fullName: 'John Doe', email: 'johndoe@example.com'),
+          MockUser(
+              id: '2',
+              fullName: 'Esther Howard',
+              email: 'estherh@ahffagon.com',
+              role: 'Admin'),
+          MockUser(
+              id: '3',
+              fullName: 'Leslie Alexander',
+              email: 'lesliea@ahffagon.com'),
+          MockUser(
+              id: '4', fullName: 'Wade Warren', email: 'wadew@ahffagon.com'),
+          MockUser(
+              id: '5', fullName: 'Jenny Wilson', email: 'jennyw@ahffagon.com'),
+        ]);
+
+  void toggleUserSelection(String userId) {
+    state = state.map((user) {
+      return user.copyWith(isSelected: user.id == userId);
+    }).toList();
+  }
+
+  void changeUserRole(String userId, String newRole) {
+    state = state.map((user) {
+      if (user.id == userId) {
+        return user.copyWith(role: newRole);
+      }
+      return user;
+    }).toList();
+  }
+
+  List<MockUser> getFilteredUsers(String keyword) {
+    return state.where((user) {
+      return user.fullName.toLowerCase().contains(keyword.toLowerCase());
+    }).toList();
+  }
+
+  List<MockUser> get selectedUsers {
+    return state.where((user) => user.isSelected).toList();
+  }
+
+  void addUsersToOrganization() {
+    final selectedUsers = this.selectedUsers;
+    // Implement the logic to send selected users to backend or wherever required
+    print('Selected Users: $selectedUsers');
+  }
+}
+
+class AddUserToOrgPage extends ConsumerStatefulWidget {
   const AddUserToOrgPage({super.key});
 
   @override
-  State<AddUserToOrgPage> createState() => _AddUserToOrgPageState();
+  ConsumerState<AddUserToOrgPage> createState() => _AddUserToOrgPageState();
 }
 
-class _AddUserToOrgPageState extends State<AddUserToOrgPage> {
+class _AddUserToOrgPageState extends ConsumerState<AddUserToOrgPage> {
   final _formKey = GlobalKey<FormState>();
   String searchKeyword = '';
 
@@ -18,7 +99,10 @@ class _AddUserToOrgPageState extends State<AddUserToOrgPage> {
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
-    final userController = Provider.of<UserController>(context);
+    final filteredUsers = ref.watch(userProvider).where((user) {
+      return user.fullName.toLowerCase().contains(searchKeyword.toLowerCase());
+    }).toList();
+    final userController = ref.read(userProvider.notifier);
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -99,7 +183,6 @@ class _AddUserToOrgPageState extends State<AddUserToOrgPage> {
                           setState(() {
                             searchKeyword = value;
                           });
-                          userController.filterUsers(searchKeyword);
                         },
                       ),
                     ),
@@ -117,38 +200,45 @@ class _AddUserToOrgPageState extends State<AddUserToOrgPage> {
                           horizontal: 0.07 * screenWidth,
                         ),
                         child: ListView.builder(
-                          itemCount: userController.filteredUsers.length,
+                          itemCount: filteredUsers.length,
                           itemBuilder: (context, index) {
-                            UserViewModel userViewModel =
-                                userController.filteredUsers[index];
+                            final user = filteredUsers[index];
                             return ListTile(
-                              title: Text(userViewModel.user.fullName),
-                              subtitle: Text(userViewModel.user.email),
-                              trailing: userViewModel.isSelected
-                                  ? Icon(Icons.check_circle,
-                                      color: Colors.green)
-                                  : Icon(Icons.radio_button_unchecked),
-                              onTap: () {
-                                userController
-                                    .toggleUserSelection(userViewModel);
-                              },
+                              title: Text(user.fullName),
+                              subtitle: Text(user.email),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  DropDown<String>(
+                                    items: <String>['User', 'Admin'],
+                                    initialValue: user.role,
+                                    onChanged: (String? newValue) {
+                                      if (newValue != null) {
+                                        userController.changeUserRole(
+                                            user.id, newValue);
+                                      }
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: Icon(
+                                      user.isSelected
+                                          ? Icons.check_circle
+                                          : Icons.radio_button_unchecked,
+                                      color:
+                                          user.isSelected ? Colors.green : null,
+                                    ),
+                                    onPressed: () {
+                                      userController
+                                          .toggleUserSelection(user.id);
+                                    },
+                                  ),
+                                ],
+                              ),
                             );
                           },
                         ),
                       ),
                     ),
-                    // Error Message (if any)
-                    if (userController.errorMessage != null)
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          vertical: 0.01 * screenHeight,
-                          horizontal: 0.07 * screenWidth,
-                        ),
-                        child: Text(
-                          userController.errorMessage!,
-                          style: TextStyle(color: Colors.red),
-                        ),
-                      ),
                     // Add Button
                     Padding(
                       padding: EdgeInsets.only(
@@ -167,23 +257,17 @@ class _AddUserToOrgPageState extends State<AddUserToOrgPage> {
                             elevation: 0,
                             backgroundColor: const Color(0xff3ac7f9),
                           ),
-                          onPressed: userController.isLoading
-                              ? null
-                              : () {
-                                  userController.addUsersToOrganization();
-                                },
-                          child: userController.isLoading
-                              ? CircularProgressIndicator(
-                                  color: Colors.white,
-                                )
-                              : Text(
-                                  'Add',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 0.025 * screenHeight,
-                                    color: Colors.white,
-                                  ),
-                                ),
+                          onPressed: () {
+                            userController.addUsersToOrganization();
+                          },
+                          child: Text(
+                            'Add',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 0.025 * screenHeight,
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
                       ),
                     ),
