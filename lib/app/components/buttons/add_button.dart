@@ -14,24 +14,29 @@ class AddButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      bottom: screenHeight * 0.02,
-      right: screenWidth * 0.06,
-      child: InkWell(
-        onTap: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => pageToNavigate,
-          ),
+    return Align(
+      alignment: Alignment.bottomRight,
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom: screenHeight * 0.02,
+          right: screenWidth * 0.06,
         ),
-        child: CircleAvatar(
-          radius: screenHeight / 25,
-          backgroundColor: Colors.white,
-          child: Image.asset(
-            'assets/images/add.png',
-            height: screenHeight / 7,
-            width: screenWidth / 7,
-            fit: BoxFit.contain,
+        child: InkWell(
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => pageToNavigate,
+            ),
+          ),
+          child: CircleAvatar(
+            radius: screenHeight / 25,
+            backgroundColor: Colors.white,
+            child: Image.asset(
+              'assets/images/add.png',
+              height: screenHeight / 7,
+              width: screenWidth / 7,
+              fit: BoxFit.contain,
+            ),
           ),
         ),
       ),

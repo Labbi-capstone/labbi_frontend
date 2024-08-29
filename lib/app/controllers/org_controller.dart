@@ -125,6 +125,7 @@ class OrgController extends StateNotifier<OrgState> {
         state = state.copyWith(
             errorMessage: 'Failed to fetch organizations. Please try again.');
       }
+
     } catch (e) {
       state =
           state.copyWith(errorMessage: 'An error occurred. Please try again.');

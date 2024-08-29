@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/models/user.dart';
 import 'package:labbi_frontend/app/screens/admin_system/add_user_to_org.dart';
 import '../../components/pagination.dart';
-import '../../components/buttons/add_button.dart'; // Import the AddButton// Import the AddUserToOrgPage
+import '../../components/buttons/add_button.dart'; // Import the AddButton
 
 class UserListPage extends StatefulWidget {
   @override
@@ -11,13 +11,41 @@ class UserListPage extends StatefulWidget {
 
 class _UserListPageState extends State<UserListPage> {
   final List<User> users = [
-    User("Brooklyn Simmons", "brooklyns@ahffagon.com", "password", "Admin"),
-    User("Esther Howard", "estherh@ahffagon.com", "password", "Admin"),
-    User("Leslie Alexander", "lesliea@ahffagon.com", "password", "Admin"),
-    User("Wade Warren", "wadew@ahffagon.com", "password", "User"),
-    User("Jenny Wilson", "jennyw@ahffagon.com", "password", "User"),
-    User("Robert Fox", "robertf@ahffagon.com", "password", "User"),
-    User("Jacob Jones", "jacobj@ahffagon.com", "password", "User"),
+    User(
+        id: '1',
+        fullName: "John Doe",
+        email: "johndoe@example.com",
+        role: "Admin"),
+    User(
+        id: '2',
+        fullName: "Esther Howard",
+        email: "estherh@ahffagon.com",
+        role: "Admin"),
+    User(
+        id: '3',
+        fullName: "Leslie Alexander",
+        email: "lesliea@ahffagon.com",
+        role: "Admin"),
+    User(
+        id: '4',
+        fullName: "Wade Warren",
+        email: "wadew@ahffagon.com",
+        role: "User"),
+    User(
+        id: '5',
+        fullName: "Jenny Wilson",
+        email: "jennyw@ahffagon.com",
+        role: "User"),
+    User(
+        id: '6',
+        fullName: "Robert Fox",
+        email: "robertf@ahffagon.com",
+        role: "User"),
+    User(
+        id: '7',
+        fullName: "Jacob Jones",
+        email: "jacobj@ahffagon.com",
+        role: "User"),
     // Add more users as needed
   ];
 
@@ -166,6 +194,7 @@ class _UserListPageState extends State<UserListPage> {
         screenWidth: screenWidth,
         pageToNavigate: const AddUserToOrgPage(),
       ),
+
     );
   }
 }

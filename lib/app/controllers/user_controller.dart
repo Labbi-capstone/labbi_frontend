@@ -1,49 +1,44 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:labbi_frontend/app/view_model/user_view_model.dart';
+import 'package:labbi_frontend/app/models/User.dart';
 
-class UserController extends StateNotifier<List<UserViewModel>> {
+class UserController extends StateNotifier<List<User>> {
   UserController() : super([]);
 
-  bool _isLoading = false;
-  String? _errorMessage;
-
-  bool get isLoading => _isLoading;
-  String? get errorMessage => _errorMessage;
+  String? errorMessage;
+  bool isLoading = false;
+  final Map<String, bool> _selectedUsers = {}; // Track selection by user ID
 
   void filterUsers(String keyword) {
-    // Logic to filter users based on the keyword
+    state = state.where((user) => user.fullName.contains(keyword)).toList();
   }
 
-  void toggleUserSelection(UserViewModel userViewModel) {
-    // Logic to toggle user selection
+  void toggleUserSelection(User user) {
+    if (_selectedUsers.containsKey(user.id)) {
+      _selectedUsers[user.id] = !_selectedUsers[user.id]!;
+    } else {
+      _selectedUsers[user.id] = true;
+    }
+    state = [...state]; // Trigger a state update
+  }
+
+  bool isSelected(User user) {
+    return _selectedUsers[user.id] ?? false;
   }
 
   Future<void> addUsersToOrganization() async {
-    _isLoading = true;
-    _errorMessage = null;
-    state = [...state]; // Trigger a state update
+    // Implement logic to add selected users to the organization
+  }
 
-    try {
-      // Perform the operation to add users to the organization
-      // If successful, reset the isLoading flag
-      _isLoading = false;
-    } catch (e) {
-      // On error, set the errorMessage
-      _errorMessage = e.toString();
-      _isLoading = false;
-    }
-
-    state = [...state]; // Trigger a state update
+  List<User> get selectedUsers {
+    return state.where((user) => _selectedUsers[user.id] == true).toList();
   }
 }
 
 final userControllerProvider =
-    StateNotifierProvider<UserController, List<UserViewModel>>((ref) {
+    StateNotifierProvider<UserController, List<User>>((ref) {
   return UserController();
 });
 
-final filteredUsersProvider = Provider<List<UserViewModel>>((ref) {
-  final userController = ref.watch(userControllerProvider);
-  // Logic to return filtered users based on some criteria
-  return userController; // This should return the actual filtered list
+final filteredUsersProvider = Provider<List<User>>((ref) {
+  return ref.watch(userControllerProvider);
 });

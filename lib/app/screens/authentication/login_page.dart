@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:labbi_frontend/app/controllers/auth_controller.dart';
-import 'package:labbi_frontend/app/screens/authentication/register/register_page.dart';
+import 'package:labbi_frontend/app/screens/authentication/register_page.dart';
 import 'package:labbi_frontend/app/components/text_fields/textfield.dart';
 import 'package:labbi_frontend/app/components/buttons/button.dart';
 import 'package:labbi_frontend/app/theme/app_colors.dart';
