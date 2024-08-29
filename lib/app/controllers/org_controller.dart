@@ -94,7 +94,6 @@ class OrgController extends StateNotifier<OrgState> {
       String? token = prefs.getString('token');
       String? role = prefs.getString('userRole');
 
-
       if (token == null || role == null) {
         setLoading(false);
         state = state.copyWith(
@@ -103,7 +102,7 @@ class OrgController extends StateNotifier<OrgState> {
       }
 
       final url = Uri.parse('http://localhost:3000/api/organizations/list');
-      print('Fetching organizations...');
+
       final response = await http.get(
         url,
         headers: {
@@ -112,8 +111,6 @@ class OrgController extends StateNotifier<OrgState> {
           "Role": role,
         },
       );
-      print('Response status: ${response.statusCode}');
-      print('Response status: ${response.body}');
 
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
@@ -125,7 +122,6 @@ class OrgController extends StateNotifier<OrgState> {
         state = state.copyWith(
             errorMessage: 'Failed to fetch organizations. Please try again.');
       }
-
     } catch (e) {
       state =
           state.copyWith(errorMessage: 'An error occurred. Please try again.');

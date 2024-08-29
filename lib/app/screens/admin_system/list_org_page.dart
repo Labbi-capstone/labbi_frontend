@@ -98,7 +98,9 @@ class _ListOrgPageState extends ConsumerState<ListOrgPage> {
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
-                                                   UserListPage(), // Navigate to UserListPage
+                                                   UserListInOrgPage(
+                                                      orgId: org
+                                                          .id), // Navigate to UserListPage
                                             ),
                                           );
                                         },
