@@ -8,12 +8,12 @@ final List<Dashboard> initialDashboards = [
     id: 11,
     name: "Device 111",
     lineChartData: [
-      FlSpot(0, 1),
-      FlSpot(1, 3),
-      FlSpot(2, 5),
-      FlSpot(3, 4),
-      FlSpot(4, 7),
-      FlSpot(5, 8),
+      const FlSpot(0, 1),
+      const FlSpot(1, 3),
+      const FlSpot(2, 5),
+      const FlSpot(3, 4),
+      const FlSpot(4, 7),
+      const FlSpot(5, 8),
     ],
     pieChartData: [
       PieChartSectionData(

@@ -6,7 +6,6 @@ import 'package:labbi_frontend/app/screens/authentication/register_page.dart';
 import 'package:labbi_frontend/app/components/text_fields/textfield.dart';
 import 'package:labbi_frontend/app/components/buttons/button.dart';
 import 'package:labbi_frontend/app/theme/app_colors.dart';
-import 'package:riverpod/riverpod.dart';
 
 class LoginPage extends ConsumerWidget {
   const LoginPage({super.key});

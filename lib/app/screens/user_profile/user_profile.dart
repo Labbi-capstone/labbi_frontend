@@ -325,12 +325,12 @@ class UserInfoRow extends StatelessWidget {
   final double screenWidth;
 
   const UserInfoRow({
-    Key? key,
+    super.key,
     required this.label,
     required this.value,
     required this.screenHeight,
     required this.screenWidth,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

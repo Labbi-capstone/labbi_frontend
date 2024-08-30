@@ -4,15 +4,14 @@ import 'package:flutter/material.dart';
 class BarChartComponent extends StatelessWidget {
   final List<BarChartGroupData> barGroups;
 
-  const BarChartComponent({required this.barGroups, Key? key})
-      : super(key: key);
+  const BarChartComponent({required this.barGroups, super.key});
 
   @override
   Widget build(BuildContext context) {
     return BarChart(
       BarChartData(
-        gridData: FlGridData(show: true),
-        titlesData: FlTitlesData(show: true),
+        gridData: const FlGridData(show: true),
+        titlesData: const FlTitlesData(show: true),
         borderData: FlBorderData(
           show: true,
           border: Border.all(color: const Color(0xff37434d), width: 1),

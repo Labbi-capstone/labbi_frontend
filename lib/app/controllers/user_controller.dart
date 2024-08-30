@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:labbi_frontend/app/models/User.dart';
 
@@ -7,6 +10,33 @@ class UserController extends StateNotifier<List<User>> {
   String? errorMessage;
   bool isLoading = false;
   final Map<String, bool> _selectedUsers = {}; // Track selection by user ID
+
+  Future<void> fetchUsersByOrg(String orgId) async {
+    isLoading = true;
+    try {
+      final url =
+          Uri.parse('http://localhost:3000/api/organizations/$orgId/users');
+      final response = await http.get(url);
+
+      // Debugging print statements
+      debugPrint("Fetching users for orgId: $orgId");
+      debugPrint("Response status: ${response.statusCode}");
+      debugPrint("Response body: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final List<dynamic> usersJson =
+            data['users']; // Extract the 'users' array
+        state = usersJson.map((user) => User.fromJson(user)).toList();
+      } else {
+        throw Exception('Failed to load users');
+      }
+    } catch (e) {
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
 
   void filterUsers(String keyword) {
     state = state.where((user) => user.fullName.contains(keyword)).toList();

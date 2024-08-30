@@ -37,7 +37,7 @@ class _AdminDeviceHistoryPageState extends State<AdminOrgDeviceHistoryPage> {
         ),
         leading: Builder(
           builder: (BuildContext context) {
-            return MenuButton();
+            return const MenuButton();
           },
         ),
         title: SizedBox(
@@ -51,7 +51,7 @@ class _AdminDeviceHistoryPageState extends State<AdminOrgDeviceHistoryPage> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.redo, color: Colors.white),
+            icon: const Icon(Icons.redo, color: Colors.white),
             tooltip: 'Exit',
             onPressed: () {
               Navigator.push(
