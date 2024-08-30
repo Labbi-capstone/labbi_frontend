@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/Theme/app_colors.dart';
-import 'package:labbi_frontend/app/components/menu_button.dart';
+import 'package:labbi_frontend/app/components/buttons/menu_button.dart';
 import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
 import 'package:labbi_frontend/app/screens/notification/notification_page.dart';
 import 'package:labbi_frontend/app/utils/user_info_helper.dart';
 
 class UserProfilePage extends StatefulWidget {
+  const UserProfilePage({super.key});
+
   @override
   State<StatefulWidget> createState() => _UserProfilePageState();
 }
@@ -61,7 +63,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   height: 0.04 * screenHeight,
                   width: (1 / 12) * screenWidth,
                   decoration: const BoxDecoration(
-                      // color: Colors.red,
                       image: DecorationImage(
                           image:
                               AssetImage("assets/images/notification-icon.png"),
@@ -150,7 +151,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   height: null,
                   width: screenWidth,
                   decoration: const BoxDecoration(
-                      // color: Colors.red,
                       image: DecorationImage(
                           image: AssetImage(
                               "assets/images/company-logo-white.png"),
@@ -200,7 +200,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
           Padding(
             padding: const EdgeInsets.all(0),
             child: Text(
-              '$userName',
+              userName,
               style: TextStyle(
                   fontSize: screenHeight / 26, fontWeight: FontWeight.bold),
             ),
@@ -300,7 +300,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   ),
                   UserInfoRow(
                     label: "Email",
-                    value: "$userEmail",
+                    value: userEmail,
                     screenHeight: screenHeight,
                     screenWidth: screenWidth,
                   ),

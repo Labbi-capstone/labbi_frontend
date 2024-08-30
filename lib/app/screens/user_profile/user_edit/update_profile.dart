@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:labbi_frontend/app/components/textfield.dart';
-import 'package:labbi_frontend/app/components/edit_buttons.dart';
+import 'package:labbi_frontend/app/components/text_fields/textfield.dart';
+import 'package:labbi_frontend/app/components/buttons/edit_buttons.dart';
 
 class UpdateProfile extends StatefulWidget {
 

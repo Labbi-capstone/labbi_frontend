@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/Theme/app_colors.dart';
-import 'package:labbi_frontend/app/components/menu_button.dart';
+import 'package:labbi_frontend/app/components/buttons/menu_button.dart';
 import 'package:labbi_frontend/app/models/dashboard.dart';
 import 'package:labbi_frontend/app/screens/dashboard_page/dashboard_items.dart';
 import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
