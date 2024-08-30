@@ -68,7 +68,7 @@ class OrgController extends StateNotifier<OrgState> {
         debugPrint('[MY_APP] Organization created successfully!');
         setLoading(false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Organization created successfully!')),
+          const SnackBar(content: Text('Organization created successfully!')),
         );
       } else if (response.statusCode == 403) {
         debugPrint('[MY_APP] Access denied. Admins only.');

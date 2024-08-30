@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class UserListInOrgPage extends ConsumerStatefulWidget {
   final String orgId; // Receive orgId from the previous page
 
-  const UserListInOrgPage({Key? key, required this.orgId}) : super(key: key);
+  const UserListInOrgPage({super.key, required this.orgId});
 
   @override
   _UserListPageState createState() => _UserListPageState();
@@ -29,25 +29,25 @@ class _UserListPageState extends ConsumerState<UserListInOrgPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('User List'),
+        title: const Text('User List'),
         backgroundColor: Colors.white,
         elevation: 1,
       ),
       body: users.isEmpty
-          ? Center(child: Text('No users found for this organization.'))
+          ? const Center(child: Text('No users found for this organization.'))
           : Padding(
-              padding: EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0),
               child: ListView.builder(
                 itemCount: users.length,
                 itemBuilder: (context, index) {
                   final user = users[index];
                   return Card(
                     elevation: 2,
-                    margin: EdgeInsets.symmetric(vertical: 8.0),
+                    margin: const EdgeInsets.symmetric(vertical: 8.0),
                     child: ListTile(
                       leading: CircleAvatar(
                         backgroundColor: Colors.grey[200],
-                        child: Icon(Icons.person, color: Colors.grey),
+                        child: const Icon(Icons.person, color: Colors.grey),
                       ),
                       title: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,13 +59,13 @@ class _UserListPageState extends ConsumerState<UserListInOrgPage> {
                                 Padding(
                                   padding: const EdgeInsets.only(left: 8.0),
                                   child: Container(
-                                    padding: EdgeInsets.symmetric(
+                                    padding: const EdgeInsets.symmetric(
                                         vertical: 2.0, horizontal: 4.0),
                                     decoration: BoxDecoration(
                                       color: Colors.redAccent,
                                       borderRadius: BorderRadius.circular(4.0),
                                     ),
-                                    child: Text(
+                                    child: const Text(
                                       'Admin',
                                       style: TextStyle(
                                         color: Colors.white,

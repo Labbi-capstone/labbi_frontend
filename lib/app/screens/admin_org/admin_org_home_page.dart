@@ -4,7 +4,6 @@ import 'package:labbi_frontend/app/components/list_box.dart';
 import 'package:labbi_frontend/app/components/buttons/menu_button.dart';
 import 'package:labbi_frontend/app/screens/admin_org/admin_org_device_details.dart';
 import 'package:labbi_frontend/app/screens/admin_org/admin_org_users.dart';
-import 'package:labbi_frontend/app/screens/admin_system/create_org_page.dart';
 import 'package:labbi_frontend/app/screens/admin_org/admin_org_history.dart';
 import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
 import 'package:labbi_frontend/app/mockDatas/user_device_test.dart';
@@ -57,7 +56,7 @@ class _AdminHomeOrgState extends State<AdminOrgHomePage> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.history, color: Colors.white),
+            icon: const Icon(Icons.history, color: Colors.white),
             tooltip: 'History',
             onPressed: () {
               Navigator.push(
@@ -161,7 +160,7 @@ class _AdminHomeOrgState extends State<AdminOrgHomePage> {
                       .map((device) => ListTile(
                             title: Text(
                               device.name,
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              style: const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             subtitle: Text(
                                 'Type: ${device.type}\nStatus: ${device.status}'),

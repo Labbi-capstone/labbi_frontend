@@ -7,7 +7,7 @@ class Pagination extends StatelessWidget {
   final VoidCallback onNext;
   final ValueChanged<int> onPageSelected;
 
-  Pagination({
+  const Pagination({super.key, 
     required this.currentPage,
     required this.totalPages,
     required this.onPrev,

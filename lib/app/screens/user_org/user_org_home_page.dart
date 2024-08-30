@@ -37,7 +37,7 @@ class _UserOrgHomePageState extends State<UserOrgHomePage> {
         // Menu button
         leading: Builder(
           builder: (BuildContext context) {
-            return MenuButton();
+            return const MenuButton();
           },
         ),
 

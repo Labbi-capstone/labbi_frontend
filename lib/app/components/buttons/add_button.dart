@@ -6,11 +6,11 @@ class AddButton extends StatelessWidget {
   final Widget pageToNavigate;
 
   const AddButton({
-    Key? key,
+    super.key,
     required this.screenHeight,
     required this.screenWidth,
     required this.pageToNavigate,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

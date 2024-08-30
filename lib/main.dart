@@ -48,7 +48,7 @@ class MyApp extends StatelessWidget {
       routes: {
         Routes.login: (context) => const LoginPage(),
         Routes.register: (context) => const RegisterPage(),
-        Routes.dashboard: (context) => DashboardPage(),
+        Routes.dashboard: (context) => const DashboardPage(),
         Routes.userProfilePage: (context) => const UserProfilePage(),
         Routes.editUserProfilePage: (context) => const EditUserProfilePage(),
         Routes.notificationPage: (context) => const NotificationPage(),
@@ -56,7 +56,7 @@ class MyApp extends StatelessWidget {
         Routes.adminOrgHomePage: (context) => const AdminOrgHomePage(),
         Routes.userOrgHomePage: (context) => const UserOrgHomePage(),
         Routes.createOrgPage: (context) => const CreateOrgPage(),
-        Routes.controlPanelPage: (context) => ControlPanelPage(),
+        Routes.controlPanelPage: (context) => const ControlPanelPage(),
         Routes.createDashboardPage: (context) => const CreateDashboardPage(),
       },
       onUnknownRoute: (settings) => MaterialPageRoute(

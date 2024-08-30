@@ -38,9 +38,6 @@ class UserController extends StateNotifier<List<User>> {
     }
   }
 
-
-
-
   void filterUsers(String keyword) {
     state = state.where((user) => user.fullName.contains(keyword)).toList();
   }

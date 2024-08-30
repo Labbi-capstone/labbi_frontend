@@ -4,15 +4,14 @@ import 'package:flutter/material.dart';
 class LineChartComponent extends StatelessWidget {
   final List<FlSpot> dataPoints;
 
-  const LineChartComponent({required this.dataPoints, Key? key})
-      : super(key: key);
+  const LineChartComponent({required this.dataPoints, super.key});
 
   @override
   Widget build(BuildContext context) {
     return LineChart(
       LineChartData(
-        gridData: FlGridData(show: true),
-        titlesData: FlTitlesData(show: true),
+        gridData: const FlGridData(show: true),
+        titlesData: const FlTitlesData(show: true),
         borderData: FlBorderData(
           show: true,
           border: Border.all(color: const Color(0xff37434d), width: 1),
@@ -24,7 +23,7 @@ class LineChartComponent extends StatelessWidget {
             color: Colors.blue, 
             barWidth: 4,
             belowBarData: BarAreaData(show: false),
-            dotData: FlDotData(show: true),
+            dotData: const FlDotData(show: true),
           ),
         ],
       ),

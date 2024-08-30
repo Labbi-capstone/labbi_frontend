@@ -10,21 +10,21 @@ List<UserDeviceHistory> getUserDeviceHistory() {
   return [
     UserDeviceHistory(
         username: 'User 1',
-        addedOn: DateTime.now().subtract(Duration(days: 1))),
+        addedOn: DateTime.now().subtract(const Duration(days: 1))),
     UserDeviceHistory(
         username: 'User 2',
-        addedOn: DateTime.now().subtract(Duration(days: 3))),
+        addedOn: DateTime.now().subtract(const Duration(days: 3))),
     UserDeviceHistory(
         username: 'User 3',
-        addedOn: DateTime.now().subtract(Duration(days: 5))),
+        addedOn: DateTime.now().subtract(const Duration(days: 5))),
     UserDeviceHistory(
         username: 'User 4',
-        addedOn: DateTime.now().subtract(Duration(days: 8))),
+        addedOn: DateTime.now().subtract(const Duration(days: 8))),
     UserDeviceHistory(
         username: 'User 5',
-        addedOn: DateTime.now().subtract(Duration(days: 7))),
+        addedOn: DateTime.now().subtract(const Duration(days: 7))),
     UserDeviceHistory(
         username: 'User 6',
-        addedOn: DateTime.now().subtract(Duration(days: 11))),
+        addedOn: DateTime.now().subtract(const Duration(days: 11))),
   ];
 }

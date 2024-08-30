@@ -210,7 +210,7 @@ class _AddUserToOrgPageState extends ConsumerState<AddUserToOrgPage> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   DropDown<String>(
-                                    items: <String>['User', 'Admin'],
+                                    items: const <String>['User', 'Admin'],
                                     initialValue: user.role,
                                     onChanged: (String? newValue) {
                                       if (newValue != null) {

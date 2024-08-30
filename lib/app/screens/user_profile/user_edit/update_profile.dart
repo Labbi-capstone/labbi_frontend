@@ -63,13 +63,13 @@ class _UpdateProfileState extends State<UpdateProfile> {
             ],
           ),
         ),
-        MyTextField(
+        const MyTextField(
           title: 'User name',
           hintText: "", 
           obscureText: false,
           errorText: '',
         ),
-        MyTextField(
+        const MyTextField(
           title: 'Email',
           hintText: '',
           obscureText: false,
@@ -132,13 +132,13 @@ class _UpdateProfileState extends State<UpdateProfile> {
             ),
           ),
         ),
-        MyTextField(
+        const MyTextField(
           title: 'Enter OTP',
           hintText: '',
           obscureText: false,
           errorText: '',
         ),
-        MyTextField(
+        const MyTextField(
           title: 'New Phone Number',
           hintText: '',
           obscureText: false,
@@ -149,7 +149,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
               left: 0.15 * screenWidth,
               right: 0.15 * screenWidth,
               top: 0.005 * screenHeight),
-          child: EditButtons(),
+          child: const EditButtons(),
         )
       ],
     );

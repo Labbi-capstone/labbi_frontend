@@ -66,7 +66,7 @@ class _EditUserProfilePageState extends State<EditUserProfilePage> {
             tileMode: TileMode.clamp,
           ),
         ),
-        child: SingleChildScrollView(
+        child: const SingleChildScrollView(
           child: UpdateProfile(),
         ),
       ),

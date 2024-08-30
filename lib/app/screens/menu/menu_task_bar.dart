@@ -4,7 +4,6 @@ import 'package:labbi_frontend/app/components/buttons/logout_button.dart';
 import 'package:labbi_frontend/app/models/menu_item_model.dart';
 import 'package:labbi_frontend/app/screens/menu/menu_item.dart';
 import 'package:labbi_frontend/app/screens/user_profile/user_profile.dart';
-import 'package:riverpod/riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // Provider to load user information
@@ -64,7 +63,7 @@ class MenuTaskbar extends ConsumerWidget {
                 // Logout Button
                 SizedBox(
                   width: screenWidth,
-                  child: LogoutButton(),
+                  child: const LogoutButton(),
                 ),
 
                 SizedBox(height: screenHeight * 0.01),
@@ -84,7 +83,7 @@ class MenuTaskbar extends ConsumerWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => UserProfilePage(),
+              builder: (context) => const UserProfilePage(),
             ),
           );
         },

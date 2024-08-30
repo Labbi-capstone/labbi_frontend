@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:labbi_frontend/app/Theme/app_colors.dart';
 import 'package:labbi_frontend/app/components/buttons/menu_button.dart';
-import 'package:labbi_frontend/app/models/dashboard.dart';
 import 'package:labbi_frontend/app/screens/dashboard_page/dashboard_items.dart';
 import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
 import 'package:labbi_frontend/app/state/dashboard_state.dart';
 import 'package:labbi_frontend/app/utils/user_info_helper.dart';
-import 'package:riverpod/riverpod.dart';
 
 // Provider to load user information
 final userInfoProvider = FutureProvider<Map<String, String>>((ref) async {
@@ -15,6 +13,8 @@ final userInfoProvider = FutureProvider<Map<String, String>>((ref) async {
 });
 
 class DashboardPage extends ConsumerWidget {
+  const DashboardPage({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final userInfoAsyncValue = ref.watch(userInfoProvider);
@@ -42,11 +42,11 @@ class DashboardPage extends ConsumerWidget {
         ),
         title: userInfoAsyncValue.when(
           data: (userInfo) => Text('Dashboard, Welcome ${userInfo['userName']}',
-              style: TextStyle(color: Colors.white)),
+              style: const TextStyle(color: Colors.white)),
           loading: () =>
-              Text('Loading...', style: TextStyle(color: Colors.white)),
+              const Text('Loading...', style: TextStyle(color: Colors.white)),
           error: (error, stack) =>
-              Text('Error', style: TextStyle(color: Colors.white)),
+              const Text('Error', style: TextStyle(color: Colors.white)),
         ),
         centerTitle: true,
       ),

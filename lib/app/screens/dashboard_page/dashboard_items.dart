@@ -12,8 +12,8 @@ class DashboardItem extends StatelessWidget {
     required this.title,
     required this.lineChartData,
     required this.pieChartData,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,24 +27,24 @@ class DashboardItem extends StatelessWidget {
             Center(
               child: Text(
                 title,
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Row(
               children: [
                 Expanded(
                   flex: 1,
                   child: SquareStat(pieChartData: pieChartData),
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 Expanded(
                   flex: 1,
                   child: SquareStat(pieChartData: pieChartData),
                 ),
               ],
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             RectangleStat(lineChartData: lineChartData),
           ],
         ),
@@ -56,8 +56,7 @@ class DashboardItem extends StatelessWidget {
 class RectangleStat extends StatelessWidget {
   final List<FlSpot> lineChartData;
 
-  const RectangleStat({required this.lineChartData, Key? key})
-      : super(key: key);
+  const RectangleStat({required this.lineChartData, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +75,7 @@ class RectangleStat extends StatelessWidget {
 class SquareStat extends StatelessWidget {
   final List<PieChartSectionData> pieChartData;
 
-  const SquareStat({required this.pieChartData, Key? key}) : super(key: key);
+  const SquareStat({required this.pieChartData, super.key});
 
   @override
   Widget build(BuildContext context) {
