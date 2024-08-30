@@ -1,6 +1,4 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:labbi_frontend/app/Theme/app_colors.dart';
 import 'package:labbi_frontend/app/components/buttons/menu_button.dart';
 import 'package:labbi_frontend/app/mockDatas/user_org_test.dart';
@@ -32,8 +30,8 @@ class _AdminDeviceHistoryPageState extends State<AdminOrgUsersPage> {
   }
 
   void _showAddUserDialog() {
-    final TextEditingController _nameController = TextEditingController();
-    final TextEditingController _idController = TextEditingController();
+    final TextEditingController nameController = TextEditingController();
+    final TextEditingController idController = TextEditingController();
 
     showDialog(
       context: context,
@@ -48,7 +46,7 @@ class _AdminDeviceHistoryPageState extends State<AdminOrgUsersPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextField(
-                  controller: _nameController,
+                  controller: nameController,
                   decoration: InputDecoration(
                     labelText: 'Name',
                     hintText: 'Enter user name',
@@ -60,7 +58,7 @@ class _AdminDeviceHistoryPageState extends State<AdminOrgUsersPage> {
                 ),
                 const SizedBox(height: 15),
                 TextField(
-                  controller: _idController,
+                  controller: idController,
                   decoration: InputDecoration(
                     labelText: 'User ID',
                     hintText: 'Enter unique user ID',
@@ -94,9 +92,9 @@ class _AdminDeviceHistoryPageState extends State<AdminOrgUsersPage> {
                 ),
               ),
               onPressed: () {
-                if (_nameController.text.isNotEmpty &&
-                    _idController.text.isNotEmpty) {
-                  _addUser(_nameController.text, _idController.text,
+                if (nameController.text.isNotEmpty &&
+                    idController.text.isNotEmpty) {
+                  _addUser(nameController.text, idController.text,
                       ''); // Empty image path
                   Navigator.of(context).pop();
                 } else {
@@ -144,7 +142,7 @@ class _AdminDeviceHistoryPageState extends State<AdminOrgUsersPage> {
         ),
         leading: Builder(
           builder: (BuildContext context) {
-            return MenuButton();
+            return const MenuButton();
           },
         ),
         title: SizedBox(

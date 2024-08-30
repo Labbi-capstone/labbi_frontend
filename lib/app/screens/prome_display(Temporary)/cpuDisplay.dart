@@ -5,6 +5,8 @@ import 'package:web_socket_channel/status.dart' as websocket_status;
 import '../../utils/utils.dart';
 
 class CPUUsagePage extends StatefulWidget {
+  const CPUUsagePage({super.key});
+
   @override
   _CPUUsagePageState createState() => _CPUUsagePageState();
 }

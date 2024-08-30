@@ -2,43 +2,85 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:labbi_frontend/app/routes.dart';
+import 'package:riverpod/riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class AuthController extends ChangeNotifier {
+// State class to manage the authentication state
+class AuthState {
+  final String loginMessage;
+  final String errorMessage;
+  final String userRole;
+  final String registrationMessage;
+  final bool isLoading;
+  final bool emptyEmail;
+  final bool emptyPassword;
+  final bool emptyFullName;
+  final bool emptyConfirmedPassword;
+  final bool isNotMatch;
+
+  AuthState({
+    this.loginMessage = '',
+    this.errorMessage = '',
+    this.userRole = '',
+    this.registrationMessage = '',
+    this.isLoading = false,
+    this.emptyEmail = false,
+    this.emptyPassword = false,
+    this.emptyFullName = false,
+    this.emptyConfirmedPassword = false,
+    this.isNotMatch = false,
+  });
+
+  AuthState copyWith({
+    String? loginMessage,
+    String? errorMessage,
+    String? userRole,
+    String? registrationMessage,
+    bool? isLoading,
+    bool? emptyEmail,
+    bool? emptyPassword,
+    bool? emptyFullName,
+    bool? emptyConfirmedPassword,
+    bool? isNotMatch,
+  }) {
+    return AuthState(
+      loginMessage: loginMessage ?? this.loginMessage,
+      errorMessage: errorMessage ?? this.errorMessage,
+      userRole: userRole ?? this.userRole,
+      registrationMessage: registrationMessage ?? this.registrationMessage,
+      isLoading: isLoading ?? this.isLoading,
+      emptyEmail: emptyEmail ?? this.emptyEmail,
+      emptyPassword: emptyPassword ?? this.emptyPassword,
+      emptyFullName: emptyFullName ?? this.emptyFullName,
+      emptyConfirmedPassword:
+          emptyConfirmedPassword ?? this.emptyConfirmedPassword,
+      isNotMatch: isNotMatch ?? this.isNotMatch,
+    );
+  }
+}
+
+class AuthController extends StateNotifier<AuthState> {
+  bool isSnackBarShown = false;
+  final Ref ref;
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final nameController = TextEditingController();
   final confirmedPasswordController = TextEditingController();
 
-  String loginMessage = '';
-  String errorMessage = '';
-  String userRole = '';
-  String registrationMessage = '';
-
-  bool emptyEmail = false;
-  bool emptyPassword = false;
-  bool emptyFullName = false;
-  bool emptyConfirmedPassword = false;
-  bool isNotMatch = false;
-  bool isLoading = false;
-  bool isSnackBarShown = false;
-
   late SharedPreferences prefs;
 
-  AuthController() {
+  AuthController(this.ref) : super(AuthState()) {
     initSharedPref();
   }
 
-  void initSharedPref() async {
+  Future<void> initSharedPref() async {
     prefs = await SharedPreferences.getInstance();
   }
 
   void setLoading(bool loading) {
-    isLoading = loading;
-    notifyListeners();
+    state = state.copyWith(isLoading: loading);
   }
 
-  // Method to login user
   Future<void> loginUser(BuildContext context) async {
     setLoading(true);
 
@@ -53,7 +95,6 @@ class AuthController extends ChangeNotifier {
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(reqBody),
       );
-      print(response.body);
 
       final jsonRes = jsonDecode(response.body);
 
@@ -62,24 +103,18 @@ class AuthController extends ChangeNotifier {
         final userId = jsonRes['user']['id'];
         final userName = jsonRes['user']['fullName'];
         final userEmail = jsonRes['user']['email'];
-        final token = jsonRes['token']; // Retrieve the token
+        final token = jsonRes['token'];
 
-        // Store user information and token in SharedPreferences
         prefs.setString('userName', userName);
         prefs.setString('userId', userId);
         prefs.setString('userRole', userRole);
         prefs.setString('userEmail', userEmail);
-        prefs.setString('token', token); // Store the token
+        prefs.setString('token', token);
 
         if (context.mounted) {
-          // Navigate based on the user role
           switch (userRole) {
             case 'admin':
-              Navigator.pushReplacementNamed(context, '/dashboard');
-              break;
             case 'developer':
-              Navigator.pushReplacementNamed(context, '/dashboard');
-              break;
             case 'adminOrg':
               Navigator.pushReplacementNamed(context, '/dashboard');
               break;
@@ -102,45 +137,29 @@ class AuthController extends ChangeNotifier {
     }
   }
 
-
-  // Method to show error messages
-  void _showErrorMessage(BuildContext context, String message) {
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
-  }
-
-  // Method for registering a user
   Future<void> registerUser(BuildContext context) async {
-    // Validate form fields before proceeding
     if (nameController.text.isEmpty ||
         emailController.text.isEmpty ||
         passwordController.text.isEmpty ||
         confirmedPasswordController.text.isEmpty) {
-      // Update error messages based on the specific empty fields
-      emptyFullName = nameController.text.isEmpty;
-      emptyEmail = emailController.text.isEmpty;
-      emptyPassword = passwordController.text.isEmpty;
-      emptyConfirmedPassword = confirmedPasswordController.text.isEmpty;
-      registrationMessage = "Please fill all fields correctly.";
-      notifyListeners();
+      state = state.copyWith(
+        emptyFullName: nameController.text.isEmpty,
+        emptyEmail: emailController.text.isEmpty,
+        emptyPassword: passwordController.text.isEmpty,
+        emptyConfirmedPassword: confirmedPasswordController.text.isEmpty,
+        registrationMessage: "Please fill all fields correctly.",
+      );
       return;
     }
 
-    // Check if passwords match
     if (confirmedPasswordController.text != passwordController.text) {
-      isNotMatch = true;
-      registrationMessage = "Passwords do not match.";
-      notifyListeners();
+      state = state.copyWith(
+        isNotMatch: true,
+        registrationMessage: "Passwords do not match.",
+      );
       return;
     }
 
-    // If validation passes, proceed with registration
     setLoading(true);
 
     try {
@@ -159,15 +178,11 @@ class AuthController extends ChangeNotifier {
       final jsonRes = jsonDecode(response.body);
 
       if (response.statusCode == 200 && jsonRes['status']) {
-        registrationMessage = "Registration successful!";
         if (context.mounted) {
-          _showSuccessMessage(context, registrationMessage);
+          _showSuccessMessage(context, "Registration successful!");
 
-          // Navigate to the login page after a short delay
           await Future.delayed(const Duration(seconds: 1));
-          if (context.mounted) {
-            Navigator.pushReplacementNamed(context, Routes.login);
-          }
+          Navigator.pushReplacementNamed(context, Routes.login);
         }
       } else {
         if (context.mounted) {
@@ -184,7 +199,17 @@ class AuthController extends ChangeNotifier {
     }
   }
 
-  // Method to show success messages
+  void _showErrorMessage(BuildContext context, String message) {
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   void _showSuccessMessage(BuildContext context, String message) {
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -196,11 +221,15 @@ class AuthController extends ChangeNotifier {
     }
   }
 
-  // Method to log out the user
-  void logoutUser(BuildContext context) async {
+  Future<void> logoutUser(BuildContext context) async {
     await prefs.clear();
     if (context.mounted) {
       Navigator.pushReplacementNamed(context, Routes.login);
     }
   }
 }
+
+final authControllerProvider =
+    StateNotifierProvider<AuthController, AuthState>((ref) {
+  return AuthController(ref);
+});

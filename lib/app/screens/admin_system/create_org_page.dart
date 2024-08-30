@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/controllers/org_controller.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:labbi_frontend/app/Theme/app_colors.dart';
 
-class CreateOrgPage extends StatefulWidget {
+class CreateOrgPage extends ConsumerStatefulWidget {
+  // Updated to ConsumerStatefulWidget
   const CreateOrgPage({super.key});
 
   @override
-  State<StatefulWidget> createState() => _AddCreateOrgPageState();
+  ConsumerState<CreateOrgPage> createState() =>
+      _AddCreateOrgPageState(); // Updated to return the correct type
 }
 
-class _AddCreateOrgPageState extends State<CreateOrgPage> {
+class _AddCreateOrgPageState extends ConsumerState<CreateOrgPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _orgNameController = TextEditingController();
 
@@ -18,7 +20,9 @@ class _AddCreateOrgPageState extends State<CreateOrgPage> {
   Widget build(BuildContext context) {
     dynamic screenHeight = MediaQuery.of(context).size.height;
     dynamic screenWidth = MediaQuery.of(context).size.width;
-    final orgController = Provider.of<OrgController>(context);
+    final orgController = ref.watch(orgControllerProvider.notifier);
+    final isLoading = ref.watch(orgControllerLoadingProvider);
+    final errorMessage = ref.watch(orgControllerErrorMessageProvider);
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -143,21 +147,21 @@ class _AddCreateOrgPageState extends State<CreateOrgPage> {
                         ),
                       ),
                       // Error Message (if any)
-                      if (orgController.errorMessage != null)
+                      if (errorMessage != null)
                         Padding(
                           padding: EdgeInsets.symmetric(
                               vertical: 0.01 * screenHeight,
                               horizontal: 0.07 * screenWidth),
                           child: Text(
-                            orgController.errorMessage!,
+                            errorMessage,
                             style: const TextStyle(color: Colors.red),
                           ),
                         ),
                       // Create Button
                       Padding(
                         padding: EdgeInsets.only(
-                          top: 0.03 * screenHeight, bottom: 0.03 * screenHeight
-                        ),
+                            top: 0.03 * screenHeight,
+                            bottom: 0.03 * screenHeight),
                         child: Container(
                           height: 0.07 * screenHeight,
                           width: (5 / 10) * screenWidth,
@@ -179,7 +183,7 @@ class _AddCreateOrgPageState extends State<CreateOrgPage> {
                               elevation: 0,
                               backgroundColor: Colors.transparent,
                             ),
-                            onPressed: orgController.isLoading
+                            onPressed: isLoading
                                 ? null
                                 : () {
                                     if (_formKey.currentState!.validate()) {
@@ -189,7 +193,7 @@ class _AddCreateOrgPageState extends State<CreateOrgPage> {
                                       );
                                     }
                                   },
-                            child: orgController.isLoading
+                            child: isLoading
                                 ? const CircularProgressIndicator(
                                     color: Colors.white,
                                   )

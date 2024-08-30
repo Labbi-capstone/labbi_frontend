@@ -18,17 +18,17 @@ final List<MenuItemModel> userMenuItems = [
   MenuItemModel(
     icon: Icons.home_outlined,
     label: 'Dashboard',
-    route: DashboardPage(),
+    route: const DashboardPage(),
   ),
   MenuItemModel(
     icon: Icons.notifications_active_outlined,
     label: 'Notification',
-    route: NotificationPage(),
+    route: const NotificationPage(),
   ),
   MenuItemModel(
     icon: Icons.work_outline,
     label: 'Organization',
-    route: UserOrgHomePage(),
+    route: const UserOrgHomePage(),
   ),
 ];
 
@@ -36,22 +36,22 @@ final List<MenuItemModel> adminMenuItems = [
   MenuItemModel(
     icon: Icons.home_outlined,
     label: 'Dashboard',
-    route: DashboardPage(),
+    route: const DashboardPage(),
   ),
   MenuItemModel(
     icon: Icons.dashboard_outlined,
     label: 'Control Panel',
-    route: ControlPanelPage(),
+    route: const ControlPanelPage(),
   ),
   MenuItemModel(
     icon: Icons.notifications_active_outlined,
     label: 'Notification',
-    route: NotificationPage(),
+    route: const NotificationPage(),
   ),
   MenuItemModel(
     icon: Icons.work_outline,
     label: 'Organization',
-    route: ListOrgPage(),
+    route: const ListOrgPage(),
   ),
 ];
 
@@ -59,22 +59,22 @@ final List<MenuItemModel> developerMenuItems = [
   MenuItemModel(
     icon: Icons.home_outlined,
     label: 'Dashboard',
-    route: DashboardPage(),
+    route: const DashboardPage(),
   ),
   MenuItemModel(
     icon: Icons.dashboard_outlined,
     label: 'Control Panel',
-    route: ControlPanelPage(),
+    route: const ControlPanelPage(),
   ),
   MenuItemModel(
     icon: Icons.notifications_active_outlined,
     label: 'Notification',
-    route: NotificationPage(),
+    route: const NotificationPage(),
   ),
   MenuItemModel(
     icon: Icons.work_outline,
     label: 'Organization',
-    route: AdminOrgHomePage(),
+    route: const AdminOrgHomePage(),
   ),
 ];
 
@@ -82,16 +82,16 @@ final List<MenuItemModel> orgAdminMenuItems = [
   MenuItemModel(
     icon: Icons.home_outlined,
     label: 'Dashboard',
-    route: DashboardPage(),
+    route: const DashboardPage(),
   ),
   MenuItemModel(
     icon: Icons.notifications_active_outlined,
     label: 'Notification',
-    route: NotificationPage(),
+    route: const NotificationPage(),
   ),
   MenuItemModel(
     icon: Icons.work_outline,
     label: 'Organization',
-    route: AdminOrgHomePage(),
+    route: const AdminOrgHomePage(),
   ),
 ];

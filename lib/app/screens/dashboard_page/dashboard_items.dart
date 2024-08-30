@@ -31,7 +31,7 @@ class DashboardItem extends StatelessWidget {
             Center(
               child: Text(
                 title,
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
             // SizedBox(height: 10),
@@ -84,8 +84,8 @@ class RectangleStat extends StatelessWidget {
 
 class SquareStat extends StatelessWidget {
   // final List<PieData> pieChartData;
-
   // const SquareStat({required this.pieChartData, Key? key}) : super(key: key);
+
 
   @override
   Widget build(BuildContext context) {

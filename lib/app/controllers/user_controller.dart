@@ -1,52 +1,74 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:labbi_frontend/app/models/user.dart';
-import 'package:labbi_frontend/app/view_model/user_view_model.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:labbi_frontend/app/models/User.dart';
 
-class UserController with ChangeNotifier {
-  List<UserViewModel> _allUsers = [];
-  List<UserViewModel> filteredUsers = [];
-  bool isLoading = false;
+class UserController extends StateNotifier<List<User>> {
+  UserController() : super([]);
+
   String? errorMessage;
+  bool isLoading = false;
+  final Map<String, bool> _selectedUsers = {}; // Track selection by user ID
 
-  UserController() {
-    // Initialize users (you would normally fetch this from an API)
-    _allUsers = [
-      UserViewModel(User(
-          "Brooklyn Simmons", "brooklyns@ahffagon.com", "password", "Admin")),
-      UserViewModel(
-          User("Esther Howard", "estherh@ahffagon.com", "password", "Admin")),
-      // Add more users here...
-    ];
-    filteredUsers = List.from(_allUsers);
+  Future<void> fetchUsersByOrg(String orgId) async {
+    isLoading = true;
+    try {
+      final url =
+          Uri.parse('http://localhost:3000/api/organizations/$orgId/users');
+      final response = await http.get(url);
+
+      // Debugging print statements
+      debugPrint("Fetching users for orgId: $orgId");
+      debugPrint("Response status: ${response.statusCode}");
+      debugPrint("Response body: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final List<dynamic> usersJson =
+            data['users']; // Extract the 'users' array
+        state = usersJson.map((user) => User.fromJson(user)).toList();
+      } else {
+        throw Exception('Failed to load users');
+      }
+    } catch (e) {
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
   }
 
   void filterUsers(String keyword) {
-    if (keyword.isEmpty) {
-      filteredUsers = List.from(_allUsers);
+    state = state.where((user) => user.fullName.contains(keyword)).toList();
+  }
+
+  void toggleUserSelection(User user) {
+    if (_selectedUsers.containsKey(user.id)) {
+      _selectedUsers[user.id] = !_selectedUsers[user.id]!;
     } else {
-      filteredUsers = _allUsers
-          .where((userViewModel) =>
-              userViewModel.user.fullName
-                  .toLowerCase()
-                  .contains(keyword.toLowerCase()) ||
-              userViewModel.user.email
-                  .toLowerCase()
-                  .contains(keyword.toLowerCase()))
-          .toList();
+      _selectedUsers[user.id] = true;
     }
-    notifyListeners();
+    state = [...state]; // Trigger a state update
   }
 
-  void toggleUserSelection(UserViewModel userViewModel) {
-    userViewModel.isSelected = !userViewModel.isSelected;
-    notifyListeners();
+  bool isSelected(User user) {
+    return _selectedUsers[user.id] ?? false;
   }
 
-  void addUsersToOrganization() {
-    // Handle adding users to the organization here
-    // For example, filter the selected users and send them to an API
-    final selectedUsers =
-        _allUsers.where((userViewModel) => userViewModel.isSelected).toList();
-    // Add the selected users to the organization...
+  Future<void> addUsersToOrganization() async {
+    // Implement logic to add selected users to the organization
+  }
+
+  List<User> get selectedUsers {
+    return state.where((user) => _selectedUsers[user.id] == true).toList();
   }
 }
+
+final userControllerProvider =
+    StateNotifierProvider<UserController, List<User>>((ref) {
+  return UserController();
+});
+
+final filteredUsersProvider = Provider<List<User>>((ref) {
+  return ref.watch(userControllerProvider);
+});

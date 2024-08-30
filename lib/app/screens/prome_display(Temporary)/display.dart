@@ -4,6 +4,8 @@ import 'package:intl/intl.dart'; // Add this import for date formatting
 import 'package:labbi_frontend/app/services/prometheus_service.dart';
 
 class PrometheusDataPage extends StatefulWidget {
+  const PrometheusDataPage({super.key});
+
   @override
   _PrometheusDataPageState createState() => _PrometheusDataPageState();
 }
@@ -15,7 +17,7 @@ class _PrometheusDataPageState extends State<PrometheusDataPage> {
   @override
   void initState() {
     super.initState();
-    dataStream = Stream.periodic(Duration(seconds: 1))
+    dataStream = Stream.periodic(const Duration(seconds: 1))
         .asyncMap((_) => _prometheusService.queryPrometheus('go_gc_duration_seconds'));
   }
 
@@ -29,13 +31,13 @@ class _PrometheusDataPageState extends State<PrometheusDataPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Prometheus Data'),
+        title: const Text('Prometheus Data'),
       ),
       body: StreamBuilder<Map<String, dynamic>>(
         stream: dataStream,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (snapshot.hasData &&
@@ -56,7 +58,7 @@ class _PrometheusDataPageState extends State<PrometheusDataPage> {
               },
             );
           } else {
-            return Center(child: Text('No data available'));
+            return const Center(child: Text('No data available'));
           }
         },
       ),

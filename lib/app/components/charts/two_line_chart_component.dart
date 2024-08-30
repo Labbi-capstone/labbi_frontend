@@ -5,7 +5,7 @@ class TwoLineChartComponent extends StatelessWidget {
   final List<double> humidityData;
   final List<double> temperatureData;
 
-  TwoLineChartComponent({
+  const TwoLineChartComponent({super.key, 
     required this.humidityData,
     required this.temperatureData,
   });
@@ -27,24 +27,24 @@ class TwoLineChartComponent extends StatelessWidget {
               show: true,
               drawVerticalLine: true,
               getDrawingHorizontalLine: (value) {
-                return FlLine(
-                  color: const Color(0xffe7e8ec),
+                return const FlLine(
+                  color: Color(0xffe7e8ec),
                   strokeWidth: 1,
                 );
               },
               getDrawingVerticalLine: (value) {
-                return FlLine(
-                  color: const Color(0xffe7e8ec),
+                return const FlLine(
+                  color: Color(0xffe7e8ec),
                   strokeWidth: 1,
                 );
               },
             ),
             titlesData: FlTitlesData(
               show: true,
-              rightTitles: AxisTitles(
+              rightTitles: const AxisTitles(
                 sideTitles: SideTitles(showTitles: false),
               ),
-              topTitles: AxisTitles(
+              topTitles: const AxisTitles(
                 sideTitles: SideTitles(showTitles: false),
               ),
               bottomTitles: AxisTitles(
@@ -102,7 +102,7 @@ class TwoLineChartComponent extends StatelessWidget {
                 color: Colors.purple,
                 barWidth: 3,
                 isStrokeCapRound: true,
-                dotData: FlDotData(
+                dotData: const FlDotData(
                   show: false,
                 ),
                 belowBarData: BarAreaData(show: false),
@@ -117,7 +117,7 @@ class TwoLineChartComponent extends StatelessWidget {
                 color: Colors.blue,
                 barWidth: 3,
                 isStrokeCapRound: true,
-                dotData: FlDotData(
+                dotData: const FlDotData(
                   show: false,
                 ),
                 belowBarData: BarAreaData(show: false),

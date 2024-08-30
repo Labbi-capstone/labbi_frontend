@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:labbi_frontend/app/Theme/app_colors.dart';
@@ -10,6 +9,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ControlPanelPage extends StatelessWidget {
+  const ControlPanelPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,9 +29,9 @@ class ControlPanelPage extends StatelessWidget {
             ),
           ),
         ),
-        title: Text('Control Panel', style: TextStyle(color: Colors.white)),
+        title: const Text('Control Panel', style: TextStyle(color: Colors.white)),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -50,7 +51,7 @@ class ControlPanelPage extends StatelessWidget {
           ),
         ),
         child: ListView.builder(
-          padding: EdgeInsets.all(10),
+          padding: const EdgeInsets.all(10),
           itemCount: devices.length,
           itemBuilder: (context, index) {
             final device = devices[index];
@@ -83,7 +84,7 @@ class DeviceCard extends StatefulWidget {
   bool isActive; // This needs to be mutable
   final String deviceId;
 
-  DeviceCard({
+  DeviceCard({super.key, 
     required this.deviceName,
     required this.status,
     required this.version,
@@ -151,7 +152,7 @@ class _DeviceCardState extends State<DeviceCard> {
       ),
       elevation: 5,
       child: Padding(
-        padding: EdgeInsets.all(10),
+        padding: const EdgeInsets.all(10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -162,11 +163,11 @@ class _DeviceCardState extends State<DeviceCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Device: ${widget.deviceName}',
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold)),
                     Row(
                       children: [
-                        Text('Status: ', style: TextStyle(fontSize: 14)),
+                        const Text('Status: ', style: TextStyle(fontSize: 14)),
                         Text(widget.status,
                             style: TextStyle(
                                 fontSize: 14,
@@ -176,11 +177,11 @@ class _DeviceCardState extends State<DeviceCard> {
                       ],
                     ),
                     Text('Version: ${widget.version}',
-                        style: TextStyle(fontSize: 14)),
+                        style: const TextStyle(fontSize: 14)),
                   ],
                 ),
                 _isLoading
-                    ? CircularProgressIndicator() // Show loading indicator when making API call
+                    ? const CircularProgressIndicator() // Show loading indicator when making API call
                     : FlutterSwitch(
                         width: 55.0,
                         height: 25.0,
@@ -191,13 +192,13 @@ class _DeviceCardState extends State<DeviceCard> {
                       ),
               ],
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             widget.humidityData.isNotEmpty && widget.temperatureData.isNotEmpty
                 ? TwoLineChartComponent(
                     humidityData: widget.humidityData,
                     temperatureData: widget.temperatureData)
-                : Center(child: Text('No data available')),
-            SizedBox(height: 10),
+                : const Center(child: Text('No data available')),
+            const SizedBox(height: 10),
             ControlSliderComponent(
               icon: FontAwesomeIcons.cog,
               label: 'Motor speed: ${widget.motorSpeed} RPM',
