@@ -91,7 +91,7 @@ class AuthController extends StateNotifier<AuthState> {
       };
 
       final response = await http.post(
-        Uri.parse('http://localhost:8000/api/users/login'),
+        Uri.parse('http://localhost:3000/api/users/login'),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(reqBody),
       );
