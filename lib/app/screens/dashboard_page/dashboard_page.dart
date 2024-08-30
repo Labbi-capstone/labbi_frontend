@@ -70,8 +70,8 @@ class DashboardPage extends ConsumerWidget {
             final dashboard = initialDashboards[index];
             return DashboardItem(
               title: dashboard.name,
-              lineChartData: dashboard.lineChartData,
-              pieChartData: dashboard.pieChartData,
+              // lineChartData: dashboard.lineChartData,
+              // pieChartData: dashboard.pieChartData,
             );
           },
         ),

@@ -9,6 +9,11 @@ import 'package:labbi_frontend/app/screens/dashboard_page/dashboard_page.dart';
 import 'package:labbi_frontend/app/screens/user_profile/user_profile.dart';
 import 'package:labbi_frontend/app/screens/user_profile/user_edit/edit_user_profile_page.dart';
 import 'package:labbi_frontend/app/screens/notification/notification_page.dart';
+
+import 'package:labbi_frontend/app/screens/prome_display(Temporary)/cpuDisplay.dart';
+import 'package:labbi_frontend/app/screens/prome_display(Temporary)/display.dart';
+import 'package:labbi_frontend/app/screens/start_page/start_page.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
 import 'package:labbi_frontend/app/screens/admin_org/admin_org_home_page.dart';
 import 'package:labbi_frontend/app/screens/user_org/user_org_home_page.dart';
@@ -38,13 +43,14 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
+  // const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: Routes.login,
+      initialRoute: Routes.dashboard,
       routes: {
         Routes.login: (context) => const LoginPage(),
         Routes.register: (context) => const RegisterPage(),
@@ -58,6 +64,8 @@ class MyApp extends StatelessWidget {
         Routes.createOrgPage: (context) => const CreateOrgPage(),
         Routes.controlPanelPage: (context) => const ControlPanelPage(),
         Routes.createDashboardPage: (context) => const CreateDashboardPage(),
+        Routes.userListPage: (context) => UserListPage(),
+        Routes.cpuDisplay: (context) => CPUUsagePage(),
       },
       onUnknownRoute: (settings) => MaterialPageRoute(
         builder: (context) => Scaffold(
@@ -69,6 +77,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
+// >>>>>>> origin/main
     );
   }
 }
