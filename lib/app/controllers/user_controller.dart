@@ -2,7 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:labbi_frontend/app/models/User.dart';
+import 'package:labbi_frontend/app/models/user.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserController extends StateNotifier<List<User>> {
   UserController() : super([]);
@@ -16,7 +17,22 @@ class UserController extends StateNotifier<List<User>> {
     try {
       final url =
           Uri.parse('http://localhost:3000/api/organizations/$orgId/users');
-      final response = await http.get(url);
+
+      // Retrieve the token and role from shared preferences
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      String? role = prefs.getString('userRole');
+
+      if (token == null || role == null) {
+        throw Exception('User token or role not found. Please login again.');
+      }
+
+      // Add headers with the authorization token and role
+      final response = await http.get(url, headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+        "Role": role,
+      });
 
       // Debugging print statements
       debugPrint("Fetching users for orgId: $orgId");
@@ -27,7 +43,22 @@ class UserController extends StateNotifier<List<User>> {
         final data = jsonDecode(response.body);
         final List<dynamic> usersJson =
             data['users']; // Extract the 'users' array
-        state = usersJson.map((user) => User.fromJson(user)).toList();
+
+        // Debugging step: Print the raw usersJson data
+        debugPrint("usersJson: $usersJson");
+
+        // Map the JSON to User objects
+        final List<User> users = usersJson.map((userJson) {
+          final user = User.fromJson(userJson);
+          debugPrint(
+              "Parsed user: ${user.fullName}, ${user.email}, ${user.role}");
+          return user;
+        }).toList();
+
+        state = users;
+
+        // Debugging step: Confirm state update
+        debugPrint("Users fetched and state updated: ${state.length} users.");
       } else {
         throw Exception('Failed to load users');
       }
@@ -35,6 +66,9 @@ class UserController extends StateNotifier<List<User>> {
       errorMessage = e.toString();
     } finally {
       isLoading = false;
+
+      // Additional debug print to check the final state
+      debugPrint("Final number of users in state: ${state.length}");
     }
   }
 

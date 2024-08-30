@@ -17,7 +17,7 @@ class ListOrgPage extends ConsumerStatefulWidget {
 class _ListOrgPageState extends ConsumerState<ListOrgPage> {
   String searchKeyWord = '';
 
-@override
+  @override
   void initState() {
     super.initState();
 
@@ -27,8 +27,6 @@ class _ListOrgPageState extends ConsumerState<ListOrgPage> {
       orgController.fetchOrganizations();
     });
   }
-
-
 
   void updateSearchKey(String newValue) {
     setState(() {
@@ -45,8 +43,6 @@ class _ListOrgPageState extends ConsumerState<ListOrgPage> {
     final errorMessage = ref.watch(orgControllerErrorMessageProvider);
     final organizationList = ref.watch(orgControllerProvider).organizationList;
     final orgState = ref.watch(orgControllerProvider);
-
-
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -104,15 +100,14 @@ class _ListOrgPageState extends ConsumerState<ListOrgPage> {
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
-                                                   UserListInOrgPage(
+                                                  UserListInOrgPage(
                                                       orgId: org
                                                           .id), // Navigate to UserListPage
                                             ),
                                           );
                                         },
                                       ),
-                                    ))
-                                ,
+                                    )),
                           ],
                         ),
                       ),
