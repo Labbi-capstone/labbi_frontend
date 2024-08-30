@@ -126,13 +126,13 @@ class _AddUserToOrgPageState extends ConsumerState<AddUserToOrgPage> {
       body: SingleChildScrollView(
         child: Container(
           width: screenWidth,
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image:
-                  AssetImage("assets/images/create-dashboard-background.jpg"),
-              fit: BoxFit.fill,
-            ),
-          ),
+          // decoration: const BoxDecoration(
+          //   image: DecorationImage(
+          //     image:
+          //         AssetImage("assets/images/create-dashboard-background.jpg"),
+          //     fit: BoxFit.fill,
+          //   ),
+          // ),
           child: Padding(
             padding: EdgeInsets.only(
               top: 0.1 * screenHeight,
