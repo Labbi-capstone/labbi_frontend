@@ -15,5 +15,6 @@ class Routes {
   static const String controlPanelPage = '/controlPanelPage';
   static const String createDashboardPage = '/createDashboardPage';
   static const String userListPage = '/userListPage';
+  static const String cpuDisplay = '/cpuDisplay';
   // Add more routes as needed
 }

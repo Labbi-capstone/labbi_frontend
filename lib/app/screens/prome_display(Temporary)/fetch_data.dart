@@ -1,105 +1,114 @@
+// fetch_data.dart
 import 'dart:convert';
-import 'package:flutter/material.dart';
+import 'package:intl/intl.dart'; // Import for date formatting
+import 'package:labbi_frontend/app/components/charts/bar_chart_giang.dart';
+import 'package:labbi_frontend/app/components/charts/line_chart_giang.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
-void main() {
-  runApp(MyApp());
-}
+class DataFetcher {
+  final WebSocketChannel channel;
+  final DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: WebSocketPage(),
-    );
+  DataFetcher(this.channel);
+
+  void fetchData() {
+    channel.sink.add('fetch_data'); // Use an appropriate message to fetch data
   }
-}
 
-class WebSocketPage extends StatefulWidget {
-  final List<Map<String, dynamic>> _dataList = [];
-  @override
-  _WebSocketPageState createState() => _WebSocketPageState();
-}
-
-class _WebSocketPageState extends State<WebSocketPage> {
-  final WebSocketChannel channel = WebSocketChannel.connect(
-    Uri.parse('ws://localhost:8000'), // Change this to your WebSocket URL
-  );
-
-  // Maintain a list to hold the fetched data
-  final List<Map<String, dynamic>> _dataList = [];
-
-  @override
-  void initState() {
-    super.initState();
-    // Listen to WebSocket stream and process incoming data
-    channel.stream.listen((data) {
+  void processWebSocketData(
+      dynamic data,
+      List<BarData> quantile0Data,
+      List<BarData> quantile025Data,
+      List<BarData> quantile05Data,
+      List<BarData> quantile075Data,
+      List<BarData> quantile1Data,
+      List<LineData> quantile0LineData,
+      List<LineData> quantile025LineData,
+      List<LineData> quantile05LineData,
+      List<LineData> quantile075LineData,
+      List<LineData> quantile1LineData) {
+    if (data != null && data is String) {
       try {
-        final jsonData = jsonDecode(data);
-        final result = jsonData['data']['result'] as List<dynamic>;
+        var decodedData = jsonDecode(data);
 
-        // Add new data to the list
-        setState(() {
-          _dataList.addAll(result.map((item) => _convertToMap(item)));
-        });
+        if (decodedData['data'] != null &&
+            decodedData['data']['result'] != null &&
+            decodedData['data']['result'].isNotEmpty) {
+          var resultData = decodedData['data']['result'];
 
-        // Print the updated list
-        _printDataList();
+          for (var entry in resultData) {
+            var metric = entry['metric'];
+            var value = entry['value'];
+
+            if (value != null && value is List && value.length > 1) {
+              // Get the current time as a formatted string
+              var formattedTime = dateFormat.format(DateTime.now());
+
+              double parsedValue =
+                  (double.tryParse(value[1].toString()) ?? 0.0) * 1000000000.0;
+
+              double quantile = double.tryParse(metric['quantile'].toString()) ?? 0.0;
+
+              var barData = BarData('Quantile $quantile', parsedValue);
+              var lineData = LineData(formattedTime, parsedValue);
+
+              switch (quantile) {
+                case 0:
+                  _updateBarDataList(quantile0Data, barData);
+                  _updateLineDataList(quantile0LineData, lineData);
+                  break;
+                case 0.25:
+                  _updateBarDataList(quantile025Data, barData);
+                  _updateLineDataList(quantile025LineData, lineData);
+                  break;
+                case 0.5:
+                  _updateBarDataList(quantile05Data, barData);
+                  _updateLineDataList(quantile05LineData, lineData);
+                  break;
+                case 0.75:
+                  _updateBarDataList(quantile075Data, barData);
+                  _updateLineDataList(quantile075LineData, lineData);
+                  break;
+                case 1:
+                  _updateBarDataList(quantile1Data, barData);
+                  _updateLineDataList(quantile1LineData, lineData);
+                  break;
+                default:
+                  print('Unknown quantile: $quantile');
+              }
+            }
+          }
+        }
       } catch (e) {
-        print('Error parsing data: $e');
-      }
-    });
-  }
-
-  // Convert dynamic data to the expected map with type checks
-  Map<String, dynamic> _convertToMap(dynamic item) {
-    final Map<String, dynamic> result = {};
-
-    // Handle expected keys and convert values to the correct types
-    if (item is Map<String, dynamic>) {
-      result['metric'] = item['metric'] as Map<String, dynamic>;
-      
-      final value = item['value'];
-      if (value is List<dynamic> && value.length > 1) {
-        // Convert timestamp and value to int if necessary
-        result['value'] = [
-          value[0] is double ? value[0].toInt() : value[0],
-          value[1] is double ? value[1].toInt() : value[1]
-        ];
+        print('Error parsing JSON: $e');
       }
     }
-    return result;
   }
 
-  // Method to print data list
-  void _printDataList() {
-    print('Data List:');
-    for (var item in _dataList) {
-      final metric = item['metric'];
-      final value = item['value'];
-      final formattedTime = DateTime.fromMillisecondsSinceEpoch(value[0] as int).toString();
+  void printData(
+      List<LineData> quantile0Data,
+      List<LineData> quantile025Data,
+      List<LineData> quantile05Data,
+      List<LineData> quantile075Data,
+      List<LineData> quantile1Data) {
+    print('Quantile 0 Data: $quantile0Data');
+    print('Quantile 0.25 Data: $quantile025Data');
+    print('Quantile 0.5 Data: $quantile05Data');
+    print('Quantile 0.75 Data: $quantile075Data');
+    print('Quantile 1 Data: $quantile1Data');
+  }
 
-      print('Instance: ${metric['instance']}, Job: ${metric['job']}, Quantile: ${metric['quantile']}');
-      print('Value: ${value[1]}, Time: $formattedTime');
+  void _updateBarDataList(List<BarData> dataList, BarData newData) {
+    if (dataList.length >= 5) {
+      dataList.removeAt(0); // Remove the oldest data point to keep the list size at most 5
     }
+    dataList.add(newData);
   }
 
-  @override
-  void dispose() {
-    channel.sink.close();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // Provide a simple UI or leave it empty if not needed
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('WebSocket Data'),
-      ),
-      body: Center(
-        child: Text('Check console for data output.'),
-      ),
-    );
+  void _updateLineDataList(List<LineData> dataList, LineData newData) {
+    if (dataList.length >= 5) {
+      dataList.removeAt(0); // Remove the oldest data point to keep the list size at most 5
+    }
+    dataList.add(newData);
   }
 }

@@ -14,6 +14,7 @@ import 'package:labbi_frontend/app/screens/dashboard_page/dashboard_page.dart';
 import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
 import 'package:labbi_frontend/app/screens/notification/notification_page.dart';
 import 'package:labbi_frontend/app/screens/prome_display(Temporary)/cpuDisplay.dart';
+import 'package:labbi_frontend/app/screens/prome_display(Temporary)/display.dart';
 import 'package:labbi_frontend/app/screens/start_page/start_page.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:labbi_frontend/app/screens/user_org/user_org_home_page.dart';
@@ -51,7 +52,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: Routes.login,
+      initialRoute: Routes.dashboard,
       routes: {
         Routes.login: (context) => const LoginPage(),
         Routes.register: (context) => const RegisterPage(),
@@ -66,6 +67,7 @@ class MyApp extends StatelessWidget {
         Routes.controlPanelPage: (context) => ControlPanelPage(),
         Routes.createDashboardPage: (context) => const CreateDashboardPage(),
         Routes.userListPage: (context) => UserListPage(),
+        Routes.cpuDisplay: (context) => CPUUsagePage(),
       },
       onUnknownRoute: (settings) => MaterialPageRoute(
         builder: (context) => Scaffold(

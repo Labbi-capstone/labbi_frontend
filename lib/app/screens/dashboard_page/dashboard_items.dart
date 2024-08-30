@@ -34,22 +34,22 @@ class DashboardItem extends StatelessWidget {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
-            SizedBox(height: 10),
-            Row(
-              children: [
-                Expanded(
-                  flex: 1,
-                  // child: SquareStat(pieChartData: pieChartData),
-                  child: SquareStat(),
-                ),
-                SizedBox(width: 10),
-                Expanded(
-                  flex: 1,
-                   // child: SquareStat(pieChartData: pieChartData),
-                  child: SquareStat(),
-                ),
-              ],
-            ),
+            // SizedBox(height: 10),
+            // Row(
+            //   children: [
+            //     Expanded(
+            //       flex: 1,
+            //       // child: SquareStat(pieChartData: pieChartData),
+            //       child: SquareStat(),
+            //     ),
+            //     SizedBox(width: 10),
+            //     Expanded(
+            //       flex: 1,
+            //        // child: SquareStat(pieChartData: pieChartData),
+            //       child: SquareStat(),
+            //     ),
+            //   ],
+            // ),
             SizedBox(height: 10),
             RectangleStat(),
             SizedBox(height: 10),
@@ -70,7 +70,7 @@ class RectangleStat extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 200,
+      height: 500,
       decoration: BoxDecoration(
         color: Colors.grey[300],
         borderRadius: BorderRadius.circular(12),
@@ -112,7 +112,7 @@ class RectangleStat2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 200,
+      height: 500,
       decoration: BoxDecoration(
         color: Colors.grey[300],
         borderRadius: BorderRadius.circular(12),
