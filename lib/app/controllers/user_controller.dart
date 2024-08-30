@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:labbi_frontend/app/models/User.dart';
@@ -15,40 +16,25 @@ class UserController extends StateNotifier<List<User>> {
     try {
       final url =
           Uri.parse('http://localhost:3000/api/organizations/$orgId/users');
-      print('Fetching users from URL: $url'); // Debug: Print the API URL
       final response = await http.get(url);
 
-      print(
-          'Response status code: ${response.statusCode}'); // Debug: Print status code
-      print(
-          'Response body: ${response.body}'); // Debug: Print the response body
+      // Debugging print statements
+      debugPrint("Fetching users for orgId: $orgId");
+      debugPrint("Response status: ${response.statusCode}");
+      debugPrint("Response body: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print('Decoded data: $data'); // Debug: Print the decoded JSON data
-
         final List<dynamic> usersJson =
             data['users']; // Extract the 'users' array
-        print('Users JSON: $usersJson'); // Debug: Print the users array
-
         state = usersJson.map((user) => User.fromJson(user)).toList();
-        print(
-            'Mapped users: $state'); // Debug: Print the list of users after mapping
-
-        if (state.isEmpty) {
-          print(
-              'No users found in the organization'); // Debug: Check if the list is empty
-        }
       } else {
         throw Exception('Failed to load users');
       }
     } catch (e) {
       errorMessage = e.toString();
-      print('Error: $errorMessage'); // Debug: Print the error message
     } finally {
       isLoading = false;
-      print(
-          'Loading complete. isLoading: $isLoading'); // Debug: Print loading status
     }
   }
 

@@ -5,7 +5,6 @@ import 'package:labbi_frontend/app/models/organization.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// State class to manage the organization-related state
 class OrgState {
   final bool isLoading;
   final String? errorMessage;
@@ -66,20 +65,23 @@ class OrgController extends StateNotifier<OrgState> {
       );
 
       if (response.statusCode == 201) {
+        debugPrint('[MY_APP] Organization created successfully!');
         setLoading(false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Organization created successfully!')),
         );
-        // Perform additional actions like redirecting if needed.
       } else if (response.statusCode == 403) {
+        debugPrint('[MY_APP] Access denied. Admins only.');
         setLoading(false);
         state = state.copyWith(errorMessage: 'Access denied. Admins only.');
       } else {
+        debugPrint('[MY_APP] Failed to create organization.');
         setLoading(false);
         state = state.copyWith(
             errorMessage: 'Failed to create organization. Please try again.');
       }
     } catch (e) {
+      debugPrint('[MY_APP] Error creating organization: $e');
       setLoading(false);
       state =
           state.copyWith(errorMessage: 'An error occurred. Please try again.');
@@ -87,6 +89,7 @@ class OrgController extends StateNotifier<OrgState> {
   }
 
   Future<void> fetchOrganizations() async {
+    debugPrint('[MY_APP] Fetching organizations...');
     setLoading(true);
 
     try {
@@ -95,6 +98,7 @@ class OrgController extends StateNotifier<OrgState> {
       String? role = prefs.getString('userRole');
 
       if (token == null || role == null) {
+        debugPrint('[MY_APP] User token or role not found.');
         setLoading(false);
         state = state.copyWith(
             errorMessage: 'User token or role not found. Please login again.');
@@ -113,16 +117,19 @@ class OrgController extends StateNotifier<OrgState> {
       );
 
       if (response.statusCode == 200) {
+        debugPrint('[MY_APP] Successfully fetched organizations.');
         final List<dynamic> data = jsonDecode(response.body);
         final organizations =
             data.map((org) => Organization.fromJson(org)).toList();
         state =
             state.copyWith(organizationList: organizations, errorMessage: null);
       } else {
+        debugPrint('[MY_APP] Failed to fetch organizations.');
         state = state.copyWith(
             errorMessage: 'Failed to fetch organizations. Please try again.');
       }
     } catch (e) {
+      debugPrint('[MY_APP] Error fetching organizations: $e');
       state =
           state.copyWith(errorMessage: 'An error occurred. Please try again.');
     } finally {

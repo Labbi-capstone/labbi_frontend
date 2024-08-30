@@ -17,12 +17,18 @@ class ListOrgPage extends ConsumerStatefulWidget {
 class _ListOrgPageState extends ConsumerState<ListOrgPage> {
   String searchKeyWord = '';
 
-  @override
+@override
   void initState() {
     super.initState();
-    // Fetch organizations when the page is loaded
-    ref.read(orgControllerProvider.notifier).fetchOrganizations();
+
+    // Delaying the fetchOrganizations call to avoid modifying the provider during build
+    Future.delayed(Duration.zero, () {
+      final orgController = ref.read(orgControllerProvider.notifier);
+      orgController.fetchOrganizations();
+    });
   }
+
+
 
   void updateSearchKey(String newValue) {
     setState(() {
