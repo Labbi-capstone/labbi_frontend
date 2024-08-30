@@ -8,35 +8,20 @@ final List<Dashboard> initialDashboards = [
     id: 11,
     name: "Device 111",
     lineChartData: [
-      const FlSpot(0, 1),
-      const FlSpot(1, 3),
-      const FlSpot(2, 5),
-      const FlSpot(3, 4),
-      const FlSpot(4, 7),
-      const FlSpot(5, 8),
+      LineData(0, 1),
+      LineData(1, 3),
+      LineData(2, 5),
+      LineData(3, 4),
+      LineData(4, 7),
+      LineData(5, 8),
     ],
     pieChartData: [
-      PieChartSectionData(
-        value: 40,
-        color: Colors.blue,
-        title: '40%',
-      ),
-      PieChartSectionData(
-        value: 30,
-        color: Colors.red,
-        title: '30%',
-      ),
-      PieChartSectionData(
-        value: 15,
-        color: Colors.green,
-        title: '15%',
-      ),
-      PieChartSectionData(
-        value: 15,
-        color: Colors.yellow,
-        title: '15%',
-      ),
+      PieData("Category 1", 40),
+      PieData("Category 2", 30),
+      PieData("Category 3", 15),
+      PieData("Category 4", 15),
     ],
+    barChartData: [],
   ),
   // Add more Dashboard instances as needed
 ];
