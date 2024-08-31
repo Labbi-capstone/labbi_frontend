@@ -172,7 +172,7 @@ class _UserListInOrgPageState extends ConsumerState<UserListInOrgPage> {
       floatingActionButton: AddButton(
         screenHeight: screenHeight,
         screenWidth: screenWidth,
-        pageToNavigate: const AddUserToOrgPage(),
+        pageToNavigate: AddUserToOrgPage(orgId: widget.orgId),
       ),
     );
   }

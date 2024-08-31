@@ -10,7 +10,70 @@ class UserController extends StateNotifier<List<User>> {
 
   String? errorMessage;
   bool isLoading = false;
-  final Map<String, bool> _selectedUsers = {}; // Track selection by user ID
+Set<String> selectedUserIds = {}; // Track selected user IDs
+  Map<String, String> userRoles = {}; // Track roles for selected users
+
+  Future<void> fetchUsersNotInOrg(String orgId) async {
+    isLoading = true;
+    try {
+      final url = Uri.parse(
+          'http://localhost:3000/api/organizations/$orgId/users/not-in-org');
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      String? role = prefs.getString('userRole');
+
+      if (token == null || role == null) {
+        throw Exception('User token or role not found. Please login again.');
+      }
+
+      final response = await http.get(url, headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+        "Role": role,
+      });
+
+      debugPrint("Response status: ${response.statusCode}");
+      debugPrint("Response body: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final List<dynamic> usersJson = jsonDecode(response.body)['users'];
+
+        debugPrint("Parsed usersJson: $usersJson");
+
+        final List<User> users = usersJson.map((userJson) {
+          return User.fromJson(userJson);
+        }).toList();
+
+        state = users; // Update state with users not in the organization
+
+        // Debugging step: Confirm state update
+        debugPrint("Users fetched and state updated: ${state.length} users.");
+      } else {
+        throw Exception('Failed to load users not in the organization');
+      }
+    } catch (e) {
+      errorMessage = e.toString();
+      debugPrint("Error fetching users: $errorMessage");
+    } finally {
+      isLoading = false;
+    }
+  }
+
+
+  void toggleUserSelection(String userId) {
+    if (selectedUserIds.contains(userId)) {
+      selectedUserIds.remove(userId);
+    } else {
+      selectedUserIds.add(userId);
+    }
+    state = [...state]; // Trigger UI update
+  }
+
+  bool isUserSelected(String userId) {
+    return selectedUserIds.contains(userId);
+  }
+
 
   Future<void> fetchUsersByOrg(String orgId) async {
     isLoading = true;
@@ -76,25 +139,15 @@ class UserController extends StateNotifier<List<User>> {
     state = state.where((user) => user.fullName.contains(keyword)).toList();
   }
 
-  void toggleUserSelection(User user) {
-    if (_selectedUsers.containsKey(user.id)) {
-      _selectedUsers[user.id] = !_selectedUsers[user.id]!;
-    } else {
-      _selectedUsers[user.id] = true;
-    }
-    state = [...state]; // Trigger a state update
-  }
-
-  bool isSelected(User user) {
-    return _selectedUsers[user.id] ?? false;
-  }
-
-  Future<void> addUsersToOrganization() async {
-    // Implement logic to add selected users to the organization
-  }
 
   List<User> get selectedUsers {
-    return state.where((user) => _selectedUsers[user.id] == true).toList();
+    return state.where((user) => selectedUserIds.contains(user.id)).toList();
+  }
+
+  void addUsersToOrganization(String s) {
+    final selectedUsers = this.selectedUsers;
+    // Implement the logic to send selected users to backend or wherever required
+    print('Selected Users: $selectedUsers');
   }
 }
 
@@ -105,4 +158,8 @@ final userControllerProvider =
 
 final filteredUsersProvider = Provider<List<User>>((ref) {
   return ref.watch(userControllerProvider);
+});
+// Riverpod provider for UserController
+final userProvider = StateNotifierProvider<UserController, List<User>>((ref) {
+  return UserController();
 });

@@ -16,7 +16,7 @@ class User {
   // Add the fromJson factory method
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['id'],
+      id: json['id'], // Correctly mapping the _id field from the backend
       fullName: json['fullName'],
       email: json['email'],
       role: json['role'],
