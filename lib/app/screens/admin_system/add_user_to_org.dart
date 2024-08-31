@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/user.dart';
 import '../../controllers/user_controller.dart';
-import '../../components/lists/user_list_item.dart'; // Import the custom UserListItem widget
+import '../../components/lists/user_list_item.dart';
 
 class AddUserToOrgPage extends ConsumerStatefulWidget {
-   final String orgId; // Accept orgId as a parameter
+  final String orgId;
 
   const AddUserToOrgPage({super.key, required this.orgId});
 
@@ -16,6 +16,7 @@ class AddUserToOrgPage extends ConsumerStatefulWidget {
 class _AddUserToOrgPageState extends ConsumerState<AddUserToOrgPage> {
   final _formKey = GlobalKey<FormState>();
   String searchKeyword = '';
+  String selectedRole = 'Member'; // Default role
 
   @override
   void initState() {
@@ -30,7 +31,11 @@ class _AddUserToOrgPageState extends ConsumerState<AddUserToOrgPage> {
 
   void _addUsersToOrganization() async {
     final userController = ref.read(userProvider.notifier);
-     userController.addUsersToOrganization(widget.orgId);
+    if (selectedRole == 'Member') {
+      await userController.addOrgMember(widget.orgId);
+    } else {
+      await userController.addOrgAdmin(widget.orgId);
+    }
     // Handle success or error, e.g., showing a confirmation message
   }
 
@@ -77,7 +82,7 @@ class _AddUserToOrgPageState extends ConsumerState<AddUserToOrgPage> {
               child: Container(
                 height: screenHeight * 0.8,
                 width: (9 / 10) * screenWidth,
-                decoration: BoxDecoration( 
+                decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
                 ),
@@ -146,6 +151,30 @@ class _AddUserToOrgPageState extends ConsumerState<AddUserToOrgPage> {
                             );
                           },
                         ),
+                      ),
+                    ),
+                    // Dropdown for Role Selection
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 0.07 * screenWidth,
+                        vertical: 0.02 * screenHeight,
+                      ),
+                      child: DropdownButton<String>(
+                        value: selectedRole,
+                        items: const <DropdownMenuItem<String>>[
+                          DropdownMenuItem(
+                              value: 'Member', child: Text('Member')),
+                          DropdownMenuItem(
+                              value: 'Admin', child: Text('Admin')),
+                        ],
+                        onChanged: (String? newValue) {
+                          if (newValue != null) {
+                            setState(() {
+                              selectedRole = newValue;
+                            });
+                          }
+                        },
+                        isExpanded: true,
                       ),
                     ),
                     // Add Button

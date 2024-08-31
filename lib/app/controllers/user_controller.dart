@@ -62,11 +62,17 @@ Set<String> selectedUserIds = {}; // Track selected user IDs
 
 
   void toggleUserSelection(String userId) {
+    final selectedUser = state.firstWhere((user) => user.id == userId);
+
     if (selectedUserIds.contains(userId)) {
       selectedUserIds.remove(userId);
+      userRoles.remove(userId);
+      print('Deselected User: ${selectedUser.fullName} with ID: $userId');
     } else {
       selectedUserIds.add(userId);
+      print('Selected User: ${selectedUser.fullName} with ID: $userId');
     }
+
     state = [...state]; // Trigger UI update
   }
 
@@ -148,6 +154,83 @@ Set<String> selectedUserIds = {}; // Track selected user IDs
     final selectedUsers = this.selectedUsers;
     // Implement the logic to send selected users to backend or wherever required
     print('Selected Users: $selectedUsers');
+  }
+
+  Future<void> addOrgMember(String orgId) async {
+    try {
+      isLoading = true;
+      final url =
+          Uri.parse('http://localhost:3000/api/organizations/$orgId/addOrgMember');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      if (token == null) {
+        throw Exception('User token not found. Please login again.');
+      }
+
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: jsonEncode({
+          "members":
+              selectedUserIds.toList(), // Send the list of selected user IDs
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        // Successfully added users
+        // You might want to clear selectedUserIds after successful operation
+        selectedUserIds.clear();
+      } else {
+        throw Exception('Failed to add users to organization.');
+      }
+    } catch (e) {
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+   // Add multiple users as admins
+  Future<void> addOrgAdmin(String orgId) async {
+    try {
+      isLoading = true;
+      final url =
+          Uri.parse('http://localhost:3000/api/organizations/$orgId/addOrgAdmin');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      if (token == null) {
+        throw Exception('User token not found. Please login again.');
+      }
+
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: jsonEncode({
+          "orgAdmins":
+              selectedUserIds.toList(), // Send the list of selected user IDs
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        // Successfully added admins
+        // You might want to clear selectedUserIds after successful operation
+        selectedUserIds.clear();
+      } else {
+        throw Exception('Failed to add admins to organization.');
+      }
+    } catch (e) {
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
   }
 }
 
