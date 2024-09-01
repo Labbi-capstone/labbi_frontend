@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/Theme/app_colors.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:labbi_frontend/app/utils/user_info_helper.dart';
 
 class UpdateProfile extends StatefulWidget {
   const UpdateProfile({
@@ -15,8 +16,26 @@ class UpdateProfile extends StatefulWidget {
 
 class _UpdateProfileState extends State<UpdateProfile> {
   final String imagePath = "assets/images/man.png";
-  XFile? _image;
   final ImagePicker picker = ImagePicker();
+  XFile? _profileImage;
+  String userName = '';
+  String userEmail = '';
+  String userRole = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserInfo();
+  }
+
+  Future<void> _loadUserInfo() async {
+    final userInfo = await UserInfoHelper.loadUserInfo();
+    setState(() {
+      userName = userInfo['userName']!;
+      userEmail = userInfo['userEmail']!;
+      userRole = userInfo['userRole']!;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +69,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                     child: userProfileImage(context, screenHeight, screenWidth),
                   ),
                   Text(
-                    "Username",
+                    userName,
                     style: TextStyle(
                         fontSize: screenHeight / 30,
                         fontWeight: FontWeight.bold),
@@ -60,7 +79,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                           top: 0.002 * screenHeight,
                           bottom: 0.03 * screenHeight),
                       child: Text(
-                        "Role",
+                        userRole,
                         style: TextStyle(
                             fontSize: screenHeight / 45, color: Colors.grey),
                       )),
@@ -85,17 +104,17 @@ class _UpdateProfileState extends State<UpdateProfile> {
                 children: [
                   EditTextField(
                       label: "Name",
-                      value: "Username",
+                      value: userName,
                       screenHeight: screenHeight,
                       screenWidth: screenWidth),
                   EditTextField(
                       label: "Email",
-                      value: "example@gmail.com",
+                      value: userEmail,
                       screenHeight: screenHeight,
                       screenWidth: screenWidth),
                   EditTextField(
                       label: "Phone",
-                      value: "0912xxxxxx",
+                      value: "*To be updated*",
                       screenHeight: screenHeight,
                       screenWidth: screenWidth),
                   Padding(
@@ -163,8 +182,8 @@ class _UpdateProfileState extends State<UpdateProfile> {
               child: CircleAvatar(
                 radius: screenHeight / 14,
                 backgroundColor: Colors.white,
-                child: (_image != null)
-                    ? Image.file(_image as File)
+                child: (_profileImage != null)
+                    ? Image.file(_profileImage as File)
                     : Image.asset('assets/images/man.png'),
               ),
             ),
@@ -178,7 +197,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                       await picker.pickImage(source: ImageSource.gallery);
                   if (pickedImage != null) {
                     setState(() {
-                      _image = pickedImage;
+                      _profileImage = pickedImage;
                     });
                   }
                 },
