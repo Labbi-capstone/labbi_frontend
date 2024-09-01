@@ -3,9 +3,9 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:labbi_frontend/app/components/charts/line_chart_component.dart';
 import 'package:labbi_frontend/app/components/charts/pie_chart_component.dart';
 import 'package:labbi_frontend/app/models/dashboard.dart';
-import 'package:labbi_frontend/app/components/charts/bar_chart_giang.dart';
-import 'package:labbi_frontend/app/components/charts/line_chart_giang.dart';
-import 'package:labbi_frontend/app/components/charts/pie_chart_giang.dart';
+import 'package:labbi_frontend/app/components/charts/giang/bar_chart_giang.dart';
+import 'package:labbi_frontend/app/components/charts/giang/line_chart_giang.dart';
+import 'package:labbi_frontend/app/components/charts/giang/pie_chart_giang.dart';
 
 class DashboardItem extends StatelessWidget {
   final String title;

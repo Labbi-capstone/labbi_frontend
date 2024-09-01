@@ -1,8 +1,8 @@
 // fetch_data.dart
 import 'dart:convert';
 import 'package:intl/intl.dart'; // Import for date formatting
-import 'package:labbi_frontend/app/components/charts/bar_chart_giang.dart';
-import 'package:labbi_frontend/app/components/charts/line_chart_giang.dart';
+import 'package:labbi_frontend/app/components/charts/giang/bar_chart_giang.dart';
+import 'package:labbi_frontend/app/components/charts/giang/line_chart_giang.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class DataFetcher {
