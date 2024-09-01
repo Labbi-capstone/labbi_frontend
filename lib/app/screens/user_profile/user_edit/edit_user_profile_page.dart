@@ -17,7 +17,7 @@ class _EditUserProfilePageState extends State<EditUserProfilePage> {
     dynamic screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         elevation: 0,
         flexibleSpace: Container(
