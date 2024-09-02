@@ -50,7 +50,7 @@ class RectangleStat extends StatelessWidget {
         color: Colors.grey[300],
         borderRadius: BorderRadius.circular(12),
       ),
-      child: LineChartComponent(
+      child: const LineChartComponent(
           title: "Line Chart"), // Instantiating the widget class
     );
   }
