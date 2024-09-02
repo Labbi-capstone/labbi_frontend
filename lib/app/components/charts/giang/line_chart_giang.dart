@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:labbi_frontend/app/components/charts/giang/bar_chart_giang.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:labbi_frontend/app/screens/prome_display(Temporary)/fetch_data.dart';
 import 'package:labbi_frontend/app/screens/prome_display(Temporary)/websocket_handler.dart';
@@ -17,12 +18,7 @@ class LineChartGiang extends StatefulWidget {
 class _LineChartGiangState extends State<LineChartGiang> {
   late WebSocketHandler _webSocketHandler;
   late DataFetcher _dataFetcher;
-
-  late List<LineData> quantile0Data;
-  late List<LineData> quantile025Data;
-  late List<LineData> quantile05Data;
-  late List<LineData> quantile075Data;
-  late List<LineData> quantile1Data;
+  late Map<String, List<LineData>> lineDataMap;
 
   late Timer _timer;
 
@@ -30,11 +26,7 @@ class _LineChartGiangState extends State<LineChartGiang> {
   void initState() {
     super.initState();
 
-    quantile0Data = [];
-    quantile025Data = [];
-    quantile05Data = [];
-    quantile075Data = [];
-    quantile1Data = [];
+    lineDataMap = {};
 
     // Initialize WebSocketHandler and DataFetcher
     _webSocketHandler = WebSocketHandler(
@@ -48,19 +40,12 @@ class _LineChartGiangState extends State<LineChartGiang> {
     });
 
     // Listen to WebSocket stream
+    // Listen to WebSocket stream
     _webSocketHandler.channel.stream.listen((data) {
       _dataFetcher.processWebSocketData(
         data,
-        [],
-        [],
-        [],
-        [],
-        [],
-        quantile0Data,
-        quantile025Data,
-        quantile05Data,
-        quantile075Data,
-        quantile1Data,
+        {}, // Empty map for BarData if not needed
+        lineDataMap, // Map for LineData
       );
       setState(() {}); // Refresh the UI when new data is available
     });
@@ -85,79 +70,59 @@ class _LineChartGiangState extends State<LineChartGiang> {
             children: [
               Container(
                 width: double.infinity,
-                height: 400, // Increased height for better visibility
+                height: 400,
                 child: SfCartesianChart(
                   title: ChartTitle(
-                    text: 'Quantile Data Over Time',
-                    textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    text: 'Dynamic Metrics Data Over Time',
+                    textStyle:
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   legend: Legend(
                     isVisible: true,
                     position: LegendPosition.bottom,
                     isResponsive: true,
                   ),
-                  series: <LineSeries<LineData, String>>[
-                    LineSeries<LineData, String>(
-                      dataSource: quantile0Data,
-                      color: Colors.red,
+                  series: lineDataMap.entries.map((entry) {
+                    return LineSeries<LineData, String>(
+                      dataSource: entry.value,
                       xValueMapper: (LineData data, _) => data.time,
                       yValueMapper: (LineData data, _) => data.value,
-                      name: 'Quantile 0',
+                      name: entry.key,
                       markerSettings: MarkerSettings(isVisible: true),
-                    ),
-                    LineSeries<LineData, String>(
-                      dataSource: quantile025Data,
-                      color: Colors.orange,
-                      xValueMapper: (LineData data, _) => data.time,
-                      yValueMapper: (LineData data, _) => data.value,
-                      name: 'Quantile 0.25',
-                      markerSettings: MarkerSettings(isVisible: true),
-                    ),
-                    LineSeries<LineData, String>(
-                      dataSource: quantile05Data,
-                      color: Colors.yellow,
-                      xValueMapper: (LineData data, _) => data.time,
-                      yValueMapper: (LineData data, _) => data.value,
-                      name: 'Quantile 0.5',
-                      markerSettings: MarkerSettings(isVisible: true),
-                    ),
-                    LineSeries<LineData, String>(
-                      dataSource: quantile075Data,
-                      color: Colors.green,
-                      xValueMapper: (LineData data, _) => data.time,
-                      yValueMapper: (LineData data, _) => data.value,
-                      name: 'Quantile 0.75',
-                      markerSettings: MarkerSettings(isVisible: true),
-                    ),
-                    LineSeries<LineData, String>(
-                      dataSource: quantile1Data,
-                      color: Colors.blue,
-                      xValueMapper: (LineData data, _) => data.time,
-                      yValueMapper: (LineData data, _) => data.value,
-                      name: 'Quantile 1',
-                      markerSettings: MarkerSettings(isVisible: true),
-                    ),
-                  ],
+                      dataLabelSettings: DataLabelSettings(isVisible: false),
+                    );
+                  }).toList(),
                   primaryXAxis: CategoryAxis(
                     title: AxisTitle(text: 'Time'),
                     majorGridLines: MajorGridLines(width: 0.5),
                     majorTickLines: MajorTickLines(width: 0.5),
                     edgeLabelPlacement: EdgeLabelPlacement.shift,
                     labelRotation: 45,
-                    labelStyle: TextStyle(fontSize: 10), // Adjust label size if needed
-                    interval: quantile0Data.length > 1 ? ((quantile0Data.length / 5).ceil()).toDouble() : 1, // Set interval for 5 labels
-                    desiredIntervals: quantile0Data.length > 5 ? (quantile0Data.length / 5).ceil() : 1, // Ensure 5 intervals on the axis
+                    labelStyle: TextStyle(fontSize: 10),
+                    interval: lineDataMap.isNotEmpty
+                        ? (lineDataMap.entries.first.value.length > 1
+                            ? ((lineDataMap.entries.first.value.length / 5)
+                                    .ceil())
+                                .toDouble()
+                            : 1)
+                        : 1,
+                    desiredIntervals: lineDataMap.isNotEmpty
+                        ? (lineDataMap.entries.first.value.length > 5
+                            ? (lineDataMap.entries.first.value.length / 5)
+                                .ceil()
+                            : 1)
+                        : 1,
                   ),
                   primaryYAxis: NumericAxis(
                     title: AxisTitle(text: 'Value (scaled by 1,000,000,000)'),
                     majorGridLines: MajorGridLines(width: 0.5),
                     majorTickLines: MajorTickLines(width: 0.5),
-                    labelFormat: '{value}', // Keep as numeric
+                    labelFormat: '{value}',
                   ),
                   tooltipBehavior: TooltipBehavior(
                     enable: true,
                     canShowMarker: true,
-                    format: 'Time: {point.x}\nValue: {point.y}', // Customize tooltip format if needed
+                    format: 'Time: {point.x}\nValue: {point.y}',
                   ),
                 ),
               ),
@@ -175,7 +140,6 @@ class _LineChartGiangState extends State<LineChartGiang> {
     );
   }
 }
-
 
 class LineData {
   LineData(this.time, this.value);

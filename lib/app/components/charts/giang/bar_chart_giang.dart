@@ -17,12 +17,8 @@ class BarChartGiang extends StatefulWidget {
 class _BarChartGiangState extends State<BarChartGiang> {
   late WebSocketHandler _webSocketHandler;
   late DataFetcher _dataFetcher;
-
-  late List<BarData> quantile0Data;
-  late List<BarData> quantile025Data;
-  late List<BarData> quantile05Data;
-  late List<BarData> quantile075Data;
-  late List<BarData> quantile1Data;
+  late Map<String, List<BarData>>
+      barDataMap; // Use Map to dynamically manage data
 
   late Timer _timer;
 
@@ -30,11 +26,7 @@ class _BarChartGiangState extends State<BarChartGiang> {
   void initState() {
     super.initState();
 
-    quantile0Data = [];
-    quantile025Data = [];
-    quantile05Data = [];
-    quantile075Data = [];
-    quantile1Data = [];
+    barDataMap = {};
 
     // Initialize WebSocketHandler and DataFetcher
     _webSocketHandler = WebSocketHandler(
@@ -51,17 +43,9 @@ class _BarChartGiangState extends State<BarChartGiang> {
     _webSocketHandler.channel.stream.listen((data) {
       _dataFetcher.processWebSocketData(
         data,
-        quantile0Data,
-        quantile025Data,
-        quantile05Data,
-        quantile075Data,
-        quantile1Data,
-        [],
-        [],
-        [],
-        [],
-        [],
-      );// Print data after processing
+        barDataMap, // Pass the map for BarData
+        {}, // No need for LineData here
+      );
       setState(() {}); // Refresh the UI when new data is available
     });
   }
@@ -89,50 +73,22 @@ class _BarChartGiangState extends State<BarChartGiang> {
                 child: SfCartesianChart(
                   title: ChartTitle(
                     text: 'Quantile Data',
-                    textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    textStyle:
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   legend: Legend(
                     isVisible: true,
                     position: LegendPosition.bottom,
                     isResponsive: true,
                   ),
-                  series: <BarSeries<BarData, String>>[
-                    BarSeries<BarData, String>(
-                      dataSource: quantile0Data,
-                      color: Colors.red,
+                  series: barDataMap.entries.map((entry) {
+                    return BarSeries<BarData, String>(
+                      dataSource: entry.value,
                       xValueMapper: (BarData data, _) => data.time,
                       yValueMapper: (BarData data, _) => data.value,
-                      name: 'Quantile 0',
-                    ),
-                    BarSeries<BarData, String>(
-                      dataSource: quantile025Data,
-                      color: Colors.orange,
-                      xValueMapper: (BarData data, _) => data.time,
-                      yValueMapper: (BarData data, _) => data.value,
-                      name: 'Quantile 0.25',
-                    ),
-                    BarSeries<BarData, String>(
-                      dataSource: quantile05Data,
-                      color: Colors.yellow,
-                      xValueMapper: (BarData data, _) => data.time,
-                      yValueMapper: (BarData data, _) => data.value,
-                      name: 'Quantile 0.5',
-                    ),
-                    BarSeries<BarData, String>(
-                      dataSource: quantile075Data,
-                      color: Colors.green,
-                      xValueMapper: (BarData data, _) => data.time,
-                      yValueMapper: (BarData data, _) => data.value,
-                      name: 'Quantile 0.75',
-                    ),
-                    BarSeries<BarData, String>(
-                      dataSource: quantile1Data,
-                      color: Colors.blue,
-                      xValueMapper: (BarData data, _) => data.time,
-                      yValueMapper: (BarData data, _) => data.value,
-                      name: 'Quantile 1',
-                    ),
-                  ],
+                      name: entry.key,
+                    );
+                  }).toList(),
                   primaryXAxis: CategoryAxis(
                     title: AxisTitle(text: 'Quantile'),
                     majorGridLines: MajorGridLines(width: 0.5),
@@ -149,9 +105,11 @@ class _BarChartGiangState extends State<BarChartGiang> {
                     enable: true,
                     canShowMarker: true,
                     format: 'point.x: {point.x}\npoint.y: {point.y}',
-                    builder: (dynamic data, dynamic point, dynamic series, int pointIndex, int seriesIndex) {
+                    builder: (dynamic data, dynamic point, dynamic series,
+                        int pointIndex, int seriesIndex) {
                       final barData = data as BarData;
-                      print('Tooltip: Quantile: ${barData.time}, Value: ${barData.value}'); // Print to console
+                      print(
+                          'Tooltip: Quantile: ${barData.time}, Value: ${barData.value}'); // Print to console
                       return Container(
                         padding: EdgeInsets.all(8.0),
                         color: Colors.white,

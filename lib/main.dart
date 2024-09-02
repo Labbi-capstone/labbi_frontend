@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: Routes.PrometheusCPUDataPage,
+      initialRoute: Routes.login,
       routes: {
         Routes.login: (context) => const LoginPage(),
         Routes.register: (context) => const RegisterPage(),
