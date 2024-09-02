@@ -8,14 +8,20 @@ final List<Dashboard> initialDashboards = [
     id: 11,
     name: "Device 111",
     lineChartData: [
-      
+      LineData(0, 1),
+      LineData(1, 3),
+      LineData(2, 5),
+      LineData(3, 4),
+      LineData(4, 7),
+      LineData(5, 8),
     ],
     pieChartData: [
-      
+      PieData("Category 1", 40),
+      PieData("Category 2", 30),
+      PieData("Category 3", 15),
+      PieData("Category 4", 15),
     ],
-    barChartData: [
-
-    ]
+    barChartData: [],
   ),
   // Add more Dashboard instances as needed
 ];

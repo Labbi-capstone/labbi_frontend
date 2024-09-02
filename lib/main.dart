@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:labbi_frontend/app/routes.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:labbi_frontend/app/screens/admin_system/user_list_in_org_page.dart';
 import 'package:labbi_frontend/app/screens/authentication/login_page.dart';
 import 'package:labbi_frontend/app/screens/authentication/register_page.dart';
 import 'package:labbi_frontend/app/screens/dashboard_page/dashboard_page.dart';
+import 'package:labbi_frontend/app/screens/prome_display(Temporary)/PrometheusCPUDataPage.dart';
 import 'package:labbi_frontend/app/screens/user_profile/user_profile.dart';
 import 'package:labbi_frontend/app/screens/user_profile/user_edit/edit_user_profile_page.dart';
 import 'package:labbi_frontend/app/screens/notification/notification_page.dart';
@@ -50,7 +52,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: Routes.dashboard,
+      initialRoute: Routes.login,
       routes: {
         Routes.login: (context) => const LoginPage(),
         Routes.register: (context) => const RegisterPage(),
@@ -64,8 +66,9 @@ class MyApp extends StatelessWidget {
         Routes.createOrgPage: (context) => const CreateOrgPage(),
         Routes.controlPanelPage: (context) => const ControlPanelPage(),
         Routes.createDashboardPage: (context) => const CreateDashboardPage(),
-        // Routes.userListPage: (context) => UserListPage(),
+       // Routes.userListPage: (context) => const UserListInOrgPage(orgId: '',),
         Routes.cpuDisplay: (context) => CPUUsagePage(),
+        Routes.PrometheusCPUDataPage: (context) => const PrometheusCPUDataPage(),
       },
       onUnknownRoute: (settings) => MaterialPageRoute(
         builder: (context) => Scaffold(
@@ -77,7 +80,6 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-// >>>>>>> origin/main
     );
   }
 }
