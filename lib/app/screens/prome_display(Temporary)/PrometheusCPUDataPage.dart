@@ -27,7 +27,7 @@ class _PrometheusDataPageState extends State<PrometheusCPUDataPage> {
         "Authorization": "Bearer 8a0092a171ca802b078d3d4d7871e744098de2e8",
       },
     );
-
+print(response.body);
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
       if (jsonResponse['status'] == 'success') {
