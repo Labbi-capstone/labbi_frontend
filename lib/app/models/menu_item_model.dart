@@ -79,11 +79,11 @@ final List<MenuItemModel> developerMenuItems = [
 ];
 
 final List<MenuItemModel> orgAdminMenuItems = [
-  // MenuItemModel(
-  //   icon: Icons.home_outlined,
-  //   label: 'Dashboard',
-  //   route: const DashboardPage(),
-  // ),
+  MenuItemModel(
+    icon: Icons.home_outlined,
+    label: 'Dashboard',
+    route: const DashboardPage(),
+  ),
   MenuItemModel(
     icon: Icons.notifications_active_outlined,
     label: 'Notification',
