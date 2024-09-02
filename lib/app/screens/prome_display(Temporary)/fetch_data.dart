@@ -109,6 +109,7 @@ void processWebSocketData(
   }
 
   void _updateLineDataList(List<LineData> dataList, LineData newData) {
+    // dataList.add(newData);
     if (dataList.length >= 5) {
       dataList.removeAt(0); // Keep only the latest 5 entries
     }

@@ -67,7 +67,7 @@ class _LineChartComponentState extends State<LineChartComponent> {
             children: [
               Container(
                 width: double.infinity,
-                height: 400,
+                height: 600,
                 child: SfCartesianChart(
                   title: ChartTitle(
                     text: 'Dynamic Metrics Data Over Time',
@@ -88,6 +88,7 @@ class _LineChartComponentState extends State<LineChartComponent> {
                       name: entry.key,
                       markerSettings: MarkerSettings(isVisible: true),
                       dataLabelSettings: DataLabelSettings(isVisible: false),
+                      animationDuration: 0,
                     );
                   }).toList(),
                   primaryXAxis: CategoryAxis(
@@ -103,6 +104,9 @@ class _LineChartComponentState extends State<LineChartComponent> {
                     majorGridLines: MajorGridLines(width: 0.5),
                     majorTickLines: MajorTickLines(width: 0.5),
                     labelFormat: '{value}',
+                    minimum: 0,
+                    maximum: 1000000,
+                    interval: 100000,
                   ),
                   tooltipBehavior: TooltipBehavior(
                     enable: true,
