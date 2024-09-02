@@ -38,7 +38,7 @@ class _BarChartGiangState extends State<BarChartGiang> {
 
     // Initialize WebSocketHandler and DataFetcher
     _webSocketHandler = WebSocketHandler(
-      WebSocketChannel.connect(Uri.parse('ws://localhost:3000')),
+      WebSocketChannel.connect(Uri.parse('ws://localhost:8000')),
     );
     _dataFetcher = DataFetcher(_webSocketHandler.channel);
 

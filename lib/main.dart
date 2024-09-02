@@ -64,7 +64,7 @@ class MyApp extends StatelessWidget {
         Routes.createOrgPage: (context) => const CreateOrgPage(),
         Routes.controlPanelPage: (context) => const ControlPanelPage(),
         Routes.createDashboardPage: (context) => const CreateDashboardPage(),
-        Routes.userListPage: (context) => UserListPage(),
+        // Routes.userListPage: (context) => UserListPage(),
         Routes.cpuDisplay: (context) => CPUUsagePage(),
       },
       onUnknownRoute: (settings) => MaterialPageRoute(
