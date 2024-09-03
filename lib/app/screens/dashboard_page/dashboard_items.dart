@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:labbi_frontend/app/components/charts/sampletestchart.dart';
 import 'package:labbi_frontend/app/models/dashboard.dart';
 import 'package:labbi_frontend/app/components/charts/bar_chart_component.dart';
 import 'package:labbi_frontend/app/components/charts/line_chart_component.dart';

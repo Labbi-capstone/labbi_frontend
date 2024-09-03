@@ -4,32 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:labbi_frontend/app/models/organization.dart';
+import 'package:labbi_frontend/app/state/org_state.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-class OrgState {
-  final bool isLoading;
-  final String? errorMessage;
-  final List<Organization> organizationList;
-
-  OrgState({
-    this.isLoading = false,
-    this.errorMessage,
-    this.organizationList = const [],
-  });
-
-  OrgState copyWith({
-    bool? isLoading,
-    String? errorMessage,
-    List<Organization>? organizationList,
-  }) {
-    return OrgState(
-      isLoading: isLoading ?? this.isLoading,
-      errorMessage: errorMessage ?? this.errorMessage,
-      organizationList: organizationList ?? this.organizationList,
-    );
-  }
-}
 
 class OrgController extends StateNotifier<OrgState> {
   OrgController() : super(OrgState());
