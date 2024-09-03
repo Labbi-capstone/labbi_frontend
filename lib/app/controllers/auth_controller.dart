@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:labbi_frontend/app/routes.dart';
 import 'package:riverpod/riverpod.dart';
@@ -60,7 +62,6 @@ class AuthState {
 }
 
 class AuthController extends StateNotifier<AuthState> {
-  bool isSnackBarShown = false;
   final Ref ref;
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -85,13 +86,18 @@ class AuthController extends StateNotifier<AuthState> {
     setLoading(true);
 
     try {
+      // Select API URL based on the platform
+      final apiUrl =
+          kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
+          
       final reqBody = {
         "email": emailController.text.trim(),
         "password": passwordController.text,
       };
 
       final response = await http.post(
-        Uri.parse('http://localhost:3000/api/users/login'),
+        Uri.parse(
+            '$apiUrl/users/login'), // Adjusted URL for emulator
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(reqBody),
       );
@@ -124,13 +130,12 @@ class AuthController extends StateNotifier<AuthState> {
         }
       } else {
         if (context.mounted) {
-          _showErrorMessage(context, jsonRes['message'] ?? 'Login failed');
+          // Handle login failure (e.g., show an alert dialog or a different UI element)
         }
       }
     } catch (e) {
       if (context.mounted) {
-        _showErrorMessage(
-            context, 'An unexpected error occurred. Please try again.');
+        // Handle unexpected error (e.g., show an alert dialog or a different UI element)
       }
     } finally {
       setLoading(false);
@@ -163,6 +168,8 @@ class AuthController extends StateNotifier<AuthState> {
     setLoading(true);
 
     try {
+      final apiUrl =
+          kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
       final reqBody = {
         "fullName": nameController.text.trim(),
         "email": emailController.text.trim(),
@@ -170,7 +177,7 @@ class AuthController extends StateNotifier<AuthState> {
       };
 
       final response = await http.post(
-        Uri.parse('http://localhost:3000/api/users/register'),
+        Uri.parse('$apiUrl/users/register'),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(reqBody),
       );
@@ -179,45 +186,21 @@ class AuthController extends StateNotifier<AuthState> {
 
       if (response.statusCode == 200 && jsonRes['status']) {
         if (context.mounted) {
-          _showSuccessMessage(context, "Registration successful!");
-
+          // Handle registration success (e.g., navigate to login page)
           await Future.delayed(const Duration(seconds: 1));
           Navigator.pushReplacementNamed(context, Routes.login);
         }
       } else {
         if (context.mounted) {
-          _showErrorMessage(context,
-              jsonRes['message'] ?? "Registration failed. Please try again.");
+          // Handle registration failure (e.g., show an alert dialog or a different UI element)
         }
       }
     } catch (e) {
       if (context.mounted) {
-        _showErrorMessage(context, "An error occurred. Please try again.");
+        // Handle unexpected error (e.g., show an alert dialog or a different UI element)
       }
     } finally {
       setLoading(false);
-    }
-  }
-
-  void _showErrorMessage(BuildContext context, String message) {
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
-  }
-
-  void _showSuccessMessage(BuildContext context, String message) {
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor: Colors.green,
-        ),
-      );
     }
   }
 
