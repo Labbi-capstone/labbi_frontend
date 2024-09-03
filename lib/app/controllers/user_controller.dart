@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:labbi_frontend/app/models/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:developer' as dev;
+import 'dart:developer';
 
 class UserController extends StateNotifier<List<User>> {
   UserController() : super([]);
@@ -88,16 +88,21 @@ Set<String> selectedUserIds = {}; // Track selected user IDs
   Future<void> updateUserInfo(String userId, String newName, String newEmail) async {
     isLoading = true;
     try {
-      final url = Uri.parse('http://localhost:3000/api/users/$userId');
+      final url = Uri.parse('http://localhost:3000/api/users/update/$userId');
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
 
-      await http.patch(url, body: {
+      await http.put(url, body: jsonEncode({
+        "_id": userId,
         "fullName": newName,
-        "email": newEmail
-      }, headers: {"Authorization": "Bearer $token"},).then((value) {
-        dev.log("Response body: ${value.body}");
-        dev.log("Response status: ${value.statusCode}");
+        "email": newEmail,
+      }), headers: {"Authorization": "Bearer $token"},)
+      .then((value) {
+        log("Response body: ${value.body}");
+        log("Response status: ${value.statusCode}");
+        if (value.statusCode == 200) {
+          
+        }
       });
 
       if (token == null) {

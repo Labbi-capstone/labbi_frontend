@@ -223,7 +223,7 @@ class UpdateProfileState extends ConsumerState<UpdateProfile> {
                 radius: screenHeight / 14,
                 backgroundColor: Colors.white,
                 child: (_profileImage != null)
-                    ? Image.file(_profileImage as File)
+                    ? Image.file(File(_profileImage!.path))
                     : Image.asset('assets/images/man.png'),
               ),
             ),

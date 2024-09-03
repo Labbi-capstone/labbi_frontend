@@ -51,8 +51,8 @@ class _EditTextFieldState extends State<EditTextField> {
           } else if (widget.label == "Email") {
             widget.updateEmail(value);
           } else {
-            widget.updateEmail('');
-            widget.updateName('');
+            widget.updateEmail(widget.userData);
+            widget.updateName(widget.userData);
           }
         },
       ),
