@@ -22,7 +22,7 @@ class _ChartTestScreenState extends ConsumerState<ChartTestScreen> {
     super.initState();
     channel = widget.channel;
 
-    // Listen for WebSocket messages
+   // Listen for WebSocket messages
     channel.stream.listen((message) {
       print('Received raw message: $message'); // Log the raw message
 
@@ -50,6 +50,7 @@ class _ChartTestScreenState extends ConsumerState<ChartTestScreen> {
         print('Parsed message is not a Map');
       }
     });
+
 
     Future.microtask(
         () => ref.read(chartControllerProvider.notifier).fetchCharts());
@@ -84,25 +85,35 @@ class _ChartTestScreenState extends ConsumerState<ChartTestScreen> {
                       title: Text(chart.name),
                       subtitle: Text('Type: ${chart.chartType}'),
                       onTap: () {
-                        // Send the chart selection data to the backend via WebSocket
-                        final message = jsonEncode({
-                          'prometheusEndpointId': chart.prometheusEndpointId,
-                          'chartType': chart.chartType,
-                        });
-                        print('Sending message to backend: $message');
-                        channel.sink.add(message);
+                          // Send the chart selection data to the backend via WebSocket
+                          final message = jsonEncode({
+                            'prometheusEndpointId': chart.prometheusEndpointId,
+                            'chartType': chart.chartType,
+                          });
+                          print('Sending message to backend: $message');
+                          channel.sink.add(message);
 
-                        // Display the chart data in a new screen or modal
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ChartDisplayScreen(
-                              chartType: chart.chartType,
-                              chartData: chartDataForThisChart,
-                            ),
-                          ),
-                        );
-                      },
+                          // Wait for the data to be populated
+                          Future.delayed(Duration(milliseconds: 500), () {
+                            final chartDataForThisChart =
+                                chartData[chart.chartType] ?? {};
+                            if (chartDataForThisChart.isNotEmpty) {
+                              // Display the chart data in a new screen or modal
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ChartDisplayScreen(
+                                    chartType: chart.chartType,
+                                    chartData: chartDataForThisChart,
+                                  ),
+                                ),
+                              );
+                            } else {
+                              print('No data available yet.');
+                            }
+                          });
+                        }
+
                     );
                   },
                 ),
@@ -116,7 +127,7 @@ class ChartDisplayScreen extends StatelessWidget {
 
   ChartDisplayScreen({required this.chartType, required this.chartData});
 
-  @override
+ @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -124,7 +135,7 @@ class ChartDisplayScreen extends StatelessWidget {
       ),
       body: Center(
         child: chartData.isEmpty
-            ? Text('No data available')
+            ? CircularProgressIndicator() // Show a loading spinner while data is being fetched
             : Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -136,4 +147,5 @@ class ChartDisplayScreen extends StatelessWidget {
       ),
     );
   }
+
 }
