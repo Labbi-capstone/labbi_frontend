@@ -16,33 +16,20 @@ class DataFetcher {
     channel.sink.add('fetch_data');
   }
 
-void processWebSocketData(
+  void processWebSocketData(
     dynamic data,
     Map<String, List<BarData>> barDataMap,
     Map<String, List<LineData>> lineDataMap,
   ) {
     if (data != null && data is String) {
       try {
-        print('Received WebSocket message: $data');
-
         var decodedData = jsonDecode(data);
-        print('Decoded Data: $decodedData');
-
-        // Access the nested structure more deeply
         var innerData = decodedData['data'];
-        print('Inner Data: $innerData');
-
-        // Adjusting the access path to account for potential nested 'data'
         var actualData = innerData['data'];
-        print('Actual Data: $actualData');
-
         var resultData = actualData['result'];
-        print('resultData type: ${resultData.runtimeType}');
-        print('resultData: $resultData');
 
         if (resultData is List && resultData.isNotEmpty) {
           var chartType = decodedData['chartType'];
-          print('chartType: $chartType');
 
           for (var entry in resultData) {
             var metric = entry['metric'];
@@ -62,9 +49,6 @@ void processWebSocketData(
                 key += '_${metric['quantile']}';
               }
 
-              print(
-                  'Key: $key, Timestamp: $formattedTimestamp, Metric Value: $metricValue');
-
               if (chartType == 'barChart') {
                 var barData = BarData(formattedTimestamp, metricValue);
                 if (!barDataMap.containsKey(key)) {
@@ -78,42 +62,26 @@ void processWebSocketData(
                 }
                 _updateLineDataList(lineDataMap[key]!, lineData);
               }
-            } else {
-              print('Invalid value structure or empty value array: $value');
             }
           }
-
-          print(
-              'Updated BarDataMap: ${barDataMap.entries.map((e) => '${e.key}: ${e.value.length} entries').join(', ')}');
-          print(
-              'Updated LineDataMap: ${lineDataMap.entries.map((e) => '${e.key}: ${e.value.length} entries').join(', ')}');
-        } else {
-          print('No valid result found or result is not a list.');
         }
       } catch (e) {
-        print('Error parsing JSON or accessing result: $e');
+        // Handle error silently or log it if needed
       }
-    } else {
-      print('No data or invalid format received.');
     }
   }
-
-
 
   void _updateBarDataList(List<BarData> dataList, BarData newData) {
     if (dataList.length >= 1) {
       dataList.removeAt(0); // Keep only the latest 5 entries
     }
     dataList.add(newData);
-    print('BarDataList updated: ${dataList.length} entries');
   }
 
   void _updateLineDataList(List<LineData> dataList, LineData newData) {
-    // dataList.add(newData);
     if (dataList.length >= 5) {
       dataList.removeAt(0); // Keep only the latest 5 entries
     }
     dataList.add(newData);
-    print('LineDataList updated: ${dataList.length} entries');
   }
 }

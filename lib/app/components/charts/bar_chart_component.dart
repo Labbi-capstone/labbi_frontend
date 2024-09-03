@@ -43,7 +43,7 @@ class _BarChartComponentState extends State<BarChartComponent> {
         barDataMap, 
         {}, 
       );
-      print('BarDataMap updated: $barDataMap'); // Debug log
+     // print('BarDataMap updated: $barDataMap'); // Debug log
       setState(() {}); 
     });
   }
@@ -80,7 +80,7 @@ class _BarChartComponentState extends State<BarChartComponent> {
                     isResponsive: true,
                   ),
                   series: barDataMap.entries.map((entry) {
-                    print('Rendering BarChart for $entry.key'); // Debug log
+                 //   print('Rendering BarChart for $entry.key'); // Debug log
                     return BarSeries<BarData, String>(
                       dataSource: entry.value,
                       xValueMapper: (BarData data, _) => data.time,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:labbi_frontend/app/components/charts/sampletestchart.dart';
 import 'package:labbi_frontend/app/models/dashboard.dart';
 import 'package:labbi_frontend/app/components/charts/bar_chart_component.dart';
 import 'package:labbi_frontend/app/components/charts/line_chart_component.dart';
@@ -8,8 +9,7 @@ import 'package:labbi_frontend/app/components/charts/pie_chart_giang.dart';
 class DashboardItem extends StatelessWidget {
   final String title;
 
-
- const DashboardItem({
+  const DashboardItem({
     required this.title,
     Key? key,
   }) : super(key: key);
@@ -31,9 +31,10 @@ class DashboardItem extends StatelessWidget {
               ),
             ),
             SizedBox(height: 10),
-            RectangleStat(),
-            SizedBox(height: 10),
             RectangleStat2(),
+            SizedBox(height: 10),
+            RectangleStat(),
+            //RectangleStat: unsupportted operation: Platform._version;
           ],
         ),
       ),
