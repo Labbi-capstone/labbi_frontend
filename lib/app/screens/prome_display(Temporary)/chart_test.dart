@@ -17,7 +17,9 @@ class ChartTestScreen extends ConsumerStatefulWidget {
 class _ChartTestScreenState extends ConsumerState<ChartTestScreen> {
   late WebSocketChannel channel;
   late Stream<dynamic> broadcastStream;
-  Map<String, dynamic> chartData = {}; // Store chart data by chart type
+  Map<String, Map<String, dynamic>> allChartData =
+      {}; // Store chart data by chart type
+  Map<String, Timer> chartTimers = {}; // To keep track of timers for each chart
 
   @override
   void initState() {
@@ -29,15 +31,11 @@ class _ChartTestScreenState extends ConsumerState<ChartTestScreen> {
 
     // Listen for WebSocket messages
     broadcastStream.listen((message) {
-      print('Received raw message: $message'); // Log the raw message
-
       // Decode the JSON and explicitly cast it
       final parsedMessage = jsonDecode(message);
-      print('Parsed message: $parsedMessage'); // Log the parsed message
 
       if (parsedMessage is Map) {
         final chartType = parsedMessage['chartType'] as String;
-        print('Chart type: $chartType'); // Log the chart type
 
         // Try to cast 'data' to Map<String, dynamic> explicitly
         try {
@@ -46,7 +44,7 @@ class _ChartTestScreenState extends ConsumerState<ChartTestScreen> {
 
           // Update state with the new data
           setState(() {
-            chartData[chartType] = data;
+            allChartData[chartType] = data;
           });
         } catch (e) {
           print('Error casting data to Map<String, dynamic>: $e');
@@ -62,8 +60,41 @@ class _ChartTestScreenState extends ConsumerState<ChartTestScreen> {
 
   @override
   void dispose() {
+    // Dispose of the channel and all timers
     channel.sink.close();
+    for (var timer in chartTimers.values) {
+      timer.cancel();
+    }
     super.dispose();
+  }
+
+  void fetchData(String prometheusEndpointId, String chartType) {
+    final message = jsonEncode({
+      'prometheusEndpointId':
+          prometheusEndpointId, // Use the correct endpoint ID
+      'chartType': chartType,
+    });
+    channel.sink.add(message);
+  }
+
+  void startOrUpdateTimer(String prometheusEndpointId, String chartType) {
+    // If a timer already exists for this chartType, don't create another one
+    if (chartTimers.containsKey(chartType)) return;
+
+    // Create a timer for fetching data every 2 seconds
+    final timer = Timer.periodic(Duration(seconds: 2), (Timer t) {
+      fetchData(prometheusEndpointId, chartType);
+    });
+
+    chartTimers[chartType] = timer;
+  }
+
+  String formatTimestamp(double timestamp) {
+    final date = DateTime.fromMillisecondsSinceEpoch(
+      (timestamp * 1000).toInt(),
+      isUtc: true,
+    );
+    return date.toLocal().toString(); // Format the date as a string
   }
 
   @override
@@ -83,145 +114,37 @@ class _ChartTestScreenState extends ConsumerState<ChartTestScreen> {
                   itemBuilder: (context, index) {
                     final chart = chartState.charts[index];
                     final chartDataForThisChart =
-                        chartData[chart.chartType] ?? {};
+                        allChartData[chart.chartType] ?? {};
 
-                    return ListTile(
+                    // Start or update the timer for each chart
+                    startOrUpdateTimer(
+                        chart.prometheusEndpointId, chart.chartType);
+
+                    return ExpansionTile(
                       title: Text(chart.name),
                       subtitle: Text('Type: ${chart.chartType}'),
-                      onTap: () {
-                        // Send the chart selection data to the backend via WebSocket
-                        final message = jsonEncode({
-                          'prometheusEndpointId': chart.prometheusEndpointId,
-                          'chartType': chart.chartType,
-                        });
-                        print('Sending message to backend: $message');
-                        channel.sink.add(message);
-
-                        // Wait for the data to be populated
-                        Future.delayed(Duration(milliseconds: 500), () {
-                          final chartDataForThisChart =
-                              chartData[chart.chartType] ?? {};
-                          if (chartDataForThisChart.isNotEmpty) {
-                            // Display the chart data in a new screen or modal
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ChartDisplayScreen(
-                                  chartType: chart.chartType,
-                                  chartData: chartDataForThisChart,
-                                  channel: channel, // Pass the channel
-                                  broadcastStream:
-                                      broadcastStream, // Pass the broadcast stream
-                                  prometheusEndpointId: chart
-                                      .prometheusEndpointId, // Pass the endpoint ID
-                                ),
+                      children: [
+                        chartDataForThisChart.isEmpty
+                            ? CircularProgressIndicator() // Show a loading spinner while data is being fetched
+                            : Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text('Chart Data:'),
+                                  for (var entry
+                                      in chartDataForThisChart.entries)
+                                    if (entry.key == 'result')
+                                      for (var resultEntry in entry.value)
+                                        Text(
+                                          'Time: ${formatTimestamp(resultEntry['value'][0])}, Value: ${resultEntry['value'][1]}',
+                                        )
+                                    else
+                                      Text('${entry.key}: ${entry.value}'),
+                                ],
                               ),
-                            );
-                          } else {
-                            print('No data available yet.');
-                          }
-                        });
-                      },
+                      ],
                     );
                   },
                 ),
-    );
-  }
-}
-
-class ChartDisplayScreen extends StatefulWidget {
-  final String chartType;
-  final Map<String, dynamic> chartData;
-  final WebSocketChannel channel;
-  final Stream<dynamic> broadcastStream;
-  final String prometheusEndpointId;
-
-  ChartDisplayScreen({
-    required this.chartType,
-    required this.chartData,
-    required this.channel,
-    required this.broadcastStream,
-    required this.prometheusEndpointId,
-  });
-
-  @override
-  _ChartDisplayScreenState createState() => _ChartDisplayScreenState();
-}
-
-class _ChartDisplayScreenState extends State<ChartDisplayScreen> {
-  late Map<String, dynamic> chartData;
-  Timer? _timer;
-
-  @override
-  void initState() {
-    super.initState();
-    chartData = widget.chartData;
-
-    // Set up a periodic timer to fetch data every 2 seconds
-    _timer = Timer.periodic(Duration(seconds: 2), (Timer t) {
-      fetchData();
-    });
-
-    // Listen for WebSocket messages
-    widget.broadcastStream.listen((message) {
-      final parsedMessage = jsonDecode(message);
-      final chartType = parsedMessage['chartType'] as String;
-
-      if (chartType == widget.chartType) {
-        setState(() {
-          chartData = Map<String, dynamic>.from(parsedMessage['data']);
-        });
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
-
-  void fetchData() {
-    final message = jsonEncode({
-      'prometheusEndpointId':
-          widget.prometheusEndpointId, // Use the correct endpoint ID
-      'chartType': widget.chartType,
-    });
-    widget.channel.sink.add(message);
-  }
-
-  String formatTimestamp(double timestamp) {
-    final date = DateTime.fromMillisecondsSinceEpoch(
-      (timestamp * 1000).toInt(),
-      isUtc: true,
-    );
-    return date.toLocal().toString(); // Format the date as a string
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Chart: ${widget.chartType}'),
-      ),
-      body: Center(
-        child: chartData.isEmpty
-            ? CircularProgressIndicator() // Show a loading spinner while data is being fetched
-            : Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Chart Data:'),
-                  for (var entry in chartData.entries)
-                    if (entry.key == 'result')
-                      for (var resultEntry in entry.value)
-                        Text(
-                          'Time: ${formatTimestamp(resultEntry['value'][0])}, Value: ${resultEntry['value'][1]}',
-                        )
-                    else
-                      Text('${entry.key}: ${entry.value}'),
-                ],
-              ),
-      ),
     );
   }
 }
