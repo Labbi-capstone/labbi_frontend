@@ -16,15 +16,13 @@ class UserInfoHelper {
     };
   }
 
-  // static Future<void> updateUserInfo(String? userName, String? userEmail) async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   if (userName != null) {
-  //     await prefs.setString('userName', userName);
-  //     log("Update name successfully! $userName");
-  //   }
-  //   if (userEmail != null) {
-  //     await prefs.setString('userEmail', userEmail);
-  //     log("Update email successfully! $userEmail");
-  //   }
-  // }
+  static Future<void> updateUserInfo(String? userName, String? userEmail) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (userName != null && userEmail != null) {
+      await prefs.setString('userName', userName);
+      await prefs.setString('userEmail', userEmail);
+      log("Update name successfully! $userName");
+      log("Update email successfully! $userEmail");
+    }
+  }
 }

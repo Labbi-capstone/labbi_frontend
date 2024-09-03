@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
 
 class EditTextField extends StatefulWidget {
-  final Function updateName;
-  final Function updateEmail;
+  // final Function updateName;
+  // final Function updateEmail;
   final String label;
   final String userData;
   final double screenHeight;
   final double screenWidth;
+  final TextEditingController controller;
 
   const EditTextField({
     super.key,
-    required this.updateName,
-    required this.updateEmail,
+    // required this.updateName,
+    // required this.updateEmail,
     required this.label,
     required this.userData,
     required this.screenHeight,
     required this.screenWidth,
+    required this.controller
   });
 
   @override
@@ -37,6 +39,7 @@ class _EditTextFieldState extends State<EditTextField> {
           top: 0.03 * widget.screenHeight,
           bottom: 0.03 * widget.screenHeight),
       child: TextField(
+        controller: widget.controller,
         decoration: InputDecoration(
           border: const UnderlineInputBorder(),
           labelText: widget.label,
@@ -45,16 +48,6 @@ class _EditTextFieldState extends State<EditTextField> {
           floatingLabelBehavior: FloatingLabelBehavior.always,
           hintText: widget.userData,
         ),
-        onSubmitted: (value) {
-          if (widget.label == "Name") {
-            widget.updateName(value);
-          } else if (widget.label == "Email") {
-            widget.updateEmail(value);
-          } else {
-            widget.updateEmail(widget.userData);
-            widget.updateName(widget.userData);
-          }
-        },
       ),
     );
   }

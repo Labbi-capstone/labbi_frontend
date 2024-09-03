@@ -19,6 +19,9 @@ class UpdateProfile extends ConsumerStatefulWidget {
 class UpdateProfileState extends ConsumerState<UpdateProfile> {
   final String imagePath = "assets/images/man.png";
   final ImagePicker picker = ImagePicker();
+  final TextEditingController userNameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
   XFile? _profileImage;
   String userName = '';
   String userEmail = '';
@@ -29,9 +32,20 @@ class UpdateProfileState extends ConsumerState<UpdateProfile> {
   String userId = '';
 
   @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    userNameController.dispose();
+    emailController.dispose();
+    phoneController.dispose();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
     _loadUserInfo();
+    // newUserName = userNameController.text;
+    // newUserEmail = emailController.text;
   }
 
   Future<void> _loadUserInfo() async {
@@ -44,9 +58,9 @@ class UpdateProfileState extends ConsumerState<UpdateProfile> {
     });
   }
 
-  // Future<void> updateUserInfo() async {
-  //   await UserInfoHelper.updateUserInfo(newUserName, newUserEmail);
-  // }
+  Future<void> updateUserInfo() async {
+    await UserInfoHelper.updateUserInfo(newUserName, newUserEmail);
+  }
 
   changeCurrentName(newName) {
     setState(() {
@@ -54,16 +68,28 @@ class UpdateProfileState extends ConsumerState<UpdateProfile> {
     });
   }
 
-  updateName(newName) {
-    setState(() {
-      newUserName = newName;
-    });
+  updateName() {
+    if (userNameController.text != "") {
+      setState(() {
+        newUserName = userNameController.text;
+      });
+    } else {
+      setState(() {
+        newUserName = userName;
+      });
+    }
   }
 
-  updateEmail(newEmail) {
-    setState(() {
-      newUserEmail = newEmail;
-    });
+  updateEmail() {
+    if (emailController.text != "") {
+      setState(() {
+        newUserEmail = emailController.text;
+      });
+    } else {
+      setState(() {
+        newUserEmail = userEmail;
+      });
+    }
   }
 
   @override
@@ -133,26 +159,32 @@ class UpdateProfileState extends ConsumerState<UpdateProfile> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   EditTextField(
-                      label: "Name",
-                      userData: userName,
-                      screenHeight: screenHeight,
-                      screenWidth: screenWidth,
-                      updateName: updateName,
-                      updateEmail: updateEmail,),
+                    label: "Name",
+                    userData: userName,
+                    screenHeight: screenHeight,
+                    screenWidth: screenWidth,
+                    // updateName: updateName,
+                    // updateEmail: updateEmail,
+                    controller: userNameController,
+                  ),
                   EditTextField(
-                      label: "Email",
-                      userData: userEmail,
-                      screenHeight: screenHeight,
-                      screenWidth: screenWidth,
-                      updateName: updateName,
-                      updateEmail: updateEmail,),
+                    label: "Email",
+                    userData: userEmail,
+                    screenHeight: screenHeight,
+                    screenWidth: screenWidth,
+                    // updateName: updateName,
+                    // updateEmail: updateEmail,
+                    controller: emailController,
+                  ),
                   EditTextField(
-                      label: "Phone",
-                      userData: "*To be updated*",
-                      screenHeight: screenHeight,
-                      screenWidth: screenWidth,
-                      updateName: updateName,
-                      updateEmail: updateEmail,),
+                    label: "Phone",
+                    userData: "*To be updated*",
+                    screenHeight: screenHeight,
+                    screenWidth: screenWidth,
+                    // updateName: updateName,
+                    // updateEmail: updateEmail,
+                    controller: phoneController,
+                  ),
                   Padding(
                     padding: EdgeInsets.only(
                         left: 0.07 * screenWidth,
@@ -180,9 +212,12 @@ class UpdateProfileState extends ConsumerState<UpdateProfile> {
                             backgroundColor: Colors.transparent,
                           ),
                           onPressed: () {
+                            updateName();
+                            updateEmail();
                             changeCurrentName(newUserName);
-                            // updateUserInfo();
-                            userController.updateUserInfo(userId, newUserName, newUserEmail);
+                            updateUserInfo();
+                            userController.updateUserInfo(
+                                userId, newUserName, newUserEmail);
                           },
                           child: Text(
                             'Update',
