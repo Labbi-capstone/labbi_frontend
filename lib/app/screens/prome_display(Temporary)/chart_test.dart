@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,6 +16,7 @@ class ChartTestScreen extends ConsumerStatefulWidget {
 
 class _ChartTestScreenState extends ConsumerState<ChartTestScreen> {
   late WebSocketChannel channel;
+  late Stream<dynamic> broadcastStream;
   Map<String, dynamic> chartData = {}; // Store chart data by chart type
 
   @override
@@ -22,8 +24,11 @@ class _ChartTestScreenState extends ConsumerState<ChartTestScreen> {
     super.initState();
     channel = widget.channel;
 
-   // Listen for WebSocket messages
-    channel.stream.listen((message) {
+    // Convert the stream to a broadcast stream
+    broadcastStream = channel.stream.asBroadcastStream();
+
+    // Listen for WebSocket messages
+    broadcastStream.listen((message) {
       print('Received raw message: $message'); // Log the raw message
 
       // Decode the JSON and explicitly cast it
@@ -50,7 +55,6 @@ class _ChartTestScreenState extends ConsumerState<ChartTestScreen> {
         print('Parsed message is not a Map');
       }
     });
-
 
     Future.microtask(
         () => ref.read(chartControllerProvider.notifier).fetchCharts());
@@ -85,35 +89,39 @@ class _ChartTestScreenState extends ConsumerState<ChartTestScreen> {
                       title: Text(chart.name),
                       subtitle: Text('Type: ${chart.chartType}'),
                       onTap: () {
-                          // Send the chart selection data to the backend via WebSocket
-                          final message = jsonEncode({
-                            'prometheusEndpointId': chart.prometheusEndpointId,
-                            'chartType': chart.chartType,
-                          });
-                          print('Sending message to backend: $message');
-                          channel.sink.add(message);
+                        // Send the chart selection data to the backend via WebSocket
+                        final message = jsonEncode({
+                          'prometheusEndpointId': chart.prometheusEndpointId,
+                          'chartType': chart.chartType,
+                        });
+                        print('Sending message to backend: $message');
+                        channel.sink.add(message);
 
-                          // Wait for the data to be populated
-                          Future.delayed(Duration(milliseconds: 500), () {
-                            final chartDataForThisChart =
-                                chartData[chart.chartType] ?? {};
-                            if (chartDataForThisChart.isNotEmpty) {
-                              // Display the chart data in a new screen or modal
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ChartDisplayScreen(
-                                    chartType: chart.chartType,
-                                    chartData: chartDataForThisChart,
-                                  ),
+                        // Wait for the data to be populated
+                        Future.delayed(Duration(milliseconds: 500), () {
+                          final chartDataForThisChart =
+                              chartData[chart.chartType] ?? {};
+                          if (chartDataForThisChart.isNotEmpty) {
+                            // Display the chart data in a new screen or modal
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ChartDisplayScreen(
+                                  chartType: chart.chartType,
+                                  chartData: chartDataForThisChart,
+                                  channel: channel, // Pass the channel
+                                  broadcastStream:
+                                      broadcastStream, // Pass the broadcast stream
+                                  prometheusEndpointId: chart
+                                      .prometheusEndpointId, // Pass the endpoint ID
                                 ),
-                              );
-                            } else {
-                              print('No data available yet.');
-                            }
-                          });
-                        }
-
+                              ),
+                            );
+                          } else {
+                            print('No data available yet.');
+                          }
+                        });
+                      },
                     );
                   },
                 ),
@@ -121,17 +129,80 @@ class _ChartTestScreenState extends ConsumerState<ChartTestScreen> {
   }
 }
 
-class ChartDisplayScreen extends StatelessWidget {
+class ChartDisplayScreen extends StatefulWidget {
   final String chartType;
   final Map<String, dynamic> chartData;
+  final WebSocketChannel channel;
+  final Stream<dynamic> broadcastStream;
+  final String prometheusEndpointId;
 
-  ChartDisplayScreen({required this.chartType, required this.chartData});
+  ChartDisplayScreen({
+    required this.chartType,
+    required this.chartData,
+    required this.channel,
+    required this.broadcastStream,
+    required this.prometheusEndpointId,
+  });
 
- @override
+  @override
+  _ChartDisplayScreenState createState() => _ChartDisplayScreenState();
+}
+
+class _ChartDisplayScreenState extends State<ChartDisplayScreen> {
+  late Map<String, dynamic> chartData;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    chartData = widget.chartData;
+
+    // Set up a periodic timer to fetch data every 2 seconds
+    _timer = Timer.periodic(Duration(seconds: 2), (Timer t) {
+      fetchData();
+    });
+
+    // Listen for WebSocket messages
+    widget.broadcastStream.listen((message) {
+      final parsedMessage = jsonDecode(message);
+      final chartType = parsedMessage['chartType'] as String;
+
+      if (chartType == widget.chartType) {
+        setState(() {
+          chartData = Map<String, dynamic>.from(parsedMessage['data']);
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void fetchData() {
+    final message = jsonEncode({
+      'prometheusEndpointId':
+          widget.prometheusEndpointId, // Use the correct endpoint ID
+      'chartType': widget.chartType,
+    });
+    widget.channel.sink.add(message);
+  }
+
+  String formatTimestamp(double timestamp) {
+    final date = DateTime.fromMillisecondsSinceEpoch(
+      (timestamp * 1000).toInt(),
+      isUtc: true,
+    );
+    return date.toLocal().toString(); // Format the date as a string
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Chart: $chartType'),
+        title: Text('Chart: ${widget.chartType}'),
       ),
       body: Center(
         child: chartData.isEmpty
@@ -141,11 +212,16 @@ class ChartDisplayScreen extends StatelessWidget {
                 children: [
                   Text('Chart Data:'),
                   for (var entry in chartData.entries)
-                    Text('${entry.key}: ${entry.value}'),
+                    if (entry.key == 'result')
+                      for (var resultEntry in entry.value)
+                        Text(
+                          'Time: ${formatTimestamp(resultEntry['value'][0])}, Value: ${resultEntry['value'][1]}',
+                        )
+                    else
+                      Text('${entry.key}: ${entry.value}'),
                 ],
               ),
       ),
     );
   }
-
 }
