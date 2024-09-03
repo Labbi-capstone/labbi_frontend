@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/Theme/app_colors.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:labbi_frontend/app/utils/user_info_helper.dart';
+import 'package:labbi_frontend/app/components/text_fields/edit_text_field.dart';
 
 class UpdateProfile extends StatefulWidget {
   const UpdateProfile({
@@ -21,6 +22,9 @@ class _UpdateProfileState extends State<UpdateProfile> {
   String userName = '';
   String userEmail = '';
   String userRole = '';
+  String newUserName = '';
+  String newUserEmail = '';
+  String newUserPhone = '';
 
   @override
   void initState() {
@@ -34,6 +38,28 @@ class _UpdateProfileState extends State<UpdateProfile> {
       userName = userInfo['userName']!;
       userEmail = userInfo['userEmail']!;
       userRole = userInfo['userRole']!;
+    });
+  }
+
+  Future<void> updateUserInfo() async {
+    await UserInfoHelper.updateUserInfo(newUserName, newUserEmail);
+  }
+
+  changeCurrentName(newName) {
+    setState(() {
+      userName = newUserName;
+    });
+  }
+
+  updateName(newName) {
+    setState(() {
+      newUserName = newName;
+    });
+  }
+
+  updateEmail(newEmail) {
+    setState(() {
+      newUserEmail = newEmail;
     });
   }
 
@@ -104,19 +130,25 @@ class _UpdateProfileState extends State<UpdateProfile> {
                 children: [
                   EditTextField(
                       label: "Name",
-                      value: userName,
+                      userData: userName,
                       screenHeight: screenHeight,
-                      screenWidth: screenWidth),
+                      screenWidth: screenWidth,
+                      updateName: updateName,
+                      updateEmail: updateEmail,),
                   EditTextField(
                       label: "Email",
-                      value: userEmail,
+                      userData: userEmail,
                       screenHeight: screenHeight,
-                      screenWidth: screenWidth),
+                      screenWidth: screenWidth,
+                      updateName: updateName,
+                      updateEmail: updateEmail,),
                   EditTextField(
                       label: "Phone",
-                      value: "*To be updated*",
+                      userData: "*To be updated*",
                       screenHeight: screenHeight,
-                      screenWidth: screenWidth),
+                      screenWidth: screenWidth,
+                      updateName: updateName,
+                      updateEmail: updateEmail,),
                   Padding(
                     padding: EdgeInsets.only(
                         left: 0.07 * screenWidth,
@@ -143,7 +175,10 @@ class _UpdateProfileState extends State<UpdateProfile> {
                             elevation: 0,
                             backgroundColor: Colors.transparent,
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            changeCurrentName(newUserName);
+                            updateUserInfo();
+                          },
                           child: Text(
                             'Update',
                             style: TextStyle(
@@ -212,43 +247,4 @@ class _UpdateProfileState extends State<UpdateProfile> {
           ],
         ),
       );
-}
-
-class EditTextField extends StatelessWidget {
-  final String label;
-  final String value;
-  final double screenHeight;
-  final double screenWidth;
-
-  const EditTextField({
-    super.key,
-    required this.label,
-    required this.value,
-    required this.screenHeight,
-    required this.screenWidth,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-          right: 0.08 * screenWidth,
-          left: 0.08 * screenWidth,
-          top: 0.03 * screenHeight,
-          bottom: 0.03 * screenHeight),
-      child: TextField(
-        decoration: InputDecoration(
-          border: const UnderlineInputBorder(),
-          labelText: label,
-          labelStyle: TextStyle(
-              fontSize: screenHeight / 32, fontWeight: FontWeight.bold),
-          floatingLabelBehavior: FloatingLabelBehavior.always,
-          hintText: value,
-        ),
-        onTapOutside: (_) {
-          FocusManager.instance.primaryFocus?.unfocus();
-        },
-      ),
-    );
-  }
 }
