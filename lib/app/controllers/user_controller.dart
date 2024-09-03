@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:labbi_frontend/app/models/user.dart';
@@ -16,8 +18,10 @@ Set<String> selectedUserIds = {}; // Track selected user IDs
   Future<void> fetchUsersNotInOrg(String orgId) async {
     isLoading = true;
     try {
+      final apiUrl =
+          kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
       final url = Uri.parse(
-          'http://localhost:3000/api/organizations/$orgId/users/not-in-org');
+          '$apiUrl/organizations/$orgId/users/not-in-org');
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
@@ -84,8 +88,10 @@ Set<String> selectedUserIds = {}; // Track selected user IDs
   Future<void> fetchUsersByOrg(String orgId) async {
     isLoading = true;
     try {
+      final apiUrl =
+          kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
       final url =
-          Uri.parse('http://localhost:3000/api/organizations/$orgId/users');
+          Uri.parse('$apiUrl/organizations/$orgId/users');
 
       // Retrieve the token and role from shared preferences
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -158,9 +164,11 @@ Set<String> selectedUserIds = {}; // Track selected user IDs
 
   Future<void> addOrgMember(String orgId) async {
     try {
+      final apiUrl =
+          kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
       isLoading = true;
       final url =
-          Uri.parse('http://localhost:3000/api/organizations/$orgId/addOrgMember');
+          Uri.parse('$apiUrl/organizations/$orgId/addOrgMember');
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
 
@@ -197,9 +205,11 @@ Set<String> selectedUserIds = {}; // Track selected user IDs
    // Add multiple users as admins
   Future<void> addOrgAdmin(String orgId) async {
     try {
+      final apiUrl =
+          kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
       isLoading = true;
       final url =
-          Uri.parse('http://localhost:3000/api/organizations/$orgId/addOrgAdmin');
+          Uri.parse('$apiUrl/organizations/$orgId/addOrgAdmin');
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
 

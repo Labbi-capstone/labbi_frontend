@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:labbi_frontend/app/models/organization.dart';
 import 'package:riverpod/riverpod.dart';
@@ -42,6 +44,8 @@ class OrgController extends StateNotifier<OrgState> {
     setLoading(true);
 
     try {
+      final apiUrl =
+          kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       String? role = prefs.getString('userRole');
@@ -53,7 +57,7 @@ class OrgController extends StateNotifier<OrgState> {
         return;
       }
 
-      final url = Uri.parse('http://localhost:3000/api/organizations/create');
+      final url = Uri.parse('$apiUrl/organizations/create');
       final response = await http.post(
         url,
         headers: {
@@ -93,6 +97,8 @@ class OrgController extends StateNotifier<OrgState> {
     setLoading(true);
 
     try {
+      final apiUrl =
+          kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       String? role = prefs.getString('userRole');
@@ -105,7 +111,7 @@ class OrgController extends StateNotifier<OrgState> {
         return;
       }
 
-      final url = Uri.parse('http://localhost:3000/api/organizations/list');
+      final url = Uri.parse('$apiUrl/organizations/list');
 
       final response = await http.get(
         url,
