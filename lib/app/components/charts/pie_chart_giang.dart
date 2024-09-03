@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:labbi_frontend/app/models/chart.dart';
 import 'package:labbi_frontend/app/models/dashboard.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'dart:async';

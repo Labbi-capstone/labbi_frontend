@@ -1,25 +1,24 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:labbi_frontend/app/components/charts/bar_chart_component.dart';
+import 'package:labbi_frontend/app/models/chart.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:web_socket_channel/io.dart';
 import 'package:labbi_frontend/app/screens/prome_display(Temporary)/fetch_data.dart';
 import 'package:labbi_frontend/app/screens/prome_display(Temporary)/websocket_handler.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 
 class LineChartComponent extends StatefulWidget {
-  const LineChartComponent({Key? key, required this.title}) : super(key: key);
+  const LineChartComponent({super.key, required this.title});
 
   final String title;
 
   @override
-  _LineChartGiangState createState() => _LineChartGiangState();
+  _LineChartComponentState createState() => _LineChartComponentState();
 }
 
-class _LineChartGiangState extends State<LineChartComponent> {
+class _LineChartComponentState extends State<LineChartComponent> {
   late WebSocketHandler _webSocketHandler;
   late DataFetcher _dataFetcher;
   late Map<String, List<LineData>> lineDataMap;
-
   late Timer _timer;
 
   @override
@@ -28,26 +27,24 @@ class _LineChartGiangState extends State<LineChartComponent> {
 
     lineDataMap = {};
 
-    // Initialize WebSocketHandler and DataFetcher
+    // Connect to the WebSocket server for the line chart
     _webSocketHandler = WebSocketHandler(
-      WebSocketChannel.connect(Uri.parse('ws://localhost:3000')),
+      IOWebSocketChannel.connect('ws://localhost:3000/lineChartEndpoint'),
     );
     _dataFetcher = DataFetcher(_webSocketHandler.channel);
 
-    // Set up a timer to fetch data every 2 seconds
     _timer = Timer.periodic(const Duration(seconds: 2), (Timer timer) {
       _dataFetcher.fetchData();
     });
 
-    // Listen to WebSocket stream
-    // Listen to WebSocket stream
     _webSocketHandler.channel.stream.listen((data) {
       _dataFetcher.processWebSocketData(
         data,
-        {}, // Empty map for BarData if not needed
-        lineDataMap, // Map for LineData
+        {}, 
+        lineDataMap,
       );
-      setState(() {}); // Refresh the UI when new data is available
+      print('LineDataMap updated: $lineDataMap');
+      setState(() {});
     });
   }
 
@@ -84,6 +81,7 @@ class _LineChartGiangState extends State<LineChartComponent> {
                     isResponsive: true,
                   ),
                   series: lineDataMap.entries.map((entry) {
+                    print('Rendering LineChart for $entry.key');
                     return LineSeries<LineData, String>(
                       dataSource: entry.value,
                       xValueMapper: (LineData data, _) => data.time,
@@ -101,19 +99,6 @@ class _LineChartGiangState extends State<LineChartComponent> {
                     edgeLabelPlacement: EdgeLabelPlacement.shift,
                     labelRotation: 45,
                     labelStyle: TextStyle(fontSize: 10),
-                    interval: lineDataMap.isNotEmpty
-                        ? (lineDataMap.entries.first.value.length > 1
-                            ? ((lineDataMap.entries.first.value.length / 5)
-                                    .ceil())
-                                .toDouble()
-                            : 1)
-                        : 1,
-                    desiredIntervals: lineDataMap.isNotEmpty
-                        ? (lineDataMap.entries.first.value.length > 5
-                            ? (lineDataMap.entries.first.value.length / 5)
-                                .ceil()
-                            : 1)
-                        : 1,
                   ),
                   primaryYAxis: NumericAxis(
                     title: AxisTitle(text: 'Value (scaled by 1,000,000,000)'),
@@ -144,10 +129,4 @@ class _LineChartGiangState extends State<LineChartComponent> {
       ),
     );
   }
-}
-
-class LineData {
-  LineData(this.time, this.value);
-  final String time;
-  final double value;
 }

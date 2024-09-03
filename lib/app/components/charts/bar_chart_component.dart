@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:labbi_frontend/app/models/chart.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:labbi_frontend/app/screens/prome_display(Temporary)/fetch_data.dart';
 import 'package:labbi_frontend/app/screens/prome_display(Temporary)/websocket_handler.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 
 class BarChartComponent extends StatefulWidget {
   const BarChartComponent({Key? key, required this.title}) : super(key: key);
@@ -17,9 +18,7 @@ class BarChartComponent extends StatefulWidget {
 class _BarChartComponentState extends State<BarChartComponent> {
   late WebSocketHandler _webSocketHandler;
   late DataFetcher _dataFetcher;
-  late Map<String, List<BarData>>
-      barDataMap; // Use Map to dynamically manage data
-
+  late Map<String, List<BarData>> barDataMap;
   late Timer _timer;
 
   @override
@@ -28,25 +27,24 @@ class _BarChartComponentState extends State<BarChartComponent> {
 
     barDataMap = {};
 
-    // Initialize WebSocketHandler and DataFetcher
     _webSocketHandler = WebSocketHandler(
-      WebSocketChannel.connect(Uri.parse('ws://localhost:3000')),
+      WebSocketChannel.connect(
+          Uri.parse('ws://localhost:3000')), 
     );
     _dataFetcher = DataFetcher(_webSocketHandler.channel);
 
-    // Set up a timer to fetch data every 2 seconds
     _timer = Timer.periodic(const Duration(seconds: 2), (Timer timer) {
       _dataFetcher.fetchData();
     });
 
-    // Listen to WebSocket stream
     _webSocketHandler.channel.stream.listen((data) {
       _dataFetcher.processWebSocketData(
         data,
-        barDataMap, // Pass the map for BarData
-        {}, // No need for LineData here
+        barDataMap, 
+        {}, 
       );
-      setState(() {}); // Refresh the UI when new data is available
+      print('BarDataMap updated: $barDataMap'); // Debug log
+      setState(() {}); 
     });
   }
 
@@ -69,7 +67,7 @@ class _BarChartComponentState extends State<BarChartComponent> {
             children: [
               Container(
                 width: double.infinity,
-                height: 400, // Increased height for better visibility
+                height: 400,
                 child: SfCartesianChart(
                   title: ChartTitle(
                     text: 'Quantile Data',
@@ -82,6 +80,7 @@ class _BarChartComponentState extends State<BarChartComponent> {
                     isResponsive: true,
                   ),
                   series: barDataMap.entries.map((entry) {
+                    print('Rendering BarChart for $entry.key'); // Debug log
                     return BarSeries<BarData, String>(
                       dataSource: entry.value,
                       xValueMapper: (BarData data, _) => data.time,
@@ -99,26 +98,12 @@ class _BarChartComponentState extends State<BarChartComponent> {
                     title: AxisTitle(text: 'Value (scaled by 1,000,000,000)'),
                     majorGridLines: MajorGridLines(width: 0.5),
                     majorTickLines: MajorTickLines(width: 0.5),
-                    labelFormat: '{value}', // Keep as numeric
+                    labelFormat: '{value}', 
                   ),
                   tooltipBehavior: TooltipBehavior(
                     enable: true,
                     canShowMarker: true,
                     format: 'point.x: {point.x}\npoint.y: {point.y}',
-                    builder: (dynamic data, dynamic point, dynamic series,
-                        int pointIndex, int seriesIndex) {
-                      final barData = data as BarData;
-                      print(
-                          'Tooltip: Quantile: ${barData.time}, Value: ${barData.value}'); // Print to console
-                      return Container(
-                        padding: EdgeInsets.all(8.0),
-                        color: Colors.white,
-                        child: Text(
-                          'Quantile: ${barData.time}\nValue: ${barData.value}',
-                          style: TextStyle(color: Colors.black),
-                        ),
-                      );
-                    },
                   ),
                 ),
               ),
@@ -135,11 +120,4 @@ class _BarChartComponentState extends State<BarChartComponent> {
       ),
     );
   }
-}
-
-class BarData {
-  BarData(this.time, this.value);
-
-  final String time;
-  final double value;
 }
