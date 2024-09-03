@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:labbi_frontend/app/models/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:developer' as dev;
 
 class UserController extends StateNotifier<List<User>> {
   UserController() : super([]);
@@ -84,6 +85,30 @@ Set<String> selectedUserIds = {}; // Track selected user IDs
     return selectedUserIds.contains(userId);
   }
 
+  Future<void> updateUserInfo(String userId, String newName, String newEmail) async {
+    isLoading = true;
+    try {
+      final url = Uri.parse('http://localhost:3000/api/users/$userId');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      await http.patch(url, body: {
+        "fullName": newName,
+        "email": newEmail
+      }, headers: {"Authorization": "Bearer $token"},).then((value) {
+        dev.log("Response body: ${value.body}");
+        dev.log("Response status: ${value.statusCode}");
+      });
+
+      if (token == null) {
+        throw Exception('User token or role not found. Please login again.');
+      }
+    } catch (e) {
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
 
   Future<void> fetchUsersByOrg(String orgId) async {
     isLoading = true;
@@ -101,7 +126,7 @@ Set<String> selectedUserIds = {}; // Track selected user IDs
       if (token == null || role == null) {
         throw Exception('User token or role not found. Please login again.');
       }
-
+      
       // Add headers with the authorization token and role
       final response = await http.get(url, headers: {
         "Content-Type": "application/json",
@@ -256,3 +281,7 @@ final filteredUsersProvider = Provider<List<User>>((ref) {
 final userProvider = StateNotifierProvider<UserController, List<User>>((ref) {
   return UserController();
 });
+
+// final singleUserProvider = StateNotifierProvider<UserController, User>((ref) {
+//   return UserController();
+// });

@@ -1,21 +1,22 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:labbi_frontend/app/Theme/app_colors.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:labbi_frontend/app/controllers/user_controller.dart';
 import 'package:labbi_frontend/app/utils/user_info_helper.dart';
 import 'package:labbi_frontend/app/components/text_fields/edit_text_field.dart';
 
-class UpdateProfile extends StatefulWidget {
+class UpdateProfile extends ConsumerStatefulWidget {
   const UpdateProfile({
     super.key,
   });
 
   @override
-  // ignore: library_private_types_in_public_api
-  _UpdateProfileState createState() => _UpdateProfileState();
+  UpdateProfileState createState() => UpdateProfileState();
 }
 
-class _UpdateProfileState extends State<UpdateProfile> {
+class UpdateProfileState extends ConsumerState<UpdateProfile> {
   final String imagePath = "assets/images/man.png";
   final ImagePicker picker = ImagePicker();
   XFile? _profileImage;
@@ -25,6 +26,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
   String newUserName = '';
   String newUserEmail = '';
   String newUserPhone = '';
+  String userId = '';
 
   @override
   void initState() {
@@ -36,14 +38,15 @@ class _UpdateProfileState extends State<UpdateProfile> {
     final userInfo = await UserInfoHelper.loadUserInfo();
     setState(() {
       userName = userInfo['userName']!;
+      userId = userInfo['userId']!;
       userEmail = userInfo['userEmail']!;
       userRole = userInfo['userRole']!;
     });
   }
 
-  Future<void> updateUserInfo() async {
-    await UserInfoHelper.updateUserInfo(newUserName, newUserEmail);
-  }
+  // Future<void> updateUserInfo() async {
+  //   await UserInfoHelper.updateUserInfo(newUserName, newUserEmail);
+  // }
 
   changeCurrentName(newName) {
     setState(() {
@@ -65,6 +68,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
 
   @override
   Widget build(BuildContext context) {
+    final userController = ref.watch(userControllerProvider.notifier);
     dynamic screenHeight = MediaQuery.of(context).size.height;
     dynamic screenWidth = MediaQuery.of(context).size.width;
 
@@ -177,7 +181,8 @@ class _UpdateProfileState extends State<UpdateProfile> {
                           ),
                           onPressed: () {
                             changeCurrentName(newUserName);
-                            updateUserInfo();
+                            // updateUserInfo();
+                            userController.updateUserInfo(userId, newUserName, newUserEmail);
                           },
                           child: Text(
                             'Update',
