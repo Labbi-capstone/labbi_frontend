@@ -39,6 +39,8 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
+    dynamic screenHeight = MediaQuery.of(context).size.height;
+    dynamic screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Center(
         child: Column(
@@ -46,18 +48,19 @@ class _DashboardState extends State<Dashboard> {
             const SizedBox(height: 50),
             Text(email),
             const SizedBox(height: 50),
-            Container(
-              padding: const EdgeInsets.all(25),
-              margin: const EdgeInsets.symmetric(horizontal: 25),
-              decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: MyButton(
-                onTap: () async {
-                  logoutUser();
-                },
-                text: const Text(
+            MyButton(
+              onTap: () async {
+                logoutUser();
+              },
+              child: Container(
+                alignment: Alignment.center,
+                height: 0.085 * screenHeight,
+                width: 0.75 * screenWidth,
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Text(
                   'Sign out',
                   style: TextStyle(
                     color: Colors.white,

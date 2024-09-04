@@ -6,13 +6,14 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:labbi_frontend/app/models/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:developer';
 
 class UserController extends StateNotifier<List<User>> {
   UserController() : super([]);
 
   String? errorMessage;
   bool isLoading = false;
-Set<String> selectedUserIds = {}; // Track selected user IDs
+  Set<String> selectedUserIds = {}; // Track selected user IDs
   Map<String, String> userRoles = {}; // Track roles for selected users
 
   Future<void> fetchUsersNotInOrg(String orgId) async {
@@ -20,8 +21,7 @@ Set<String> selectedUserIds = {}; // Track selected user IDs
     try {
       final apiUrl =
           kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
-      final url = Uri.parse(
-          '$apiUrl/organizations/$orgId/users/not-in-org');
+      final url = Uri.parse('$apiUrl/organizations/$orgId/users/not-in-org');
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
@@ -64,7 +64,6 @@ Set<String> selectedUserIds = {}; // Track selected user IDs
     }
   }
 
-
   void toggleUserSelection(String userId) {
     final selectedUser = state.firstWhere((user) => user.id == userId);
 
@@ -84,14 +83,43 @@ Set<String> selectedUserIds = {}; // Track selected user IDs
     return selectedUserIds.contains(userId);
   }
 
+  Future<void> updateUserInfo(
+      String userId, String newName, String newEmail) async {
+    isLoading = true;
+    try {
+      final apiUrl =
+          kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
+      final url = Uri.parse('$apiUrl/users/update/$userId');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      await http.put(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token"
+        },
+        body: jsonEncode(<String, String>{
+          "fullName": newName,
+          "email": newEmail,
+        }),
+      );
+      if (token == null) {
+        throw Exception('User token or role not found. Please login again.');
+      }
+    } catch (e) {
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
 
   Future<void> fetchUsersByOrg(String orgId) async {
     isLoading = true;
     try {
       final apiUrl =
           kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
-      final url =
-          Uri.parse('$apiUrl/organizations/$orgId/users');
+      final url = Uri.parse('$apiUrl/organizations/$orgId/users');
 
       // Retrieve the token and role from shared preferences
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -151,7 +179,6 @@ Set<String> selectedUserIds = {}; // Track selected user IDs
     state = state.where((user) => user.fullName.contains(keyword)).toList();
   }
 
-
   List<User> get selectedUsers {
     return state.where((user) => selectedUserIds.contains(user.id)).toList();
   }
@@ -167,8 +194,7 @@ Set<String> selectedUserIds = {}; // Track selected user IDs
       final apiUrl =
           kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
       isLoading = true;
-      final url =
-          Uri.parse('$apiUrl/organizations/$orgId/addOrgMember');
+      final url = Uri.parse('$apiUrl/organizations/$orgId/addOrgMember');
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
 
@@ -202,14 +228,13 @@ Set<String> selectedUserIds = {}; // Track selected user IDs
     }
   }
 
-   // Add multiple users as admins
+  // Add multiple users as admins
   Future<void> addOrgAdmin(String orgId) async {
     try {
       final apiUrl =
           kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
       isLoading = true;
-      final url =
-          Uri.parse('$apiUrl/organizations/$orgId/addOrgAdmin');
+      final url = Uri.parse('$apiUrl/organizations/$orgId/addOrgAdmin');
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
 
@@ -256,3 +281,7 @@ final filteredUsersProvider = Provider<List<User>>((ref) {
 final userProvider = StateNotifierProvider<UserController, List<User>>((ref) {
   return UserController();
 });
+
+// final singleUserProvider = StateNotifierProvider<UserController, User>((ref) {
+//   return UserController();
+// });
