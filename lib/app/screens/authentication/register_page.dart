@@ -135,24 +135,7 @@ class RegisterPage extends ConsumerWidget {
                               // Perform registration
                               await authController.registerUser(context);
 
-                              // Ensure only one SnackBar is shown
-                              if (context.mounted &&
-                                  !authController.isSnackBarShown) {
-                                authController.isSnackBarShown = true;
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content:
-                                        Text(authState.registrationMessage),
-                                    backgroundColor: authState
-                                            .registrationMessage
-                                            .contains("successful")
-                                        ? Colors.green
-                                        : Colors.red,
-                                  ),
-                                );
-                              }
-
-                              // Delay before navigating (if successful)
+                              // If registration is successful, navigate to login page
                               if (authState.registrationMessage
                                       .contains("successful") &&
                                   context.mounted) {
@@ -161,10 +144,6 @@ class RegisterPage extends ConsumerWidget {
                                 Navigator.pushReplacementNamed(
                                     context, '/login');
                               }
-
-                              // Reset the snack bar state after a delay to avoid spamming
-                              await Future.delayed(const Duration(seconds: 2));
-                              authController.isSnackBarShown = false;
                             },
                       text: authState.isLoading
                           ? const SizedBox(
