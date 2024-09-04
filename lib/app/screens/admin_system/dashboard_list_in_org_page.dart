@@ -4,19 +4,26 @@ import 'package:labbi_frontend/app/controllers/dashboard_controller.dart'; // Im
 import 'package:labbi_frontend/app/models/dashboard.dart';
 import 'package:labbi_frontend/app/screens/admin_org/admin_org_device_details.dart';
 
-class DashboardListInOrgPage extends ConsumerWidget {
+class DashboardListInOrgPage extends ConsumerStatefulWidget {
   final String orgId;
-  DashboardListInOrgPage({required this.orgId});
+  const DashboardListInOrgPage({super.key, required this.orgId});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final dashboards = ref.watch(dashboardControllerProvider);
-    final dashboardController = ref.watch(dashboardControllerProvider.notifier);
+  _DashboardListInOrgPageState createState() => _DashboardListInOrgPageState();
+}
 
-    // Fetch dashboards for the organization when the widget is built
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      dashboardController.fetchDashboardsByOrg(orgId);
-    });
+class _DashboardListInOrgPageState extends ConsumerState<DashboardListInOrgPage> {
+
+  @override
+  void initState() {
+    super.initState();
+    // Fetch users when the page is loaded
+    ref.read(dashboardControllerProvider.notifier).fetchDashboardsByOrg(widget.orgId);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final dashboards = ref.watch(dashboardControllerProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -46,7 +53,7 @@ class DashboardListInOrgPage extends ConsumerWidget {
                     dashboard.name,
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  leading: const Icon(Icons.device_hub),
+                  leading: const Icon(Icons.bar_chart_sharp),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [

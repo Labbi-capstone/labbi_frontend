@@ -5,7 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:labbi_frontend/app/models/dashboard.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:labbi_frontend/app/state/dashboard_state.dart'; // Import the state file
+import 'package:labbi_frontend/app/state/dashboard_state.dart';
+import 'package:universal_html/js_util.dart'; // Import the state file
 
 class DashboardController extends StateNotifier<List<Dashboard>> {
   DashboardController() : super([]);
@@ -16,7 +17,7 @@ class DashboardController extends StateNotifier<List<Dashboard>> {
   Future<void> fetchDashboardsByOrg(String orgId) async {
     isLoading = true;
     try {
-      final url = Uri.parse('http://localhost:3000/api/dashboards/$orgId/');
+      final url = Uri.parse('http://localhost:3000/api/dashboards/$orgId/dashboards');
 
       // Retrieve the token and role from shared preferences
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -36,11 +37,13 @@ class DashboardController extends StateNotifier<List<Dashboard>> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        final List<dynamic> dashboardsJson = data['dashboards']; // Correct field name if needed
+        final List<dynamic> dashboardsJson = data['dashboards']; 
 
-        // Map the JSON to Dashboard objects
         final List<Dashboard> dashboards = dashboardsJson.map((dashboardJson) {
-          return Dashboard.fromJson(dashboardJson);
+          return Dashboard(
+            id: dashboardJson['_id'] as String,
+            name: dashboardJson['name'] as String,
+          );
         }).toList();
 
         state = dashboards; // Update state with fetched dashboards
