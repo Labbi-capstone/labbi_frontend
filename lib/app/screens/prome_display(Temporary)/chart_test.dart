@@ -40,7 +40,7 @@ class _ChartTestScreenState extends ConsumerState<ChartTestScreen> {
         // Try to cast 'data' to Map<String, dynamic> explicitly
         try {
           final data = Map<String, dynamic>.from(parsedMessage['data']);
-          print('Chart data: $data'); // Log the chart data
+          print('Chart data Updated'); // Log the chart data
 
           // Update state with the new data
           setState(() {
@@ -60,18 +60,16 @@ class _ChartTestScreenState extends ConsumerState<ChartTestScreen> {
 
   @override
   void dispose() {
-    // Dispose of the channel and all timers
+    // Dispose of the WebSocket connection and timers when the widget is removed from the tree
     channel.sink.close();
-    for (var timer in chartTimers.values) {
-      timer.cancel();
-    }
+    // Clear all timers on dispose
+    chartTimers.forEach((_, timer) => timer.cancel());
     super.dispose();
   }
 
   void fetchData(String prometheusEndpointId, String chartType) {
     final message = jsonEncode({
-      'prometheusEndpointId':
-          prometheusEndpointId, // Use the correct endpoint ID
+      'prometheusEndpointId': prometheusEndpointId,
       'chartType': chartType,
     });
     channel.sink.add(message);
@@ -79,11 +77,15 @@ class _ChartTestScreenState extends ConsumerState<ChartTestScreen> {
 
   void startOrUpdateTimer(String prometheusEndpointId, String chartType) {
     // If a timer already exists for this chartType, don't create another one
-    if (chartTimers.containsKey(chartType)) return;
+    if (chartTimers.containsKey(chartType)) {
+      print('Timer already exists for $chartType');
+      return;
+    }
 
-    // Create a timer for fetching data every 2 seconds
+    // Create a timer for fetching data every 10 seconds
     final timer = Timer.periodic(Duration(seconds: 2), (Timer t) {
       fetchData(prometheusEndpointId, chartType);
+      print("fetchData(prometheusEndpointId, chartType);");
     });
 
     chartTimers[chartType] = timer;
