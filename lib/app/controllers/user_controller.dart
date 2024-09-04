@@ -83,33 +83,34 @@ class UserController extends StateNotifier<List<User>> {
     return selectedUserIds.contains(userId);
   }
 
-  Future<User> updateUserInfo(
+  Future<void> updateUserInfo(
       String userId, String newName, String newEmail) async {
     isLoading = true;
+    try {
+      final apiUrl =
+          kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
+      final url = Uri.parse('$apiUrl/users/update/$userId');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
 
-    final url = Uri.parse('http://localhost:3000/api/users/update/$userId');
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('token');
-
-    final response = await http.put(
-      url,
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token"
-      },
-      body: jsonEncode(<String, String>{
-        "fullName": newName,
-        "email": newEmail,
-      }),
-    );
-    if (token == null) {
-      throw Exception('User token or role not found. Please login again.');
-    }
-    isLoading = false;
-    if (response.statusCode == 200) {
-      return User.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
-    } else {
-      throw Exception('Failed to update User.');
+      await http.put(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token"
+        },
+        body: jsonEncode(<String, String>{
+          "fullName": newName,
+          "email": newEmail,
+        }),
+      );
+      if (token == null) {
+        throw Exception('User token or role not found. Please login again.');
+      }
+    } catch (e) {
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
     }
   }
 

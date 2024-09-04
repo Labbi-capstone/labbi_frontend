@@ -9,16 +9,15 @@ class EditTextField extends StatefulWidget {
   final double screenWidth;
   final TextEditingController controller;
 
-  const EditTextField({
-    super.key,
-    // required this.updateName,
-    // required this.updateEmail,
-    required this.label,
-    required this.userData,
-    required this.screenHeight,
-    required this.screenWidth,
-    required this.controller
-  });
+  const EditTextField(
+      {super.key,
+      // required this.updateName,
+      // required this.updateEmail,
+      required this.label,
+      required this.userData,
+      required this.screenHeight,
+      required this.screenWidth,
+      required this.controller});
 
   @override
   State<StatefulWidget> createState() => _EditTextFieldState();
@@ -48,6 +47,9 @@ class _EditTextFieldState extends State<EditTextField> {
           floatingLabelBehavior: FloatingLabelBehavior.always,
           hintText: widget.userData,
         ),
+        onTapOutside: (_) {
+          FocusManager.instance.primaryFocus?.unfocus();
+        },
       ),
     );
   }
