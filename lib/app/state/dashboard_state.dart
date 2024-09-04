@@ -5,68 +5,7 @@ import 'package:labbi_frontend/app/models/chart.dart';
 import 'package:labbi_frontend/app/models/dashboard.dart';
 
 final List<Dashboard> initialDashboards = [
-  Dashboard(
-    id: '11',
-    name: "Device 111",
-    // charts: [
-    //   // Add a line chart
-    //   Chart(
-    //     id: 'line1',
-    //     name: 'Line Chart Example',
-    //     chartType: 'line',
-    //     data: [
-    //       LineData('0', 1),
-    //       LineData('1', 3),
-    //       LineData('2', 5),
-    //       LineData('3', 4),
-    //       LineData('4', 7),
-    //       LineData('5', 8),
-    //     ],
-    //   ),
-    //   // Add a pie chart
-    //   Chart(
-    //     id: 'pie1',
-    //     name: 'Pie Chart Example',
-    //     chartType: 'pie',
-    //     data: [
-    //       PieData("Category 1", 40),
-    //       PieData("Category 2", 30),
-    //       PieData("Category 3", 15),
-    //       PieData("Category 4", 15),
-    //     ],
-    //   ),
-    //   // Add an empty bar chart (if needed)
-    //   Chart(
-    //     id: 'bar1',
-    //     name: 'Bar Chart Example',
-    //     chartType: 'bar',
-    //     data: [],
-    //   ),
-    // ],
-  ),
-  // Add more Dashboard instances as needed
+  
 ];
 
-class DashboardNotifier extends StateNotifier<List<Dashboard>> {
-  DashboardNotifier() : super(initialDashboards);
 
-  void addDashboard(Dashboard dashboard) {
-    state = [...state, dashboard];
-  }
-
-  void removeDashboard(String id) {
-    state = state.where((dashboard) => dashboard.id != id).toList();
-  }
-
-  void updateDashboard(Dashboard updatedDashboard) {
-    state = [
-      for (final dashboard in state)
-        if (dashboard.id == updatedDashboard.id) updatedDashboard else dashboard
-    ];
-  }
-}
-
-final dashboardProvider =
-    StateNotifierProvider<DashboardNotifier, List<Dashboard>>((ref) {
-  return DashboardNotifier();
-});

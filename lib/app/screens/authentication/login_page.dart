@@ -14,14 +14,20 @@ class LoginPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authController = ref.watch(authControllerProvider.notifier);
     final authState = ref.watch(authControllerProvider);
+    dynamic screenHeight = MediaQuery.of(context).size.height;
+    dynamic screenWidth = MediaQuery.of(context).size.width;
 
     return MaterialApp(
       theme: ThemeData(
         textTheme: GoogleFonts.barlowSemiCondensedTextTheme(),
       ),
       home: Scaffold(
+        resizeToAvoidBottomInset: true,
         body: SafeArea(
+            child: SingleChildScrollView(
           child: Container(
+            height: screenHeight,
+            width: screenWidth,
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [
@@ -75,7 +81,7 @@ class LoginPage extends ConsumerWidget {
                       children: [
                         MyButton(
                           onTap: () {},
-                          text: const Text(
+                          child: const Text(
                             'Forgot Password?',
                             style: TextStyle(
                               color: Color.fromARGB(255, 127, 127, 127),
@@ -89,24 +95,24 @@ class LoginPage extends ConsumerWidget {
                   ),
                   const SizedBox(height: 30),
                   // Sign in button
-                  Container(
-                    padding: const EdgeInsets.all(25),
-                    margin: const EdgeInsets.symmetric(horizontal: 25),
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: MyButton(
-                      onTap: () {
-                        authController.loginUser(context);
-                      },
-                      text: const Text(
+                  MyButton(
+                    onTap: () {
+                      authController.loginUser(context);
+                    },
+                    child: Container(
+                      alignment: Alignment.center,
+                      height: 0.085 * screenHeight,
+                      width: 0.75 * screenWidth,
+                      decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Text(
                         'Sign in',
                         style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16),
                       ),
                     ),
                   ),
@@ -147,34 +153,36 @@ class LoginPage extends ConsumerWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 70, vertical: 10),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.white),
-                          borderRadius: BorderRadius.circular(15),
-                          color: Colors.white,
-                        ),
-                        child: Row(
-                          children: [
-                            Image.asset(
-                              'assets/images/google-icon.png',
-                              height: 50,
+                      MyButton(
+                          onTap: () {},
+                          child: Container(
+                            height: 0.085 * screenHeight,
+                            width: 0.75 * screenWidth,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.white),
+                              borderRadius: BorderRadius.circular(15),
+                              color: Colors.white,
                             ),
-                            const SizedBox(width: 10),
-                            MyButton(
-                              onTap: () {},
-                              text: const Text(
-                                'Sign in with Google',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Image.asset(
+                                  'assets/images/google-icon.png',
+                                  height: 50,
                                 ),
-                              ),
+                                const SizedBox(width: 10),
+                                const Text(
+                                  'Sign in with Google',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      )
+                          ))
                     ],
                   ),
                   const SizedBox(height: 30),
@@ -191,7 +199,7 @@ class LoginPage extends ConsumerWidget {
                               MaterialPageRoute(
                                   builder: (context) => const RegisterPage()));
                         },
-                        text: const Text(
+                        child: const Text(
                           'Register',
                           style: TextStyle(
                             color: Colors.blue,
@@ -206,7 +214,7 @@ class LoginPage extends ConsumerWidget {
               ),
             ),
           ),
-        ),
+        )),
       ),
     );
   }

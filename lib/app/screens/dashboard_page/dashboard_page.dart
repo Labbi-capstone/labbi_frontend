@@ -65,9 +65,7 @@ class DashboardPage extends ConsumerWidget {
           ),
         ),
         child: ListView.builder(
-          itemCount: initialDashboards.length,
           itemBuilder: (context, index) {
-            final dashboard = initialDashboards[index];
             return DashboardItem(
               title: dashboard.name,
             );

@@ -1,10 +1,13 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/models/chart.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:web_socket_channel/io.dart';
+import 'package:web_socket_channel/web_socket_channel.dart'; // Use generic WebSocketChannel
 import 'package:labbi_frontend/app/screens/prome_display(Temporary)/fetch_data.dart';
 import 'package:labbi_frontend/app/screens/prome_display(Temporary)/websocket_handler.dart';
+import 'dart:io' as io;
 
 class LineChartComponent extends StatefulWidget {
   const LineChartComponent({super.key, required this.title});
@@ -27,24 +30,49 @@ class _LineChartComponentState extends State<LineChartComponent> {
 
     lineDataMap = {};
 
-    // Connect to the WebSocket server for the line chart
-    _webSocketHandler = WebSocketHandler(
-      IOWebSocketChannel.connect('ws://localhost:3000/lineChartEndpoint'),
-    );
+    // WebSocket connection setup based on platform
+    if (!kIsWeb &&
+        (io.Platform.isAndroid ||
+            io.Platform.isIOS ||
+            io.Platform.isLinux ||
+            io.Platform.isMacOS ||
+            io.Platform.isWindows)) {
+      // If running on supported native platforms
+      _webSocketHandler = WebSocketHandler(
+        IOWebSocketChannel.connect('ws://localhost:3000/'),
+      );
+    } else {
+      // For web or other environments
+      _webSocketHandler = WebSocketHandler(
+        WebSocketChannel.connect(Uri.parse('ws://localhost:3000/')),
+      );
+    }
+
     _dataFetcher = DataFetcher(_webSocketHandler.channel);
+
+    // Logging WebSocket connection
+   // print('WebSocket connected to ws://localhost:3000/');
 
     _timer = Timer.periodic(const Duration(seconds: 2), (Timer timer) {
       _dataFetcher.fetchData();
+      // Logging fetch data trigger
+     // print('Data fetch triggered');
     });
 
     _webSocketHandler.channel.stream.listen((data) {
+     // print('Data received from WebSocket: $data'); // Log raw data
       _dataFetcher.processWebSocketData(
         data,
-        {}, 
+        {},
         lineDataMap,
       );
-      print('LineDataMap updated: $lineDataMap');
+      // Logging the updated lineDataMap
+   //   print('LineDataMap updated: $lineDataMap');
       setState(() {});
+    }, onError: (error) {
+   //   print('WebSocket error: $error'); // Log any errors in WebSocket
+    }, onDone: () {
+ //     print('WebSocket connection closed'); // Log when WebSocket closes
     });
   }
 
@@ -52,11 +80,14 @@ class _LineChartComponentState extends State<LineChartComponent> {
   void dispose() {
     _timer.cancel();
     _webSocketHandler.dispose();
+    print('Timer cancelled and WebSocket closed'); // Log disposal
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    // Logging build process
+   // print('Building LineChartComponent with title: ${widget.title}');
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -81,7 +112,8 @@ class _LineChartComponentState extends State<LineChartComponent> {
                     isResponsive: true,
                   ),
                   series: lineDataMap.entries.map((entry) {
-                    print('Rendering LineChart for $entry.key');
+                    // print(
+                    //     'Rendering LineChart for ${entry.key}'); // Log each series rendering
                     return LineSeries<LineData, String>(
                       dataSource: entry.value,
                       xValueMapper: (LineData data, _) => data.time,

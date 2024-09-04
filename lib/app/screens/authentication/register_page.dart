@@ -13,6 +13,8 @@ class RegisterPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authController = ref.watch(authControllerProvider.notifier);
     final authState = ref.watch(authControllerProvider);
+    dynamic screenHeight = MediaQuery.of(context).size.height;
+    dynamic screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       body: SafeArea(
@@ -117,51 +119,61 @@ class RegisterPage extends ConsumerWidget {
                   ),
                   const SizedBox(height: 20),
                   // Sign up button with context handling
-                  Container(
-                    padding: const EdgeInsets.all(25),
-                    margin: const EdgeInsets.symmetric(horizontal: 25),
-                    decoration: BoxDecoration(
-                      color: authState.isLoading
-                          ? Colors.grey // Change button color when loading
-                          : Colors.black,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: MyButton(
-                      onTap: authState.isLoading
-                          ? null // Disable button while loading
-                          : () async {
-                              if (authState.isLoading) return; // Debounce click
+                  MyButton(
+                    onTap: authState.isLoading
+                        ? null // Disable button while loading
+                        : () async {
+                            if (authState.isLoading) return; // Debounce click
 
-                              // Perform registration
-                              await authController.registerUser(context);
+                            // Perform registration
+                            await authController.registerUser(context);
 
-                              // If registration is successful, navigate to login page
-                              if (authState.registrationMessage
-                                      .contains("successful") &&
-                                  context.mounted) {
-                                await Future.delayed(
-                                    const Duration(seconds: 1));
-                                Navigator.pushReplacementNamed(
-                                    context, '/login');
-                              }
-                            },
-                      text: authState.isLoading
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2,
+                            // If registration is successful, navigate to login page
+                            if (authState.registrationMessage
+                                    .contains("successful") &&
+                                context.mounted) {
+                              await Future.delayed(const Duration(seconds: 1));
+                              Navigator.pushReplacementNamed(context, '/login');
+                            }
+                          },
+                    child: Container(
+                      alignment: Alignment.center,
+                      height: 0.085 * screenHeight,
+                      width: 0.75 * screenWidth,
+                      decoration: BoxDecoration(
+                        color: authState.isLoading
+                            ? Colors.grey // Change button color when loading
+                            : Colors.black,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Container(
+                        alignment: Alignment.center,
+                        height: 0.085 * screenHeight,
+                        width: 0.75 * screenWidth,
+                        decoration: BoxDecoration(
+                          color: authState.isLoading
+                              ? Colors.grey // Change button color when loading
+                              : Colors.black,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: authState.isLoading
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Text(
+                                'Sign up',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
                               ),
-                            )
-                          : const Text(
-                              'Sign up',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 30),
@@ -198,37 +210,39 @@ class RegisterPage extends ConsumerWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 70, vertical: 10),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.white),
-                          borderRadius: BorderRadius.circular(15),
-                          color: Colors.white,
-                        ),
-                        child: Row(
-                          children: [
-                            Image.asset(
-                              'assets/images/google-icon.png',
-                              height: 30, // Adjusted for better alignment
-                              fit: BoxFit.contain,
+                      MyButton(
+                          onTap: () {},
+                          child: Container(
+                            height: 0.085 * screenHeight,
+                            width: 0.75 * screenWidth,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.white),
+                              borderRadius: BorderRadius.circular(15),
+                              color: Colors.white,
                             ),
-                            const SizedBox(width: 10),
-                            GestureDetector(
-                              onTap: () {
-                                print('Sign up with Google');
-                                // Handle Google sign up here
-                              },
-                              child: const Text(
-                                'Sign up with Google',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Image.asset(
+                                  'assets/images/google-icon.png',
+                                  height: 50,
+                                ),
+                                const SizedBox(width: 10),
+                                const Text(
+                                  'Sign in with Google',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      )
+                          ))
                     ],
                   ),
+                  const SizedBox(height: 30),
                 ],
               ),
             ),

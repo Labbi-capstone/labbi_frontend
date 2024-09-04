@@ -18,5 +18,6 @@ class Routes {
   static const String listOfOrg = '/listOfOrg';
   static const String cpuDisplay = '/cpuDisplay';
   static const String PrometheusCPUDataPage = '/PrometheusCPUDataPage';
+  static const String ChartTestScreen = '/ChartTestScreen';
   // Add more routes as needed
 }

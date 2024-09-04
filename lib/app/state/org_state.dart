@@ -1,25 +1,25 @@
 import 'package:labbi_frontend/app/models/organization.dart';
 
 class OrgState {
-  final List<Organization> organizationList;
   final bool isLoading;
   final String? errorMessage;
+  final List<Organization> organizationList;
 
   OrgState({
-    required this.organizationList,
-    required this.isLoading,
+    this.isLoading = false,
     this.errorMessage,
+    this.organizationList = const [],
   });
 
   OrgState copyWith({
-    List<Organization>? organizationList,
     bool? isLoading,
     String? errorMessage,
+    List<Organization>? organizationList,
   }) {
     return OrgState(
-      organizationList: organizationList ?? this.organizationList,
       isLoading: isLoading ?? this.isLoading,
       errorMessage: errorMessage ?? this.errorMessage,
+      organizationList: organizationList ?? this.organizationList,
     );
   }
 }
