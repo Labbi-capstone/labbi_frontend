@@ -14,14 +14,20 @@ class LoginPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authController = ref.watch(authControllerProvider.notifier);
     final authState = ref.watch(authControllerProvider);
+    dynamic screenHeight = MediaQuery.of(context).size.height;
+    dynamic screenWidth = MediaQuery.of(context).size.width;
 
     return MaterialApp(
       theme: ThemeData(
         textTheme: GoogleFonts.barlowSemiCondensedTextTheme(),
       ),
       home: Scaffold(
+        resizeToAvoidBottomInset: true,
         body: SafeArea(
+            child: SingleChildScrollView(
           child: Container(
+            height: screenHeight,
+            width: screenWidth,
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [
@@ -206,7 +212,7 @@ class LoginPage extends ConsumerWidget {
               ),
             ),
           ),
-        ),
+        )),
       ),
     );
   }

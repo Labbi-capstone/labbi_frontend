@@ -10,10 +10,7 @@ class MyButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        // Your button styling here
-        child: Center(child: text), // Now this can be any widget
-      ),
+      child: Center(child: text),
     );
   }
 }
