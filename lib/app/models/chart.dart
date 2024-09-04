@@ -1,5 +1,3 @@
-// chart_model.dart
-
 class LineData {
   LineData(this.time, this.value);
   final String time;
@@ -21,13 +19,34 @@ class BarData {
 class Chart {
   final String id;
   final String name;
-  final String chartType; // e.g., 'line', 'bar', 'pie'
-  final List<dynamic> data; // Can hold LineData, PieData, or BarData
+  final String prometheusEndpointId;
+  final String chartType;
+  final bool isActive;
+  final String dashboardId;
+  final List<dynamic> data;
 
   Chart({
     required this.id,
     required this.name,
+    required this.prometheusEndpointId,
     required this.chartType,
-    required this.data,
+    required this.isActive,
+    required this.dashboardId,
+    this.data =
+        const [], // Ensure data is initialized as an empty list if not provided
   });
+
+  factory Chart.fromJson(Map<String, dynamic> json) {
+    return Chart(
+      id: json['_id'],
+      name: json['name'],
+      prometheusEndpointId: json['prometheus_endpoint_id'],
+      chartType: json['chart_type'],
+      isActive: json['is_active'],
+      dashboardId: json['dashboard_id'],
+      data: json['data'] ??
+          [], // Safeguard against null by providing an empty list
+    );
+  }
 }
+

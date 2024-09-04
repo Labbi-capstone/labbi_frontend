@@ -8,9 +8,11 @@ import 'package:labbi_frontend/app/screens/authentication/login_page.dart';
 import 'package:labbi_frontend/app/screens/authentication/register_page.dart';
 import 'package:labbi_frontend/app/screens/dashboard_page/dashboard_page.dart';
 import 'package:labbi_frontend/app/screens/prome_display(Temporary)/PrometheusCPUDataPage.dart';
+import 'package:labbi_frontend/app/screens/prome_display(Temporary)/chart_test.dart';
 import 'package:labbi_frontend/app/screens/user_profile/user_profile.dart';
 import 'package:labbi_frontend/app/screens/user_profile/user_edit/edit_user_profile_page.dart';
 import 'package:labbi_frontend/app/screens/notification/notification_page.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 import 'package:labbi_frontend/app/screens/prome_display(Temporary)/cpuDisplay.dart';
 import 'package:labbi_frontend/app/screens/prome_display(Temporary)/display.dart';
@@ -50,9 +52,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Create a WebSocketChannel for the ChartTestScreen
+    final WebSocketChannel channel = WebSocketChannel.connect(
+      Uri.parse('ws://localhost:3000'),
+    );
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: Routes.login,
+      initialRoute: Routes.ChartTestScreen,
       routes: {
         Routes.login: (context) => const LoginPage(),
         Routes.register: (context) => const RegisterPage(),
@@ -66,9 +73,11 @@ class MyApp extends StatelessWidget {
         Routes.createOrgPage: (context) => const CreateOrgPage(),
         Routes.controlPanelPage: (context) => const ControlPanelPage(),
         Routes.createDashboardPage: (context) => const CreateDashboardPage(),
-       // Routes.userListPage: (context) => const UserListInOrgPage(orgId: '',),
+        // Routes.userListPage: (context) => const UserListInOrgPage(orgId: '',),
         Routes.cpuDisplay: (context) => CPUUsagePage(),
-        Routes.PrometheusCPUDataPage: (context) => const PrometheusCPUDataPage(),
+        Routes.PrometheusCPUDataPage: (context) =>
+            const PrometheusCPUDataPage(),
+        Routes.ChartTestScreen: (context) => ChartTestScreen(channel: channel),
       },
       onUnknownRoute: (settings) => MaterialPageRoute(
         builder: (context) => Scaffold(
@@ -80,7 +89,6 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-// >>>>>>> origin/main
     );
   }
 }
