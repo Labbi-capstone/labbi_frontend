@@ -10,4 +10,12 @@ class Dashboard {
     required this.name,
     required this.charts,
   });
+
+  factory Dashboard.fromJson(Map<String, dynamic> json) {
+    return Dashboard(
+      id: json['id'], // Correctly mapping the _id field from the backend
+      name: json['name'],
+      charts: json[''],
+    );
+  }
 }

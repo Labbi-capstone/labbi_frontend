@@ -162,7 +162,7 @@ class _AdminDeviceHistoryPageState extends State<AdminOrgUsersPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const AdminOrgDeviceHistoryPage(),
+                  builder: (context) => const AdminOrgDeviceHistoryPage(orgId: ''),
                 ),
               );
             },
@@ -202,7 +202,7 @@ class _AdminDeviceHistoryPageState extends State<AdminOrgUsersPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const AdminOrgHomePage()),
+                              builder: (context) => const AdminOrgHomePage(orgId: '',)),
                         );
                       },
                       icon: Icon(Icons.devices, size: screenHeight * 0.05),

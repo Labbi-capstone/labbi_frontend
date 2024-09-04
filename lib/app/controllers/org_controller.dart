@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:labbi_frontend/app/models/organization.dart';
+import 'package:labbi_frontend/app/screens/admin_system/list_org_page.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -70,6 +71,7 @@ class OrgController extends StateNotifier<OrgState> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Organization created successfully!')),
         );
+        Navigator.pushReplacementNamed(context, '/listOfOrg');
       } else if (response.statusCode == 403) {
         debugPrint('[MY_APP] Access denied. Admins only.');
         setLoading(false);

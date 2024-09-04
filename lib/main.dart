@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:labbi_frontend/app/routes.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:labbi_frontend/app/screens/admin_system/list_org_page.dart';
 import 'package:labbi_frontend/app/screens/admin_system/user_list_in_org_page.dart';
 import 'package:labbi_frontend/app/screens/authentication/login_page.dart';
 import 'package:labbi_frontend/app/screens/authentication/register_page.dart';
@@ -61,13 +62,14 @@ class MyApp extends StatelessWidget {
         Routes.editUserProfilePage: (context) => const EditUserProfilePage(),
         Routes.notificationPage: (context) => const NotificationPage(),
         Routes.menuTaskbar: (context) => const MenuTaskbar(),
-        Routes.adminOrgHomePage: (context) => const AdminOrgHomePage(),
+        Routes.adminOrgHomePage: (context) => const AdminOrgHomePage(orgId: ''),
         Routes.userOrgHomePage: (context) => const UserOrgHomePage(),
         Routes.createOrgPage: (context) => const CreateOrgPage(),
         Routes.controlPanelPage: (context) => const ControlPanelPage(),
         Routes.createDashboardPage: (context) => const CreateDashboardPage(),
-       // Routes.userListPage: (context) => const UserListInOrgPage(orgId: '',),
+        Routes.userListPage: (context) => const UserListInOrgPage(orgId: '66a181d07a2007c79a23ce98',),
         Routes.cpuDisplay: (context) => CPUUsagePage(),
+        Routes.listOfOrg: (context) => const ListOrgPage(),
         Routes.PrometheusCPUDataPage: (context) => const PrometheusCPUDataPage(),
       },
       onUnknownRoute: (settings) => MaterialPageRoute(

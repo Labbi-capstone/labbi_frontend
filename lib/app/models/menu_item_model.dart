@@ -34,10 +34,15 @@ final List<MenuItemModel> userMenuItems = [
 
 final List<MenuItemModel> adminMenuItems = [
   MenuItemModel(
-    icon: Icons.home_outlined,
-    label: 'Dashboard',
-    route: const DashboardPage(),
+    icon: Icons.work_outline,
+    label: 'Organization',
+    route: const ListOrgPage(),
   ),
+  // MenuItemModel(
+  //   icon: Icons.home_outlined,
+  //   label: 'Dashboard',
+  //   route: const DashboardPage(),
+  // ),
   MenuItemModel(
     icon: Icons.dashboard_outlined,
     label: 'Control Panel',
@@ -48,11 +53,7 @@ final List<MenuItemModel> adminMenuItems = [
     label: 'Notification',
     route: const NotificationPage(),
   ),
-  MenuItemModel(
-    icon: Icons.work_outline,
-    label: 'Organization',
-    route: const ListOrgPage(),
-  ),
+  
 ];
 
 final List<MenuItemModel> developerMenuItems = [
@@ -74,7 +75,7 @@ final List<MenuItemModel> developerMenuItems = [
   MenuItemModel(
     icon: Icons.work_outline,
     label: 'Organization',
-    route: const AdminOrgHomePage(),
+    route: const AdminOrgHomePage(orgId: ''),
   ),
 ];
 
@@ -92,6 +93,6 @@ final List<MenuItemModel> orgAdminMenuItems = [
   MenuItemModel(
     icon: Icons.work_outline,
     label: 'Organization',
-    route: const AdminOrgHomePage(),
+    route: const AdminOrgHomePage(orgId: ''),
   ),
 ];
