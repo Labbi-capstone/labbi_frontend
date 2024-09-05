@@ -9,7 +9,7 @@ import 'package:labbi_frontend/app/screens/authentication/login_page.dart';
 import 'package:labbi_frontend/app/screens/authentication/register_page.dart';
 import 'package:labbi_frontend/app/screens/dashboard_page/dashboard_page.dart';
 import 'package:labbi_frontend/app/screens/prome_display(Temporary)/PrometheusCPUDataPage.dart';
-import 'package:labbi_frontend/app/screens/prome_display(Temporary)/chart_test.dart';
+import 'package:labbi_frontend/app/screens/chart_pages/list_all_charts_page.dart';
 import 'package:labbi_frontend/app/screens/user_profile/user_profile.dart';
 import 'package:labbi_frontend/app/screens/user_profile/user_edit/edit_user_profile_page.dart';
 import 'package:labbi_frontend/app/screens/notification/notification_page.dart';
@@ -60,7 +60,7 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: Routes.ChartTestScreen,
+      initialRoute: Routes.ListAllChartsPage,
       routes: {
         Routes.login: (context) => const LoginPage(),
         Routes.register: (context) => const RegisterPage(),
@@ -81,7 +81,7 @@ class MyApp extends StatelessWidget {
         Routes.cpuDisplay: (context) => CPUUsagePage(),
         Routes.PrometheusCPUDataPage: (context) =>
             const PrometheusCPUDataPage(),
-        Routes.ChartTestScreen: (context) => ChartTestScreen(channel: channel),
+        Routes.ListAllChartsPage: (context) => ListAllChartsPage(channel: channel),
       },
       onUnknownRoute: (settings) => MaterialPageRoute(
         builder: (context) => Scaffold(
