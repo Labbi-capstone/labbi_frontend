@@ -27,7 +27,7 @@ class Utils {
       s.length > length ? '${s.substring(0, length)}...' : s;
 
   static bool isNullOrEmpty(String? s) => s == null || s.isEmpty;
-  
+
   static String formatNumber(int number) {
     return NumberFormat("#,##0", "en_US").format(number);
   }
@@ -35,7 +35,9 @@ class Utils {
   static String toFixed(double number, int decimalPlaces) {
     return number.toStringAsFixed(decimalPlaces);
   }
-static bool isListNullOrEmpty<T>(List<T>? list) => list == null || list.isEmpty;
+
+  static bool isListNullOrEmpty<T>(List<T>? list) =>
+      list == null || list.isEmpty;
   static List<T> removeDuplicates<T>(List<T> list) => list.toSet().toList();
   static List<List<T>> chunk<T>(List<T> list, int chunkSize) {
     List<List<T>> chunks = [];
@@ -44,5 +46,16 @@ static bool isListNullOrEmpty<T>(List<T>? list) => list == null || list.isEmpty;
           i, i + chunkSize > list.length ? list.length : i + chunkSize));
     }
     return chunks;
+  }
+
+  // Add the toDouble method here
+  static double toDouble(dynamic value) {
+    if (value == null) return 0.0;
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    if (value is String) {
+      return double.tryParse(value) ?? 0.0; // Try to parse string
+    }
+    return 0.0; // Default to 0.0 if conversion fails
   }
 }

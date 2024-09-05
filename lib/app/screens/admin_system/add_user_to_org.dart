@@ -21,16 +21,19 @@ class _AddUserToOrgPageState extends ConsumerState<AddUserToOrgPage> {
   @override
   void initState() {
     super.initState();
-    _fetchUsers();
+    // Delay the fetch to ensure it's after the widget tree has built
+    Future.microtask(() {
+      _fetchUsers();
+    });
   }
 
   void _fetchUsers() async {
-    final userController = ref.read(userProvider.notifier);
+    final userController = ref.read(userControllerProvider.notifier);
     await userController.fetchUsersNotInOrg(widget.orgId);
   }
 
   void _addUsersToOrganization() async {
-    final userController = ref.read(userProvider.notifier);
+    final userController = ref.read(userControllerProvider.notifier);
     if (selectedRole == 'Member') {
       await userController.addOrgMember(widget.orgId);
     } else {
@@ -43,10 +46,16 @@ class _AddUserToOrgPageState extends ConsumerState<AddUserToOrgPage> {
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
-    final filteredUsers = ref.watch(userProvider).where((user) {
+
+    // Fetch the user state, which includes a list of users
+    final userState = ref.watch(userControllerProvider);
+
+    // Filter users based on the search keyword
+    final filteredUsers = userState.usersNotInOrg.where((user) {
       return user.fullName.toLowerCase().contains(searchKeyword.toLowerCase());
     }).toList();
-    final userController = ref.read(userProvider.notifier);
+
+    final userController = ref.read(userControllerProvider.notifier);
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -195,8 +204,7 @@ class _AddUserToOrgPageState extends ConsumerState<AddUserToOrgPage> {
                             elevation: 0,
                             backgroundColor: const Color(0xff3ac7f9),
                           ),
-                          onPressed:
-                              _addUsersToOrganization, // Add users to organization
+                          onPressed: _addUsersToOrganization,
                           child: Text(
                             'Add',
                             style: TextStyle(

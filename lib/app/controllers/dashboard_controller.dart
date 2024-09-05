@@ -5,19 +5,18 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:labbi_frontend/app/models/dashboard.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:labbi_frontend/app/state/dashboard_state.dart';
-import 'package:universal_html/js_util.dart'; // Import the state file
+import 'package:labbi_frontend/app/state/dashboard_state.dart'; // Import the state file
 
-class DashboardController extends StateNotifier<List<Dashboard>> {
-  DashboardController() : super([]);
+class DashboardController extends StateNotifier<DashboardState> {
+  DashboardController() : super(DashboardState());
 
-  String? errorMessage;
-  bool isLoading = false;
-
+  // Fetch dashboards by organization ID
   Future<void> fetchDashboardsByOrg(String orgId) async {
-    isLoading = true;
+    state = state.copyWith(
+        isLoading: true); // Set loading to true before the request
     try {
-      final url = Uri.parse('http://localhost:3000/api/dashboards/$orgId/dashboards');
+      final url =
+          Uri.parse('http://localhost:3000/api/dashboards/$orgId/dashboards');
 
       // Retrieve the token and role from shared preferences
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -37,28 +36,24 @@ class DashboardController extends StateNotifier<List<Dashboard>> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        final List<dynamic> dashboardsJson = data['dashboards']; 
+        final List<dynamic> dashboardsJson = data['dashboards'];
 
         final List<Dashboard> dashboards = dashboardsJson.map((dashboardJson) {
-          return Dashboard(
-            id: dashboardJson['_id'] as String,
-            name: dashboardJson['name'] as String,
-          );
+          return Dashboard.fromJson(dashboardJson);
         }).toList();
 
-        state = dashboards; // Update state with fetched dashboards
+        state = state.copyWith(dashboards: dashboards, isLoading: false);
       } else {
         throw Exception('Failed to load dashboards');
       }
     } catch (e) {
-      errorMessage = e.toString();
-      debugPrint("Error fetching dashboards: $errorMessage");
-    } finally {
-      isLoading = false;
+      state = state.copyWith(errorMessage: e.toString(), isLoading: false);
+      debugPrint("Error fetching dashboards: ${e.toString()}");
     }
   }
 }
 
-final dashboardControllerProvider = StateNotifierProvider<DashboardController, List<Dashboard>>((ref) {
+final dashboardControllerProvider =
+    StateNotifierProvider<DashboardController, DashboardState>((ref) {
   return DashboardController();
 });

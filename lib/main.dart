@@ -9,7 +9,7 @@ import 'package:labbi_frontend/app/screens/authentication/login_page.dart';
 import 'package:labbi_frontend/app/screens/authentication/register_page.dart';
 import 'package:labbi_frontend/app/screens/dashboard_page/dashboard_page.dart';
 import 'package:labbi_frontend/app/screens/prome_display(Temporary)/PrometheusCPUDataPage.dart';
-import 'package:labbi_frontend/app/screens/prome_display(Temporary)/chart_test.dart';
+import 'package:labbi_frontend/app/screens/chart_pages/list_all_charts_page.dart';
 import 'package:labbi_frontend/app/screens/user_profile/user_profile.dart';
 import 'package:labbi_frontend/app/screens/user_profile/user_edit/edit_user_profile_page.dart';
 import 'package:labbi_frontend/app/screens/notification/notification_page.dart';
@@ -53,14 +53,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final wsApiUrl =
+        kIsWeb ? dotenv.env['WS_API_URL_LOCAL'] : dotenv.env['WS_API_URL_EMULATOR'];
     // Create a WebSocketChannel for the ChartTestScreen
     final WebSocketChannel channel = WebSocketChannel.connect(
-      Uri.parse('ws://localhost:3000'),
+      Uri.parse('$wsApiUrl'),
     );
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: Routes.ChartTestScreen,
+      initialRoute: Routes.login,
       routes: {
         Routes.login: (context) => const LoginPage(),
         Routes.register: (context) => const RegisterPage(),
@@ -81,7 +83,7 @@ class MyApp extends StatelessWidget {
         Routes.cpuDisplay: (context) => CPUUsagePage(),
         Routes.PrometheusCPUDataPage: (context) =>
             const PrometheusCPUDataPage(),
-        Routes.ChartTestScreen: (context) => ChartTestScreen(channel: channel),
+        Routes.ListAllChartsPage: (context) => ListAllChartsPage(channel: channel),
       },
       onUnknownRoute: (settings) => MaterialPageRoute(
         builder: (context) => Scaffold(
