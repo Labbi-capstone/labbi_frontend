@@ -100,6 +100,7 @@ class _LineChartComponentState extends State<LineChartComponent> {
                 width: double.infinity,
                 height: 600,
                 child: SfCartesianChart(
+                  key: ValueKey<DateTime>(DateTime.now()),
                   title: ChartTitle(
                     text: 'Dynamic Metrics Data Over Time',
                     textStyle:

@@ -67,9 +67,7 @@ class DashboardPage extends ConsumerWidget {
         child: ListView.builder(
           itemBuilder: (context, index) {
             return DashboardItem(
-              title: "hello",
-              // lineChartData: dashboard.lineChartData,
-              // pieChartData: dashboard.pieChartData,
+              title: dashboard.name,
             );
           },
         ),

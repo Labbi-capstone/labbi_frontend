@@ -70,6 +70,7 @@ class AuthController extends StateNotifier<AuthState> {
         if (context.mounted) {
           switch (userRole) {
             case 'admin':
+              Navigator.pushReplacementNamed(context, '/listOfOrg');
             case 'developer':
             case 'adminOrg':
               Navigator.pushReplacementNamed(context, '/dashboard');

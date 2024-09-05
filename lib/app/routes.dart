@@ -15,6 +15,7 @@ class Routes {
   static const String controlPanelPage = '/controlPanelPage';
   static const String createDashboardPage = '/createDashboardPage';
   static const String userListPage = '/userListPage';
+  static const String listOfOrg = '/listOfOrg';
   static const String cpuDisplay = '/cpuDisplay';
   static const String PrometheusCPUDataPage = '/PrometheusCPUDataPage';
   static const String ChartTestScreen = '/ChartTestScreen';

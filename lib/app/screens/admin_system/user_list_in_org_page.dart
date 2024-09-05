@@ -73,6 +73,7 @@ class _UserListInOrgPageState extends ConsumerState<UserListInOrgPage> {
         title: Text('User List'),
         backgroundColor: Colors.white,
         elevation: 1,
+        automaticallyImplyLeading: false,
         actions: [
           IconButton(
             icon: Icon(Icons.list_alt, color: Colors.blueAccent),
@@ -139,19 +140,6 @@ class _UserListInOrgPageState extends ConsumerState<UserListInOrgPage> {
                                     fontSize: 14,
                                   ),
                                 ),
-                              ],
-                            ),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Chip(
-                                  label: Text(
-                                    'Active',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                  backgroundColor: Colors.green,
-                                ),
-                                Icon(Icons.more_vert),
                               ],
                             ),
                           ),

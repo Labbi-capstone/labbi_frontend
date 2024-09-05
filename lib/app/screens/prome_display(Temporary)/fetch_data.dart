@@ -73,7 +73,7 @@ class DataFetcher {
 
   void _updateBarDataList(List<BarData> dataList, BarData newData) {
     if (dataList.length >= 1) {
-      dataList.removeAt(0); // Keep only the latest 5 entries
+      dataList.removeAt(0);
     }
     dataList.add(newData);
   }

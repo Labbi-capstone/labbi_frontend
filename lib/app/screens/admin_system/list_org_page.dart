@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:labbi_frontend/app/Theme/app_colors.dart';
+import 'package:labbi_frontend/app/components/buttons/menu_button.dart';
 import 'package:labbi_frontend/app/components/org_search_bar.dart';
 import 'package:labbi_frontend/app/controllers/org_controller.dart';
 import 'package:labbi_frontend/app/components/org_container.dart';
@@ -6,6 +8,8 @@ import 'package:labbi_frontend/app/components/buttons/add_button.dart';
 import 'package:labbi_frontend/app/screens/admin_system/create_org_page.dart';
 import 'package:labbi_frontend/app/screens/admin_system/user_list_in_org_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
+import 'package:labbi_frontend/app/screens/admin_org/admin_org_home_page.dart';
 
 class ListOrgPage extends ConsumerStatefulWidget {
   const ListOrgPage({super.key});
@@ -47,12 +51,26 @@ class _ListOrgPageState extends ConsumerState<ListOrgPage> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                AppColors.primary,
+                AppColors.secondary,
+              ],
+              begin: FractionalOffset(0.0, 0.0),
+              end: FractionalOffset(1.0, 0.0),
+              stops: [0.0, 1.0],
+              tileMode: TileMode.clamp,
+            ),
+          ),
+        ),
         elevation: 0,
-        backgroundColor: const Color(0xff3ac7f9),
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.of(context).pop(),
+        leading: Builder(
+          builder: (BuildContext context) {
+            return const MenuButton();
+          },
         ),
         title: Text(
           "List of Organizations",
@@ -63,7 +81,9 @@ class _ListOrgPageState extends ConsumerState<ListOrgPage> {
           ),
         ),
       ),
-      body: isLoading
+      drawer: const MenuTaskbar(),
+      body:
+       isLoading
           ? const Center(child: CircularProgressIndicator())
           : errorMessage != null
               ? Center(child: Text(errorMessage))
@@ -71,11 +91,13 @@ class _ListOrgPageState extends ConsumerState<ListOrgPage> {
                   decoration: const BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        Color.fromRGBO(83, 206, 255, 1),
-                        Color.fromRGBO(0, 174, 255, 1),
+                        AppColors.primary,
+                        AppColors.secondary,
                       ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+                      begin: FractionalOffset(0.0, 0.0),
+                      end: FractionalOffset(1.0, 0.0),
+                      stops: [0.0, 1.0],
+                      tileMode: TileMode.clamp,
                     ),
                   ),
                   child: Stack(
@@ -100,9 +122,7 @@ class _ListOrgPageState extends ConsumerState<ListOrgPage> {
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
-                                                  UserListInOrgPage(
-                                                      orgId: org
-                                                          .id), // Navigate to UserListPage
+                                                  AdminOrgHomePage(orgId: org.id,), // Navigate to OrgPage
                                             ),
                                           );
                                         },
