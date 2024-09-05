@@ -22,6 +22,7 @@ class WebSocketService {
       'chartType': chartType,
     });
     channel.sink.add(message);
+    print("Data sent to WebSocket: $message");
   }
 
   void dispose() {

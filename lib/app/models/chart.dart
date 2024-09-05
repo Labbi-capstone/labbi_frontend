@@ -48,5 +48,15 @@ class Chart {
           [], // Safeguard against null by providing an empty list
     );
   }
+   // Method to convert Chart to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'chartType': chartType,
+      'prometheusEndpointId': prometheusEndpointId,
+      'dashboardId': dashboardId,
+    };
+  }
 }
 

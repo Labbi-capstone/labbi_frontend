@@ -53,14 +53,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final wsApiUrl =
+        kIsWeb ? dotenv.env['WS_API_URL_LOCAL'] : dotenv.env['WS_API_URL_EMULATOR'];
     // Create a WebSocketChannel for the ChartTestScreen
     final WebSocketChannel channel = WebSocketChannel.connect(
-      Uri.parse('ws://localhost:3000'),
+      Uri.parse('$wsApiUrl'),
     );
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: Routes.ListAllChartsPage,
+      initialRoute: Routes.login,
       routes: {
         Routes.login: (context) => const LoginPage(),
         Routes.register: (context) => const RegisterPage(),

@@ -33,6 +33,7 @@ class _ListAllChartsPageState extends ConsumerState<ListAllChartsPage> {
     // Listen for WebSocket messages
     socketService.listenForMessages().listen((message) {
       final parsedMessage = jsonDecode(message);
+      print("Received message from WebSocket");
       if (parsedMessage is Map) {
         final chartId = parsedMessage['chartId'] as String;
         final data = Map<String, dynamic>.from(parsedMessage['data']);
