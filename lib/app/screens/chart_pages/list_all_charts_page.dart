@@ -91,7 +91,8 @@ class _ListAllChartsPageState extends ConsumerState<ListAllChartsPage> {
                                   fontSize: 18, fontWeight: FontWeight.bold),
                             ),
                             Text('Type: ${chart.chartType}'),
-                            Text('Dashboard id: ${chart.dashboardId}'),
+                            Text(
+                                'Dashboard ID: ${chart.dashboardId}'), // Use dashboardId directly
                             SizedBox(height: 8),
                             chartDataForThisChart.isEmpty
                                 ? CircularProgressIndicator()

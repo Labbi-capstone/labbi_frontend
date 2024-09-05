@@ -123,7 +123,8 @@ class ChartController extends StateNotifier<ChartState> {
   }
 
   // Get charts by Dashboard ID
-  Future<void> getChartsByDashboardId(String dashboardId) async {
+ Future<void> getChartsByDashboardId(String dashboardId) async {
+    state = state.copyWith(isLoading: true);
     try {
       final apiUrl =
           kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
@@ -133,16 +134,16 @@ class ChartController extends StateNotifier<ChartState> {
       if (response.statusCode == 200) {
         List<dynamic> data = jsonDecode(response.body);
         List<Chart> charts = data.map((json) => Chart.fromJson(json)).toList();
-        state = state.copyWith(charts: charts);
+        state = state.copyWith(charts: charts, isLoading: false);
       } else {
         throw Exception('Failed to get charts by dashboard');
       }
     } catch (e) {
-      state = state.copyWith(
-        error: e.toString(),
-      );
+      state = state.copyWith(error: e.toString(), isLoading: false);
     }
   }
+
+
 
   // Get charts by Organization ID
   Future<void> getChartsByOrganizationId(String organizationId) async {

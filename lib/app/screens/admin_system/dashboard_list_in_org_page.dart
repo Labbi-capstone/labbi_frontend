@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:labbi_frontend/app/controllers/dashboard_controller.dart'; // Import the controller file
 import 'package:labbi_frontend/app/models/dashboard.dart';
+import 'package:labbi_frontend/app/providers.dart';
 import 'package:labbi_frontend/app/screens/admin_org/admin_org_device_details.dart';
 
 class DashboardListInOrgPage extends ConsumerStatefulWidget {
