@@ -51,9 +51,37 @@ class DashboardController extends StateNotifier<DashboardState> {
       debugPrint("Error fetching dashboards: ${e.toString()}");
     }
   }
-}
 
-final dashboardControllerProvider =
-    StateNotifierProvider<DashboardController, DashboardState>((ref) {
-  return DashboardController();
-});
+  // Fetch all dashboards
+  Future<void> fetchAllDashboards() async {
+    state = state.copyWith(
+        isLoading: true); // Set loading to true before the request
+    try {
+      final url = Uri.parse('http://localhost:3000/api/dashboards');
+
+      // No need for token and role, removed related logic
+
+      final response = await http.get(url, headers: {
+        "Content-Type": "application/json",
+      });
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        debugPrint(response.body);
+        // Ensure 'data' is in the correct format and contains a list
+        final List<dynamic> dashboardsJson = data;
+
+        final List<Dashboard> dashboards = dashboardsJson.map((dashboardJson) {
+          return Dashboard.fromJson(dashboardJson);
+        }).toList();
+
+        state = state.copyWith(dashboards: dashboards, isLoading: false);
+      } else {
+        throw Exception('Failed to load dashboards');
+      }
+    } catch (e) {
+      state = state.copyWith(errorMessage: e.toString(), isLoading: false);
+      debugPrint("Error fetching dashboards: ${e.toString()}");
+    }
+  }
+}

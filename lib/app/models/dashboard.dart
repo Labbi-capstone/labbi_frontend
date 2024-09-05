@@ -1,5 +1,5 @@
 class Dashboard {
-  final String id;
+  final String id; // Change this to String to match the backend's "_id"
   final String name;
   final String organizationId;
   final String createdBy;
@@ -21,13 +21,12 @@ class Dashboard {
   factory Dashboard.fromJson(Map<String, dynamic> json) {
     return Dashboard(
       id: json[
-          '_id'], // Use '_id' from the backend as it's typically used in MongoDB
+          '_id'], // '_id' is a string in MongoDB, so it must be parsed as a String
       name: json['name'],
-      organizationId: json['organization_id'],
-      createdBy: json['created_by'],
-      isActive:
-          json['is_active'] ?? true, // Fallback to true if 'is_active' is null
-      createdAt: DateTime.parse(json['created_at']),
+      organizationId: json['organization_id'], // Expect this as a String
+      createdBy: json['created_by'], // Expect this as a String
+      isActive: json['is_active'] ?? true, // Handle boolean values
+      createdAt: DateTime.parse(json['created_at']), // Parse the date correctly
       updatedAt: DateTime.parse(json['updated_at']),
     );
   }
