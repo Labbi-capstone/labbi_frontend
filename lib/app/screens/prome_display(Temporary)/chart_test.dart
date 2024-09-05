@@ -18,7 +18,7 @@ class _ChartTestScreenState extends ConsumerState<ChartTestScreen> {
   late WebSocketChannel channel;
   late Stream<dynamic> broadcastStream;
   Map<String, Map<String, dynamic>> allChartData =
-      {}; // Store chart data by chart type
+      {}; // Store chart data by chart ID (instead of chart type)
   Map<String, Timer> chartTimers = {}; // To keep track of timers for each chart
 
   @override
@@ -35,16 +35,18 @@ class _ChartTestScreenState extends ConsumerState<ChartTestScreen> {
       final parsedMessage = jsonDecode(message);
 
       if (parsedMessage is Map) {
+        final chartId = parsedMessage['chartId'] as String;
         final chartType = parsedMessage['chartType'] as String;
 
         // Try to cast 'data' to Map<String, dynamic> explicitly
         try {
           final data = Map<String, dynamic>.from(parsedMessage['data']);
-          print('Chart data Updated'); // Log the chart data
+          print(
+              'Chart data Updated for chartId: $chartId'); // Log the chart data
 
-          // Update state with the new data
+          // Update state with the new data for the specific chartId
           setState(() {
-            allChartData[chartType] = data;
+            allChartData[chartId] = data;
           });
         } catch (e) {
           print('Error casting data to Map<String, dynamic>: $e');
@@ -67,28 +69,32 @@ class _ChartTestScreenState extends ConsumerState<ChartTestScreen> {
     super.dispose();
   }
 
-  void fetchData(String prometheusEndpointId, String chartType) {
+  void fetchData(
+      String chartId, String prometheusEndpointId, String chartType) {
     final message = jsonEncode({
+      'chartId': chartId, // Add chartId to the fetch message
       'prometheusEndpointId': prometheusEndpointId,
       'chartType': chartType,
     });
     channel.sink.add(message);
   }
 
-  void startOrUpdateTimer(String prometheusEndpointId, String chartType) {
-    // If a timer already exists for this chartType, don't create another one
-    if (chartTimers.containsKey(chartType)) {
-      print('Timer already exists for $chartType');
+  void startOrUpdateTimer(
+      String chartId, String prometheusEndpointId, String chartType) {
+    // If a timer already exists for this chartId, don't create another one
+    if (chartTimers.containsKey(chartId)) {
+      print('Timer already exists for $chartId');
       return;
     }
 
     // Create a timer for fetching data every 10 seconds
     final timer = Timer.periodic(Duration(seconds: 2), (Timer t) {
-      fetchData(prometheusEndpointId, chartType);
-      print("fetchData(prometheusEndpointId, chartType);");
+      fetchData(chartId, prometheusEndpointId, chartType);
+      print(
+          "fetchData(chartId: $chartId, prometheusEndpointId: $prometheusEndpointId, chartType: $chartType);");
     });
 
-    chartTimers[chartType] = timer;
+    chartTimers[chartId] = timer;
   }
 
   String formatTimestamp(double timestamp) {
@@ -115,35 +121,50 @@ class _ChartTestScreenState extends ConsumerState<ChartTestScreen> {
                   itemCount: chartState.charts.length,
                   itemBuilder: (context, index) {
                     final chart = chartState.charts[index];
-                    final chartDataForThisChart =
-                        allChartData[chart.chartType] ?? {};
+                    final chartDataForThisChart = allChartData[chart.id] ??
+                        {}; // Fetch by chart ID instead of chart type
 
                     // Start or update the timer for each chart
                     startOrUpdateTimer(
-                        chart.prometheusEndpointId, chart.chartType);
+                        chart.id, chart.prometheusEndpointId, chart.chartType);
 
-                    return ExpansionTile(
-                      title: Text(chart.name),
-                      subtitle: Text('Type: ${chart.chartType}'),
-                      children: [
-                        chartDataForThisChart.isEmpty
-                            ? CircularProgressIndicator() // Show a loading spinner while data is being fetched
-                            : Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text('Chart Data:'),
-                                  for (var entry
-                                      in chartDataForThisChart.entries)
-                                    if (entry.key == 'result')
-                                      for (var resultEntry in entry.value)
-                                        Text(
-                                          'Time: ${formatTimestamp(resultEntry['value'][0])}, Value: ${resultEntry['value'][1]}',
-                                        )
-                                    else
-                                      Text('${entry.key}: ${entry.value}'),
-                                ],
-                              ),
-                      ],
+                    return Card(
+                      elevation: 2,
+                      margin: EdgeInsets.all(8),
+                      child: Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              chart.name,
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                            Text('Type: ${chart.chartType}'),
+                            Text('Dashboard id that chart belong to: ${chart.dashboardId}'),
+                            SizedBox(height: 8),
+                            chartDataForThisChart.isEmpty
+                                ? CircularProgressIndicator() // Show a loading spinner while data is being fetched
+                                : Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text('Chart Data:'),
+                                      for (var entry
+                                          in chartDataForThisChart.entries)
+                                        if (entry.key == 'result')
+                                          for (var resultEntry in entry.value)
+                                            Text(
+                                              'Time: ${formatTimestamp(resultEntry['value'][0])}, Value: ${resultEntry['value'][1]}',
+                                            )
+                                        else
+                                          Text('${entry.key}: ${entry.value}'),
+                                    ],
+                                  ),
+                          ],
+                        ),
+                      ),
                     );
                   },
                 ),
