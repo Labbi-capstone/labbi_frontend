@@ -5,57 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:labbi_frontend/app/utils/utils.dart';
 import 'package:labbi_frontend/app/models/chart.dart';
+import 'package:labbi_frontend/app/services/websocket_service.dart'; // Import the WebSocketService
+import 'package:labbi_frontend/app/services/chart_timer_service.dart'; // Import the ChartTimerService
 import '../../providers.dart';
-
-// WebSocket Service to handle connections
-class WebSocketService {
-  late WebSocketChannel channel;
-  late Stream<dynamic> broadcastStream;
-
-  WebSocketService(WebSocketChannel channel) {
-    this.channel = channel;
-    this.broadcastStream = channel.stream.asBroadcastStream();
-  }
-
-  Stream<dynamic> listenForMessages() {
-    return broadcastStream;
-  }
-
-  void sendData(String chartId, String prometheusEndpointId, String chartType) {
-    final message = jsonEncode({
-      'chartId': chartId,
-      'prometheusEndpointId': prometheusEndpointId,
-      'chartType': chartType,
-    });
-    channel.sink.add(message);
-  }
-
-  void dispose() {
-    channel.sink.close();
-  }
-}
-
-// ChartTimerService to handle fetching of chart data periodically
-class ChartTimerService {
-  final Map<String, Timer> chartTimers = {};
-
-  void startOrUpdateTimer(WebSocketService socketService, String chartId,
-      String prometheusEndpointId, String chartType) {
-    if (chartTimers.containsKey(chartId)) {
-      return; // Timer already exists
-    }
-
-    final timer = Timer.periodic(Duration(seconds: 2), (Timer t) {
-      socketService.sendData(chartId, prometheusEndpointId, chartType);
-    });
-
-    chartTimers[chartId] = timer;
-  }
-
-  void clearTimers() {
-    chartTimers.forEach((_, timer) => timer.cancel());
-  }
-}
 
 // Main Widget
 class ListAllChartsPage extends ConsumerStatefulWidget {

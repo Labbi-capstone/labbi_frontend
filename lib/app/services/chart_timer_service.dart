@@ -1,5 +1,5 @@
 import 'dart:async';
-import '../services/websocket_service.dart'; // Assuming WebSocketService is in the same directory
+import 'package:labbi_frontend/app/services/websocket_service.dart'; // Import WebSocketService
 
 class ChartTimerService {
   final Map<String, Timer> chartTimers = {};

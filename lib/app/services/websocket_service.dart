@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class WebSocketService {
@@ -10,22 +11,19 @@ class WebSocketService {
     this.broadcastStream = channel.stream.asBroadcastStream();
   }
 
-  // Listen for incoming WebSocket messages
   Stream<dynamic> listenForMessages() {
     return broadcastStream;
   }
 
-  // Send data over WebSocket
   void sendData(String chartId, String prometheusEndpointId, String chartType) {
-    final message = {
+    final message = jsonEncode({
       'chartId': chartId,
       'prometheusEndpointId': prometheusEndpointId,
       'chartType': chartType,
-    };
+    });
     channel.sink.add(message);
   }
 
-  // Close the WebSocket connection
   void dispose() {
     channel.sink.close();
   }
