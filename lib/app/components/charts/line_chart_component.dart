@@ -2,24 +2,25 @@ import 'dart:async';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/models/chart.dart';
+import 'package:labbi_frontend/app/screens/prome_display(Temporary)/fetch_data.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart'; // Use generic WebSocketChannel
-import 'package:labbi_frontend/app/screens/prome_display(Temporary)/fetch_data.dart';
-import 'package:labbi_frontend/app/screens/prome_display(Temporary)/websocket_handler.dart';
 import 'dart:io' as io;
 
 class LineChartComponent extends StatefulWidget {
-  const LineChartComponent({super.key, required this.title});
+  const LineChartComponent({super.key, required this.title, required this.prometheusEndpointId, required this.chartType});
 
   final String title;
+  final String prometheusEndpointId;
+  final String chartType;
 
   @override
   _LineChartComponentState createState() => _LineChartComponentState();
 }
 
 class _LineChartComponentState extends State<LineChartComponent> {
-  late WebSocketHandler _webSocketHandler;
+  late WebSocketChannel _webSocketChannel;
   late DataFetcher _dataFetcher;
   late Map<String, List<LineData>> lineDataMap;
   late Timer _timer;
@@ -38,56 +39,43 @@ class _LineChartComponentState extends State<LineChartComponent> {
             io.Platform.isMacOS ||
             io.Platform.isWindows)) {
       // If running on supported native platforms
-      _webSocketHandler = WebSocketHandler(
-        IOWebSocketChannel.connect('ws://localhost:3000/'),
-      );
+      _webSocketChannel = IOWebSocketChannel.connect('ws://localhost:3000/');
     } else {
       // For web or other environments
-      _webSocketHandler = WebSocketHandler(
-        WebSocketChannel.connect(Uri.parse('ws://localhost:3000/')),
-      );
+      _webSocketChannel = WebSocketChannel.connect(Uri.parse('ws://localhost:3000/'));
     }
 
-    _dataFetcher = DataFetcher(_webSocketHandler.channel);
+    _dataFetcher = DataFetcher(_webSocketChannel);
 
-    // Logging WebSocket connection
-   // print('WebSocket connected to ws://localhost:3000/');
-
+    // Periodically fetch data
     _timer = Timer.periodic(const Duration(seconds: 2), (Timer timer) {
-      _dataFetcher.fetchData();
-      // Logging fetch data trigger
-     // print('Data fetch triggered');
+      _dataFetcher.fetchData(widget.prometheusEndpointId, widget.chartType);
     });
 
-    _webSocketHandler.channel.stream.listen((data) {
-     // print('Data received from WebSocket: $data'); // Log raw data
+    // Listen for data from the WebSocket
+    _webSocketChannel.stream.listen((data) {
       _dataFetcher.processWebSocketData(
         data,
         {},
         lineDataMap,
       );
-      // Logging the updated lineDataMap
-   //   print('LineDataMap updated: $lineDataMap');
       setState(() {});
     }, onError: (error) {
-   //   print('WebSocket error: $error'); // Log any errors in WebSocket
+      print('WebSocket error: $error');
     }, onDone: () {
- //     print('WebSocket connection closed'); // Log when WebSocket closes
+      print('WebSocket connection closed');
     });
   }
 
   @override
   void dispose() {
     _timer.cancel();
-    _webSocketHandler.dispose();
-    print('Timer cancelled and WebSocket closed'); // Log disposal
+    _webSocketChannel.sink.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // Logging build process
-   // print('Building LineChartComponent with title: ${widget.title}');
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -112,8 +100,6 @@ class _LineChartComponentState extends State<LineChartComponent> {
                     isResponsive: true,
                   ),
                   series: lineDataMap.entries.map((entry) {
-                    // print(
-                    //     'Rendering LineChart for ${entry.key}'); // Log each series rendering
                     return LineSeries<LineData, String>(
                       dataSource: entry.value,
                       xValueMapper: (LineData data, _) => data.time,

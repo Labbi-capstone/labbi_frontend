@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'dart:convert';
 import 'package:intl/intl.dart';
@@ -8,12 +10,18 @@ import 'package:labbi_frontend/app/models/chart.dart';
 class DataFetcher {
   final WebSocketChannel channel;
   final DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
+  Map<String, Timer> chartTimers = {}; // To keep track of timers for each chart
+
 
   // Modify the constructor to accept a WebSocketChannel
   DataFetcher(this.channel);
 
-  void fetchData() {
-    channel.sink.add('fetch_data');
+  void fetchData(String prometheusEndpointId, String chartType) {
+    final message = jsonEncode({
+      'prometheusEndpointId': prometheusEndpointId,
+      'chartType': chartType,
+    });
+    channel.sink.add(message);
   }
 
   void processWebSocketData(
@@ -49,13 +57,13 @@ class DataFetcher {
                 key += '_${metric['quantile']}';
               }
 
-              if (chartType == 'barChart') {
+              if (chartType == 'bar') {
                 var barData = BarData(formattedTimestamp, metricValue);
                 if (!barDataMap.containsKey(key)) {
                   barDataMap[key] = [];
                 }
                 _updateBarDataList(barDataMap[key]!, barData);
-              } else if (chartType == 'lineChart') {
+              } else if (chartType == 'line') {
                 var lineData = LineData(formattedTimestamp, metricValue);
                 if (!lineDataMap.containsKey(key)) {
                   lineDataMap[key] = [];

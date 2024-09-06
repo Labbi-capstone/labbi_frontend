@@ -64,7 +64,7 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: Routes.ListAllDashboardPage,
+      initialRoute: Routes.dashboard,
       routes: {
         Routes.login: (context) => const LoginPage(),
         Routes.register: (context) => const RegisterPage(),
@@ -81,9 +81,6 @@ class MyApp extends StatelessWidget {
 //         Routes.userListPage: (context) => const UserListInOrgPage(orgId: '66a181d07a2007c79a23ce98',),
         Routes.cpuDisplay: (context) => CPUUsagePage(),
         Routes.listOfOrg: (context) => const ListOrgPage(),
-        Routes.PrometheusCPUDataPage: (context) =>
-            const PrometheusCPUDataPage(),
-        Routes.cpuDisplay: (context) => CPUUsagePage(),
         Routes.PrometheusCPUDataPage: (context) =>
             const PrometheusCPUDataPage(),
         Routes.ListAllChartsPage: (context) =>

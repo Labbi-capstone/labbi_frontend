@@ -7,9 +7,11 @@ import 'package:labbi_frontend/app/screens/prome_display(Temporary)/fetch_data.d
 import 'package:labbi_frontend/app/screens/prome_display(Temporary)/websocket_handler.dart';
 
 class BarChartComponent extends StatefulWidget {
-  const BarChartComponent({Key? key, required this.title}) : super(key: key);
+  const BarChartComponent({Key? key, required this.title, required this.prometheusEndpointId, required this.chartType}) : super(key: key);
 
   final String title;
+  final String prometheusEndpointId;
+  final String chartType;
 
   @override
   _BarChartComponentState createState() => _BarChartComponentState();
@@ -34,7 +36,7 @@ class _BarChartComponentState extends State<BarChartComponent> {
     _dataFetcher = DataFetcher(_webSocketHandler.channel);
 
     _timer = Timer.periodic(const Duration(seconds: 2), (Timer timer) {
-      _dataFetcher.fetchData();
+      _dataFetcher.fetchData(widget.prometheusEndpointId, widget.chartType);
     });
 
     _webSocketHandler.channel.stream.listen((data) {

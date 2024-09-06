@@ -8,6 +8,7 @@ import 'package:labbi_frontend/app/components/buttons/menu_button.dart';
 import 'package:labbi_frontend/app/providers.dart';
 import 'package:labbi_frontend/app/screens/dashboard_page/dashboard_items.dart';
 import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
+import 'package:labbi_frontend/app/screens/prome_display(Temporary)/fetch_data.dart';
 import 'package:labbi_frontend/app/state/dashboard_state.dart';
 import 'package:labbi_frontend/app/utils/user_info_helper.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -79,14 +80,6 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     super.dispose();
   }
 
-  void fetchData(String prometheusEndpointId, String chartType) {
-    final message = jsonEncode({
-      'prometheusEndpointId': prometheusEndpointId,
-      'chartType': chartType,
-    });
-    channel.sink.add(message);
-  }
-
   void startOrUpdateTimer(String prometheusEndpointId, String chartType) {
     // If a timer already exists for this chartType, don't create another one
     if (chartTimers.containsKey(chartType)) {
@@ -96,7 +89,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
 
     // Create a timer for fetching data every 10 seconds
     final timer = Timer.periodic(Duration(seconds: 2), (Timer t) {
-      fetchData(prometheusEndpointId, chartType);
+      DataFetcher(channel).fetchData(prometheusEndpointId, chartType);
       print("fetchData(prometheusEndpointId, chartType);");
     });
 
@@ -115,6 +108,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
   Widget build(BuildContext context) {
     final userInfoAsyncValue = ref.watch(userInfoProvider);
     final chartState = ref.watch(chartControllerProvider);
+    
 
     return Scaffold(
       appBar: AppBar(
@@ -173,12 +167,14 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                       final chartDataForThisChart =
                           allChartData[chart.chartType] ?? {};
 
+                      // print(chartDataForThisChart.entries);
+
                       // Start or update the timer for each chart
                       startOrUpdateTimer(
                           chart.prometheusEndpointId, chart.chartType);
 
                       return DashboardItem(
-                        title: chart.name, chartType: chart.chartType,
+                        title: chart.name, chartType: chart.chartType, prometheusEndpointId: chart.prometheusEndpointId,
                       );
                     },
                   ),

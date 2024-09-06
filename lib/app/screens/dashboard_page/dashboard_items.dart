@@ -8,10 +8,12 @@ import 'package:labbi_frontend/app/components/charts/pie_chart_giang.dart';
 class DashboardItem extends StatelessWidget {
   final String title;
   final String chartType;
+  final String prometheusEndpointId;
 
   const DashboardItem({
     required this.title,
     required this.chartType,
+    required this.prometheusEndpointId,
     Key? key,
   }) : super(key: key);
 
@@ -21,10 +23,10 @@ class DashboardItem extends StatelessWidget {
 
     switch (chartType) {
       case 'line':
-        chartWidget = LineChartState();
+        chartWidget = LineChartState(prometheusEndpointId: prometheusEndpointId, chartType: chartType,);
         break;
       case 'bar':
-        chartWidget = BarChartState();
+        chartWidget = BarChartState(prometheusEndpointId: prometheusEndpointId, chartType: chartType,);
         break;
       default:
         chartWidget = Center(child: Text('Invalid chart type'));
@@ -53,6 +55,15 @@ class DashboardItem extends StatelessWidget {
 }
 
 class LineChartState extends StatelessWidget {
+  final String prometheusEndpointId;
+  final String chartType;
+
+  const LineChartState({
+    required this.prometheusEndpointId,
+    required this.chartType,
+    Key? key,
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -61,13 +72,25 @@ class LineChartState extends StatelessWidget {
         color: Colors.grey[300],
         borderRadius: BorderRadius.circular(12),
       ),
-      child: const LineChartComponent(
-          title: "Line Chart"), // Instantiating the widget class
+      child: LineChartComponent(
+          title: "Line Chart",
+          prometheusEndpointId: prometheusEndpointId,
+          chartType: chartType,
+      ), // Instantiating the widget class
     );
   }
 }
 
 class BarChartState extends StatelessWidget {
+  final String prometheusEndpointId;
+  final String chartType;
+
+  const BarChartState({
+    required this.prometheusEndpointId,
+    required this.chartType,
+    Key? key,
+  }) : super(key: key);
+  
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -77,7 +100,9 @@ class BarChartState extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: BarChartComponent(
-          title: "Bar Chart"), // Instantiating the widget class
+          title: "Bar Chart",
+          prometheusEndpointId: prometheusEndpointId,
+          chartType: chartType,), // Instantiating the widget class
     );
   }
 }
