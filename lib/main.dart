@@ -8,6 +8,7 @@ import 'package:labbi_frontend/app/screens/admin_system/user_list_in_org_page.da
 import 'package:labbi_frontend/app/screens/authentication/login_page.dart';
 import 'package:labbi_frontend/app/screens/authentication/register_page.dart';
 import 'package:labbi_frontend/app/screens/chart_pages/list_all_dashboard.dart';
+import 'package:labbi_frontend/app/screens/chart_pages/list_dashboard_by_org.dart';
 import 'package:labbi_frontend/app/screens/dashboard_page/dashboard_page.dart';
 import 'package:labbi_frontend/app/screens/prome_display(Temporary)/PrometheusCPUDataPage.dart';
 import 'package:labbi_frontend/app/screens/chart_pages/list_all_charts_page.dart';
@@ -91,6 +92,7 @@ class MyApp extends StatelessWidget {
         Routes.ListAllDashboardPage: (context) => ListAllDashboardPage(
               channel: channel,
             ),
+           // Routes.ListDashboardByOrgPage: (context) =>  ListDashboardByOrgPage(channel: channel,),
       },
       onUnknownRoute: (settings) => MaterialPageRoute(
         builder: (context) => Scaffold(

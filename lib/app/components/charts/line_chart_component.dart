@@ -1,93 +1,115 @@
-import 'dart:async';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:labbi_frontend/app/models/chart.dart';
+import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:web_socket_channel/io.dart';
-import 'package:web_socket_channel/web_socket_channel.dart'; // Use generic WebSocketChannel
-import 'package:labbi_frontend/app/screens/prome_display(Temporary)/fetch_data.dart';
-import 'package:labbi_frontend/app/screens/prome_display(Temporary)/websocket_handler.dart';
-import 'dart:io' as io;
+import 'package:labbi_frontend/app/models/chart.dart';
 
 class LineChartComponent extends StatefulWidget {
-  const LineChartComponent({super.key, required this.title});
+  const LineChartComponent(
+      {super.key, required this.title, required this.chartRawData});
 
   final String title;
+  final Map<String, dynamic> chartRawData;
 
   @override
   _LineChartComponentState createState() => _LineChartComponentState();
 }
 
 class _LineChartComponentState extends State<LineChartComponent> {
-  late WebSocketHandler _webSocketHandler;
-  late DataFetcher _dataFetcher;
-  late Map<String, List<LineData>> lineDataMap;
-  late Timer _timer;
+  // Stores all the LineSeries
+  late Map<String, List<LineData>> metricData;
+  late List<LineSeries<LineData, String>> series;
+  final List<Color> _lineColors = [
+    Colors.blue,
+    Colors.red,
+    Colors.green,
+    Colors.orange,
+    Colors.purple,
+  ]; // Add more colors if needed
 
   @override
   void initState() {
     super.initState();
-
-    lineDataMap = {};
-
-    // WebSocket connection setup based on platform
-    if (!kIsWeb &&
-        (io.Platform.isAndroid ||
-            io.Platform.isIOS ||
-            io.Platform.isLinux ||
-            io.Platform.isMacOS ||
-            io.Platform.isWindows)) {
-      // If running on supported native platforms
-      _webSocketHandler = WebSocketHandler(
-        IOWebSocketChannel.connect('ws://localhost:3000/'),
-      );
-    } else {
-      // For web or other environments
-      _webSocketHandler = WebSocketHandler(
-        WebSocketChannel.connect(Uri.parse('ws://localhost:3000/')),
-      );
-    }
-
-    _dataFetcher = DataFetcher(_webSocketHandler.channel);
-
-    // Logging WebSocket connection
-   // print('WebSocket connected to ws://localhost:3000/');
-
-    _timer = Timer.periodic(const Duration(seconds: 2), (Timer timer) {
-      _dataFetcher.fetchData();
-      // Logging fetch data trigger
-     // print('Data fetch triggered');
-    });
-
-    _webSocketHandler.channel.stream.listen((data) {
-     // print('Data received from WebSocket: $data'); // Log raw data
-      _dataFetcher.processWebSocketData(
-        data,
-        {},
-        lineDataMap,
-      );
-      // Logging the updated lineDataMap
-   //   print('LineDataMap updated: $lineDataMap');
-      setState(() {});
-    }, onError: (error) {
-   //   print('WebSocket error: $error'); // Log any errors in WebSocket
-    }, onDone: () {
- //     print('WebSocket connection closed'); // Log when WebSocket closes
-    });
+    metricData = _extractData(widget.chartRawData);
+    series = _createSeries();
   }
 
   @override
-  void dispose() {
-    _timer.cancel();
-    _webSocketHandler.dispose();
-    print('Timer cancelled and WebSocket closed'); // Log disposal
-    super.dispose();
+  void didUpdateWidget(covariant LineChartComponent oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.chartRawData != oldWidget.chartRawData) {
+      setState(() {
+        metricData =
+            _extractData(widget.chartRawData, existingData: metricData);
+        series = _createSeries();
+      });
+    }
+  }
+
+  Map<String, List<LineData>> _extractData(Map<String, dynamic> chartRawData,
+      {Map<String, List<LineData>>? existingData}) {
+    final DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
+    final Map<String, List<LineData>> updatedData = existingData ?? {};
+
+    for (var resultItem in chartRawData['data']['result'] as List<dynamic>) {
+      final metric = resultItem['metric'] as Map<String, dynamic>;
+      final valueList = resultItem['value'] as List<dynamic>;
+
+      final timestamp = valueList[0] as double;
+      final formattedTimestamp = dateFormat.format(
+          DateTime.fromMillisecondsSinceEpoch((timestamp * 1000).toInt()));
+
+      final value = double.tryParse(valueList[1].toString()) ?? 0.0;
+      final scaledValue = value * 100000000; // Adjust scale as needed
+
+      final metricName = metric['__name__'] as String;
+      final quantile = metric['quantile']?.toString() ?? '';
+
+      // Create a unique key for each combination of metric and quantile
+      final key = '$metricName $quantile';
+
+      if (!updatedData.containsKey(key)) {
+        updatedData[key] = [];
+      }
+
+      // Add new data and ensure only the last 5 entries are kept
+      updatedData[key]!.add(LineData(
+        formattedTimestamp,
+        scaledValue,
+      ));
+
+      if (updatedData[key]!.length > 5) {
+        updatedData[key]!.removeAt(0); // Keep only the latest 5 entries
+      }
+    }
+
+    return updatedData;
+  }
+
+  List<LineSeries<LineData, String>> _createSeries() {
+    return metricData.entries.map((entry) {
+      final metricName = entry.key;
+      final dataPoints = entry.value;
+
+      // Assign a color from the list, cycling if there are more metrics than colors
+      final colorIndex =
+          metricData.keys.toList().indexOf(metricName) % _lineColors.length;
+      final lineColor = _lineColors[colorIndex];
+
+      return LineSeries<LineData, String>(
+        dataSource: dataPoints,
+        xValueMapper: (LineData data, _) => data.time,
+        yValueMapper: (LineData data, _) => data.value,
+        name: metricName,
+        color: lineColor, // Set the color for the series
+        markerSettings: MarkerSettings(isVisible: true),
+        dataLabelSettings: DataLabelSettings(isVisible: false),
+        animationDuration: 0,
+      );
+    }).toList();
   }
 
   @override
   Widget build(BuildContext context) {
-    // Logging build process
-   // print('Building LineChartComponent with title: ${widget.title}');
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -100,7 +122,8 @@ class _LineChartComponentState extends State<LineChartComponent> {
                 width: double.infinity,
                 height: 600,
                 child: SfCartesianChart(
-                  key: ValueKey<DateTime>(DateTime.now()),
+                  key: ValueKey<DateTime>(DateTime
+                      .now()), // Key for rebuilding the chart when data changes
                   title: ChartTitle(
                     text: 'Dynamic Metrics Data Over Time',
                     textStyle:
@@ -111,19 +134,7 @@ class _LineChartComponentState extends State<LineChartComponent> {
                     position: LegendPosition.bottom,
                     isResponsive: true,
                   ),
-                  series: lineDataMap.entries.map((entry) {
-                    // print(
-                    //     'Rendering LineChart for ${entry.key}'); // Log each series rendering
-                    return LineSeries<LineData, String>(
-                      dataSource: entry.value,
-                      xValueMapper: (LineData data, _) => data.time,
-                      yValueMapper: (LineData data, _) => data.value,
-                      name: entry.key,
-                      markerSettings: MarkerSettings(isVisible: true),
-                      dataLabelSettings: DataLabelSettings(isVisible: false),
-                      animationDuration: 0,
-                    );
-                  }).toList(),
+                  series: series,
                   primaryXAxis: CategoryAxis(
                     title: AxisTitle(text: 'Time'),
                     majorGridLines: MajorGridLines(width: 0.5),
@@ -138,7 +149,7 @@ class _LineChartComponentState extends State<LineChartComponent> {
                     majorTickLines: MajorTickLines(width: 0.5),
                     labelFormat: '{value}',
                     minimum: 0,
-                    maximum: 1000000,
+                    maximum: 700000,
                     interval: 100000,
                   ),
                   tooltipBehavior: TooltipBehavior(

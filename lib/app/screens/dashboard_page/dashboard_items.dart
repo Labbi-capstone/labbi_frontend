@@ -51,7 +51,7 @@ class RectangleStat extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: const LineChartComponent(
-          title: "Line Chart"), // Instantiating the widget class
+          title: "Line Chart", chartRawData: {},), // Instantiating the widget class
     );
   }
 }
@@ -66,7 +66,7 @@ class RectangleStat2 extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: BarChartComponent(
-          title: "Bar Chart"), // Instantiating the widget class
+          title: "Bar Chart", chartRawData: {},), // Instantiating the widget class
     );
   }
 }
