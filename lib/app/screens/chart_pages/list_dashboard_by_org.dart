@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:labbi_frontend/app/components/charts/bar_chart_component.dart';
+import 'package:labbi_frontend/app/components/charts/line_chart_component.dart';
 import 'package:labbi_frontend/app/controllers/dashboard_controller.dart';
 import 'package:labbi_frontend/app/controllers/chart_controller.dart';
 import 'package:labbi_frontend/app/models/chart.dart';
@@ -23,9 +25,9 @@ class _ListDashboardByOrgPageState
     extends ConsumerState<ListDashboardByOrgPage> {
   late WebSocketService socketService;
   late ChartTimerService chartTimerService;
-  Map<String, List<Chart>> cachedCharts = {}; // Cache charts for each dashboard
-  Set<String> loadingCharts = {}; // Track loading dashboards
-  Map<String, Map<String, dynamic>> allChartData = {}; // Store chart data
+  Map<String, List<Chart>> cachedCharts = {};
+  Set<String> loadingCharts = {};
+  Map<String, Map<String, dynamic>> allChartData = {};
 
   @override
   void initState() {
@@ -91,71 +93,29 @@ class _ListDashboardByOrgPageState
     );
   }
 
-void _handleWebSocketMessage(String message) {
+  void _handleWebSocketMessage(String message) {
     try {
-      // Parsing the WebSocket message
       final parsedMessage = jsonDecode(message);
-
-      // Debugging to see the received message
       debugPrint("Received message from WebSocket: $message");
-      debugPrint("Parsed data: ${parsedMessage['data']}");
 
-      // Ensure the parsed message is a map and proceed if true
       if (parsedMessage is Map<String, dynamic>) {
         final chartId = parsedMessage['chartId'] as String;
-
-        // Convert the 'data' part to a Map<String, dynamic> to avoid type issues
         final data = parsedMessage['data'] != null
-            ? Map<String, dynamic>.from(
-                parsedMessage['data'] as Map<dynamic, dynamic>)
+            ? Map<String, dynamic>.from(parsedMessage['data'] as Map)
             : <String, dynamic>{};
 
         setState(() {
           allChartData[chartId] = data;
         });
-      } else {
-        debugPrint("WebSocket message is not a valid map.");
       }
     } catch (e) {
       debugPrint("Error handling WebSocket message: $e");
     }
   }
 
-
-
-
-
-  // Validate if chart data has valid results
-  bool hasValidData(Map<String, dynamic> chartDataForThisChart) {
-    if (chartDataForThisChart.isNotEmpty &&
-        chartDataForThisChart.containsKey('result')) {
-      final result = chartDataForThisChart['result'];
-      if (result is List && result.isNotEmpty) {
-        // Check if each entry in the list has 'value'
-        for (var entry in result) {
-          if (entry.containsKey('value')) {
-            return true;
-          }
-        }
-      }
-    }
-    return false;
-  }
-
-  // Fetch charts for a specific dashboard
   void _fetchChartsForDashboard(String dashboardId) async {
     setState(() {
       loadingCharts.add(dashboardId);
-    });
-
-    // Add a delay to handle timeout for loading charts
-    Future.delayed(Duration(seconds: 5), () {
-      if (allChartData.isEmpty) {
-        setState(() {
-          // Stop showing the loading spinner after timeout
-          loadingCharts.remove(dashboardId);
-        });
-      }
     });
 
     try {
@@ -168,7 +128,6 @@ void _handleWebSocketMessage(String message) {
         loadingCharts.remove(dashboardId);
       });
 
-      // Start or update timers and request data for each chart
       for (var chart in fetchedCharts) {
         chartTimerService.startOrUpdateTimer(
           socketService,
@@ -185,8 +144,7 @@ void _handleWebSocketMessage(String message) {
     }
   }
 
-  // Build the list of charts
-Widget _buildChartList(List<Chart> charts) {
+  Widget _buildChartList(List<Chart> charts) {
     return charts.isEmpty
         ? const ListTile(title: Text('No charts found'))
         : ListView.builder(
@@ -197,7 +155,6 @@ Widget _buildChartList(List<Chart> charts) {
               final chart = charts[chartIndex];
               final chartDataForThisChart = allChartData[chart.id] ?? {};
 
-              // Start or update timer for each chart
               chartTimerService.startOrUpdateTimer(socketService, chart.id,
                   chart.prometheusEndpointId, chart.chartType);
 
@@ -222,9 +179,28 @@ Widget _buildChartList(List<Chart> charts) {
                           : Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text('Raw Chart Data:'),
-                                Text(chartDataForThisChart
-                                    .toString()), // Display raw data here
+                                const Text('Chart Data:'),
+                                Container(
+                                  height: 500,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[300],
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: chart.chartType == 'line'
+                                      ? LineChartComponent(
+                                          title: chart.name,
+                                          chartRawData: chartDataForThisChart,
+                                        )
+                                      : chart.chartType == 'bar'
+                                          ? BarChartComponent(
+                                              title: chart.name,
+                                              chartRawData:
+                                                  chartDataForThisChart,
+                                            )
+                                          : Center(
+                                              child: const Text(
+                                                  'Chart type not supported')),
+                                )
                               ],
                             ),
                     ],
@@ -234,5 +210,4 @@ Widget _buildChartList(List<Chart> charts) {
             },
           );
   }
-
 }
