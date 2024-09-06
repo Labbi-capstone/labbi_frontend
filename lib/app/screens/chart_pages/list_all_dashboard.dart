@@ -50,7 +50,18 @@ class _ListAllDashboardPageState extends ConsumerState<ListAllDashboardPage> {
 
     // Fetch dashboards
     Future.microtask(() {
-      ref.read(dashboardControllerProvider.notifier).fetchAllDashboards();
+      ref
+          .read(dashboardControllerProvider.notifier)
+          .fetchDashboardsByOrg("66a181d07a2007c79a23ce98")
+          .then((_) {
+        setState(() {
+          // Stop loading if dashboards are successfully loaded
+        });
+      }).catchError((error) {
+        setState(() {
+          // Handle errors and stop loading spinner
+        });
+      });
     });
   }
 
@@ -98,7 +109,7 @@ class _ListAllDashboardPageState extends ConsumerState<ListAllDashboardPage> {
     );
   }
 
-void _fetchChartsForDashboard(String dashboardId) async {
+  void _fetchChartsForDashboard(String dashboardId) async {
     setState(() {
       loadingCharts.add(dashboardId);
     });
@@ -118,7 +129,6 @@ void _fetchChartsForDashboard(String dashboardId) async {
       });
     }
   }
-
 
   Widget _buildChartList(List<Chart> charts) {
     return charts.isEmpty

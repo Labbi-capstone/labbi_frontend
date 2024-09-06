@@ -11,7 +11,7 @@ class ChartTimerService {
       return; // Timer already exists
     }
 
-    final timer = Timer.periodic(Duration(seconds: 2), (Timer t) {
+    final timer = Timer.periodic(Duration(seconds: 5), (Timer t) {
       socketService.sendData(chartId, prometheusEndpointId, chartType);
     });
 
