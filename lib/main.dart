@@ -54,8 +54,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final wsApiUrl =
-        kIsWeb ? dotenv.env['WS_API_URL_LOCAL'] : dotenv.env['WS_API_URL_EMULATOR'];
+    final wsApiUrl = kIsWeb
+        ? dotenv.env['WS_API_URL_LOCAL']
+        : dotenv.env['WS_API_URL_EMULATOR'];
     // Create a WebSocketChannel for the ChartTestScreen
     final WebSocketChannel channel = WebSocketChannel.connect(
       Uri.parse('$wsApiUrl'),
@@ -80,13 +81,16 @@ class MyApp extends StatelessWidget {
 //         Routes.userListPage: (context) => const UserListInOrgPage(orgId: '66a181d07a2007c79a23ce98',),
         Routes.cpuDisplay: (context) => CPUUsagePage(),
         Routes.listOfOrg: (context) => const ListOrgPage(),
-        Routes.PrometheusCPUDataPage: (context) => const PrometheusCPUDataPage(),
+        Routes.PrometheusCPUDataPage: (context) =>
+            const PrometheusCPUDataPage(),
         Routes.cpuDisplay: (context) => CPUUsagePage(),
         Routes.PrometheusCPUDataPage: (context) =>
             const PrometheusCPUDataPage(),
-        Routes.ListAllChartsPage: (context) => ListAllChartsPage(channel: channel),
-        Routes.ListAllDashboardPage: (context) =>
-            const ListAllDashboardPage(),
+        Routes.ListAllChartsPage: (context) =>
+            ListAllChartsPage(channel: channel),
+        Routes.ListAllDashboardPage: (context) => ListAllDashboardPage(
+              channel: channel,
+            ),
       },
       onUnknownRoute: (settings) => MaterialPageRoute(
         builder: (context) => Scaffold(
