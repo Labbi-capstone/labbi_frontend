@@ -6,15 +6,7 @@ import 'package:labbi_frontend/app/components/charts/line_chart_component.dart';
 import 'package:labbi_frontend/app/models/chart.dart';
 
 class DataFetcher {
-  final WebSocketChannel channel;
   final DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
-
-  // Modify the constructor to accept a WebSocketChannel
-  DataFetcher(this.channel);
-
-  void fetchData() {
-    channel.sink.add('fetch_data');
-  }
 
   void processWebSocketData(
     dynamic data,

@@ -15,11 +15,11 @@ class MenuItemModel {
 }
 
 final List<MenuItemModel> userMenuItems = [
-  MenuItemModel(
-    icon: Icons.home_outlined,
-    label: 'Dashboard',
-    route: const DashboardPage(),
-  ),
+  // MenuItemModel(
+  //   icon: Icons.home_outlined,
+  //   label: 'Dashboard',
+  //   route: const DashboardPage(),
+  // ),
   MenuItemModel(
     icon: Icons.notifications_active_outlined,
     label: 'Notification',
@@ -57,11 +57,11 @@ final List<MenuItemModel> adminMenuItems = [
 ];
 
 final List<MenuItemModel> developerMenuItems = [
-  MenuItemModel(
-    icon: Icons.home_outlined,
-    label: 'Dashboard',
-    route: const DashboardPage(),
-  ),
+  // MenuItemModel(
+  //   icon: Icons.home_outlined,
+  //   label: 'Dashboard',
+  //   route: const DashboardPage(),
+  // ),
   MenuItemModel(
     icon: Icons.dashboard_outlined,
     label: 'Control Panel',
@@ -80,11 +80,11 @@ final List<MenuItemModel> developerMenuItems = [
 ];
 
 final List<MenuItemModel> orgAdminMenuItems = [
-  MenuItemModel(
-    icon: Icons.home_outlined,
-    label: 'Dashboard',
-    route: const DashboardPage(),
-  ),
+  // MenuItemModel(
+  //   icon: Icons.home_outlined,
+  //   label: 'Dashboard',
+  //   route: const DashboardPage(),
+  // ),
   MenuItemModel(
     icon: Icons.notifications_active_outlined,
     label: 'Notification',

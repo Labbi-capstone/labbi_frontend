@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:labbi_frontend/app/components/charts/bar_chart_component.dart';
+import 'package:labbi_frontend/app/components/charts/line_chart_component.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:labbi_frontend/app/models/dashboard.dart';
 import 'package:labbi_frontend/app/models/chart.dart';
@@ -146,6 +148,8 @@ class _ListAllDashboardPageState extends ConsumerState<ListAllDashboardPage> {
               chartTimerService.startOrUpdateTimer(socketService, chart.id,
                   chart.prometheusEndpointId, chart.chartType);
 
+              print("chartdata: $chartDataForThisChart");
+
               return Card(
                 elevation: 2,
                 margin: EdgeInsets.all(8),
@@ -176,6 +180,26 @@ class _ListAllDashboardPageState extends ConsumerState<ListAllDashboardPage> {
                                       )
                                   else
                                     Text('${entry.key}: ${entry.value}'),
+                                    Container(
+                                      height: 500,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey[300],
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: chart.chartType == 'line'
+                                          ? LineChartComponent(
+                                              title: chart.name,
+                                              chartRawData: chartDataForThisChart,
+                                            )
+                                          : chart.chartType == 'bar'
+                                              ? BarChartComponent(
+                                                  title: chart.name,
+                                                  chartRawData: chartDataForThisChart,
+                                                )
+                                              : Center(
+                                                  child: Text('Not found chart type')
+                                              )
+                                    )
                               ],
                             ),
                     ],
