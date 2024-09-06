@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,9 +13,9 @@ import 'package:labbi_frontend/app/providers.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class ListDashboardByOrgPage extends ConsumerStatefulWidget {
-  final WebSocketChannel channel;
+  final String orgId; // Include orgId
 
-  const ListDashboardByOrgPage({Key? key, required this.channel})
+  const ListDashboardByOrgPage({Key? key, required this.orgId})
       : super(key: key);
 
   @override
@@ -29,27 +30,42 @@ class _ListDashboardByOrgPageState
   Set<String> loadingCharts = {};
   Map<String, Map<String, dynamic>> allChartData = {};
 
+  // Keep track of the StreamSubscription
+  StreamSubscription? _webSocketSubscription;
+
   @override
   void initState() {
     super.initState();
-    socketService = WebSocketService(widget.channel);
-    chartTimerService = ChartTimerService();
 
-    // Listen for WebSocket messages and store chart data
-    socketService.listenForMessages().listen((message) {
-      _handleWebSocketMessage(message);
-    });
+    // Access the WebSocket channel from the provider
+    final webSocketChannel = ref.read(webSocketChannelProvider);
 
-    // Fetch dashboards by organization ID (replace with real org ID)
+    // Initialize WebSocketService if not already initialized
+    if (_webSocketSubscription == null) {
+      socketService = WebSocketService(webSocketChannel);
+      chartTimerService = ChartTimerService();
+
+      // Listen for WebSocket messages and store chart data
+      _webSocketSubscription =
+          socketService.listenForMessages().listen((message) {
+        _handleWebSocketMessage(message);
+      });
+    }
+
+    // Fetch dashboards by organization ID
     Future.microtask(() {
       ref
           .read(dashboardControllerProvider.notifier)
-          .fetchDashboardsByOrg("66a181d07a2007c79a23ce98");
+          .fetchDashboardsByOrg(widget.orgId);
     });
   }
 
   @override
   void dispose() {
+    // Cancel the WebSocket stream subscription when leaving the page
+    _webSocketSubscription?.cancel();
+
+    // Dispose of the WebSocket service and chart timers
     socketService.dispose();
     chartTimerService.clearTimers();
     super.dispose();
@@ -85,7 +101,8 @@ class _ListDashboardByOrgPageState
                             : cachedCharts.containsKey(dashboard.id)
                                 ? _buildChartList(cachedCharts[dashboard.id]!)
                                 : const ListTile(
-                                    title: Text('No charts found')),
+                                    title: Text('No charts found'),
+                                  ),
                       ],
                     );
                   },
@@ -197,9 +214,10 @@ class _ListDashboardByOrgPageState
                                               chartRawData:
                                                   chartDataForThisChart,
                                             )
-                                          : Center(
-                                              child: const Text(
-                                                  'Chart type not supported')),
+                                          : const Center(
+                                              child: Text(
+                                                  'Chart type not supported'),
+                                            ),
                                 )
                               ],
                             ),

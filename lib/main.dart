@@ -65,7 +65,7 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: Routes.ListDashboardByOrgPage,
+      initialRoute: Routes.login,
       routes: {
         Routes.login: (context) => const LoginPage(),
         Routes.register: (context) => const RegisterPage(),
@@ -92,7 +92,7 @@ class MyApp extends StatelessWidget {
         Routes.ListAllDashboardPage: (context) => ListAllDashboardPage(
               channel: channel,
             ),
-            Routes.ListDashboardByOrgPage: (context) =>  ListDashboardByOrgPage(channel: channel,),
+           // Routes.ListDashboardByOrgPage: (context) =>  ListDashboardByOrgPage(channel: channel,),
       },
       onUnknownRoute: (settings) => MaterialPageRoute(
         builder: (context) => Scaffold(

@@ -3,16 +3,16 @@ import 'dart:convert';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class WebSocketService {
-  late WebSocketChannel channel;
-  late Stream<dynamic> broadcastStream;
+  final WebSocketChannel _channel;
+  late Stream<dynamic> _broadcastStream;
 
-  WebSocketService(WebSocketChannel channel) {
-    this.channel = channel;
-    this.broadcastStream = channel.stream.asBroadcastStream();
+  WebSocketService(this._channel) {
+    _broadcastStream =
+        _channel.stream.asBroadcastStream(); // Broadcast the stream
   }
 
   Stream<dynamic> listenForMessages() {
-    return broadcastStream;
+    return _broadcastStream;
   }
 
   void sendData(String chartId, String prometheusEndpointId, String chartType) {
@@ -21,11 +21,11 @@ class WebSocketService {
       'prometheusEndpointId': prometheusEndpointId,
       'chartType': chartType,
     });
-    channel.sink.add(message);
+    _channel.sink.add(message);
     print("Data sent to WebSocket: $message");
   }
 
   void dispose() {
-    channel.sink.close();
+    _channel.sink.close();
   }
 }

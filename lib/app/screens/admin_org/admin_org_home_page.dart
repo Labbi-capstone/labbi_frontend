@@ -217,6 +217,7 @@ import 'package:labbi_frontend/app/screens/admin_org/admin_org_users.dart';
 import 'package:labbi_frontend/app/screens/admin_org/admin_org_history.dart';
 import 'package:labbi_frontend/app/screens/admin_system/dashboard_list_in_org_page.dart';
 import 'package:labbi_frontend/app/screens/admin_system/user_list_in_org_page.dart';
+import 'package:labbi_frontend/app/screens/chart_pages/list_dashboard_by_org.dart';
 import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
 import 'package:labbi_frontend/app/mockDatas/user_device_test.dart';
 
@@ -358,7 +359,7 @@ class _AdminOrgHomePageState extends State<AdminOrgHomePage> with SingleTickerPr
                         width: screenWidth,
                         height: screenHeight,
                         child: 
-                          DashboardListInOrgPage(orgId: widget.orgId)
+                          ListDashboardByOrgPage(orgId: widget.orgId,)
                       )
                     )
                     // child: ListBox(
