@@ -20,7 +20,7 @@ class ChartState {
     return ChartState(
       charts: charts ?? this.charts,
       isLoading: isLoading ?? this.isLoading,
-      error: error,
+      error: error ?? this.error,
     );
   }
 }

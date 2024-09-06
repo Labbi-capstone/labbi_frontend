@@ -148,6 +148,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
         centerTitle: true,
       ),
       drawer: const MenuTaskbar(),
+// <<<<<<< HEAD
       body: chartState.isLoading
           ? Center(child: CircularProgressIndicator())
           : chartState.error != null
@@ -182,6 +183,29 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                     },
                   ),
                ),
+// =======
+//       body: Container(
+//         decoration: const BoxDecoration(
+//           gradient: LinearGradient(
+//             colors: [
+//               AppColors.primary,
+//               AppColors.secondary,
+//             ],
+//             begin: FractionalOffset(0.0, 0.0),
+//             end: FractionalOffset(1.0, 0.0),
+//             stops: [0.0, 1.0],
+//             tileMode: TileMode.clamp,
+//           ),
+//         ),
+//         child: ListView.builder(
+//           itemBuilder: (context, index) {
+//             return const DashboardItem(
+//               title: 'asd',
+//             );
+//           },
+//         ),
+//       ),
+// >>>>>>> origin/main
     );
   }
 }

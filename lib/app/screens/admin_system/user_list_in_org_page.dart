@@ -22,20 +22,21 @@ class _UserListInOrgPageState extends ConsumerState<UserListInOrgPage> {
   @override
   void initState() {
     super.initState();
-    // Fetch users when the page is loaded
-    ref.read(userControllerProvider.notifier).fetchUsersByOrg(widget.orgId);
+    // Delay the fetch to ensure it's after the widget tree has built
+    Future.microtask(() {
+      ref.read(userControllerProvider.notifier).fetchUsersByOrg(widget.orgId);
+    });
   }
-
-  List<User> _getPaginatedUsers(List<User> users) {
+  List<User> _getPaginatedUsers(List<User> usersInOrg) {
     final startIndex = (_currentPage - 1) * _usersPerPage;
 
-    if (startIndex >= users.length) {
+    if (startIndex >= usersInOrg.length) {
       return [];
     }
 
     final endIndex = startIndex + _usersPerPage;
 
-    return users.sublist(startIndex, endIndex.clamp(0, users.length));
+    return usersInOrg.sublist(startIndex, endIndex.clamp(0, usersInOrg.length));
   }
 
   void _handlePrev() {
@@ -47,12 +48,12 @@ class _UserListInOrgPageState extends ConsumerState<UserListInOrgPage> {
   }
 
   void _handleNext() {
-    setState(() {
-      if (_currentPage * _usersPerPage <
-          ref.read(userControllerProvider).length) {
+    final userState = ref.read(userControllerProvider); // Accessing UserState
+    if (_currentPage * _usersPerPage < userState.usersInOrg.length) {
+      setState(() {
         _currentPage++;
-      }
-    });
+      });
+    }
   }
 
   void _handlePageSelected(int page) {
@@ -63,7 +64,7 @@ class _UserListInOrgPageState extends ConsumerState<UserListInOrgPage> {
 
   @override
   Widget build(BuildContext context) {
-    final userList = ref.watch(userControllerProvider);
+    final userState = ref.watch(userControllerProvider); // Accessing UserState
 
     var screenWidth = MediaQuery.of(context).size.width;
     var screenHeight = MediaQuery.of(context).size.height;
@@ -85,7 +86,7 @@ class _UserListInOrgPageState extends ConsumerState<UserListInOrgPage> {
           ),
         ],
       ),
-      body: userList.isEmpty
+      body: userState.usersInOrg.isEmpty // Access the 'users' list inside UserState
           ? Center(child: Text('No users found for this organization.'))
           : Padding(
               padding: EdgeInsets.all(16.0),
@@ -93,9 +94,11 @@ class _UserListInOrgPageState extends ConsumerState<UserListInOrgPage> {
                 children: [
                   Expanded(
                     child: ListView.builder(
-                      itemCount: _getPaginatedUsers(userList).length,
+                      itemCount: _getPaginatedUsers(userState.usersInOrg)
+                          .length, // Access 'users'
                       itemBuilder: (context, index) {
-                        final user = _getPaginatedUsers(userList)[index];
+                        final user = _getPaginatedUsers(
+                            userState.usersInOrg)[index]; // Access 'users'
                         return Card(
                           elevation: 2,
                           margin: EdgeInsets.symmetric(vertical: 8.0),
@@ -149,7 +152,8 @@ class _UserListInOrgPageState extends ConsumerState<UserListInOrgPage> {
                   ),
                   Pagination(
                     currentPage: _currentPage,
-                    totalPages: (userList.length / _usersPerPage).ceil(),
+                    totalPages: (userState.usersInOrg.length / _usersPerPage)
+                        .ceil(), // Access 'users'
                     onPrev: _handlePrev,
                     onNext: _handleNext,
                     onPageSelected: _handlePageSelected,
