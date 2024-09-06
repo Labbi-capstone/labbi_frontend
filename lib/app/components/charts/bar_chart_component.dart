@@ -1,58 +1,111 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:labbi_frontend/app/models/chart.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:labbi_frontend/app/screens/prome_display(Temporary)/fetch_data.dart';
-import 'package:labbi_frontend/app/screens/prome_display(Temporary)/websocket_handler.dart';
 
 class BarChartComponent extends StatefulWidget {
-  const BarChartComponent({Key? key, required this.title}) : super(key: key);
+  const BarChartComponent(
+      {Key? key, required this.title, required this.chartRawData})
+      : super(key: key);
 
   final String title;
+  final Map<String, dynamic> chartRawData;
 
   @override
   _BarChartComponentState createState() => _BarChartComponentState();
 }
 
 class _BarChartComponentState extends State<BarChartComponent> {
-  late WebSocketHandler _webSocketHandler;
-  late DataFetcher _dataFetcher;
-  late Map<String, List<BarData>> barDataMap;
-  late Timer _timer;
+  late Map<String, List<BarData>> metricData;
+  late List<BarSeries<BarData, String>> series;
 
   @override
   void initState() {
     super.initState();
-
-    barDataMap = {};
-
-    _webSocketHandler = WebSocketHandler(
-      WebSocketChannel.connect(
-          Uri.parse('ws://localhost:3000')), 
-    );
-    _dataFetcher = DataFetcher(_webSocketHandler.channel);
-
-    _timer = Timer.periodic(const Duration(seconds: 2), (Timer timer) {
-      _dataFetcher.fetchData();
-    });
-
-    _webSocketHandler.channel.stream.listen((data) {
-      _dataFetcher.processWebSocketData(
-        data,
-        barDataMap, 
-        {}, 
-      );
-     // print('BarDataMap updated: $barDataMap'); // Debug log
-      setState(() {}); 
-    });
+    metricData = _extractData(widget.chartRawData);
+    series = _createSeries();
   }
 
   @override
-  void dispose() {
-    _timer.cancel();
-    _webSocketHandler.dispose();
-    super.dispose();
+  void didUpdateWidget(covariant BarChartComponent oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.chartRawData != oldWidget.chartRawData) {
+      setState(() {
+        metricData =
+            _extractData(widget.chartRawData, existingData: metricData);
+        series = _createSeries();
+      });
+    }
+  }
+
+  Map<String, List<BarData>> _extractData(Map<String, dynamic> chartRawData,
+      {Map<String, List<BarData>>? existingData}) {
+    final DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
+    final Map<String, List<BarData>> updatedData = existingData ?? {};
+
+    // Parse the raw data
+    for (var resultItem in chartRawData['data']['result'] as List<dynamic>) {
+      final metric = resultItem['metric'] as Map<String, dynamic>;
+      final valueList = resultItem['value'] as List<dynamic>;
+
+      final timestamp = valueList[0] as double;
+      final formattedTimestamp = dateFormat.format(
+          DateTime.fromMillisecondsSinceEpoch((timestamp * 1000).toInt()));
+
+      final value = double.tryParse(valueList[1].toString()) ?? 0.0;
+      final scaledValue = value * 1000000; // Adjust scale as needed
+
+      final metricName = metric['__name__'] as String;
+
+      if (!updatedData.containsKey(metricName)) {
+        updatedData[metricName] = [];
+      }
+
+      // Add new data and ensure only the latest 5 entries are kept
+      updatedData[metricName]!.add(BarData(
+        formattedTimestamp,
+        scaledValue,
+      ));
+
+      if (updatedData[metricName]!.length > 1) {
+        updatedData[metricName]!.removeAt(0);
+      }
+    }
+
+    return updatedData;
+  }
+
+  List<BarSeries<BarData, String>> _createSeries() {
+    // Define a list of colors for the bars
+    final List<Color> colors = [
+      Colors.blue,
+      Colors.green,
+      Colors.red,
+      Colors.orange,
+      Colors.purple,
+    ];
+
+    // Create BarSeries for each metric
+    return metricData.entries.map((entry) {
+      final metricName = entry.key;
+      final dataPoints = entry.value;
+
+      // Assign a color from the list, cycling if there are more metrics than colors
+      final colorIndex =
+          metricData.keys.toList().indexOf(metricName) % colors.length;
+      final color = colors[colorIndex];
+
+      return BarSeries<BarData, String>(
+        dataSource: dataPoints,
+        xValueMapper: (BarData data, _) => data.time,
+        yValueMapper: (BarData data, _) => data.value,
+        name: metricName,
+        color: color, // Set the color for the series
+        dataLabelSettings: DataLabelSettings(isVisible: true),
+        borderRadius: BorderRadius.circular(4),
+      );
+    }).toList();
   }
 
   @override
@@ -79,26 +132,19 @@ class _BarChartComponentState extends State<BarChartComponent> {
                     position: LegendPosition.bottom,
                     isResponsive: true,
                   ),
-                  series: barDataMap.entries.map((entry) {
-                 //   print('Rendering BarChart for $entry.key'); // Debug log
-                    return BarSeries<BarData, String>(
-                      dataSource: entry.value,
-                      xValueMapper: (BarData data, _) => data.time,
-                      yValueMapper: (BarData data, _) => data.value,
-                      name: entry.key,
-                    );
-                  }).toList(),
+                  series: series,
                   primaryXAxis: CategoryAxis(
-                    title: AxisTitle(text: 'Quantile'),
+                    title: AxisTitle(text: 'Time'),
                     majorGridLines: MajorGridLines(width: 0.5),
                     majorTickLines: MajorTickLines(width: 0.5),
                     labelStyle: TextStyle(fontSize: 10),
+                    labelRotation: 45, // Rotate labels for better readability
                   ),
                   primaryYAxis: NumericAxis(
                     title: AxisTitle(text: 'Value (scaled by 1,000,000,000)'),
                     majorGridLines: MajorGridLines(width: 0.5),
                     majorTickLines: MajorTickLines(width: 0.5),
-                    labelFormat: '{value}', 
+                    labelFormat: '{value}',
                   ),
                   tooltipBehavior: TooltipBehavior(
                     enable: true,
