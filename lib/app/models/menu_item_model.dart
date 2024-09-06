@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:labbi_frontend/app/routes.dart';
 import 'package:labbi_frontend/app/screens/admin_org/admin_org_home_page.dart';
 import 'package:labbi_frontend/app/screens/admin_system/list_org_page.dart';
+import 'package:labbi_frontend/app/screens/chart_pages/list_all_dashboard.dart';
 import 'package:labbi_frontend/app/screens/control_panel_page/control_panel_page.dart';
 import 'package:labbi_frontend/app/screens/dashboard_page/dashboard_page.dart';
 import 'package:labbi_frontend/app/screens/notification/notification_page.dart';
 import 'package:labbi_frontend/app/screens/user_org/user_org_home_page.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class MenuItemModel {
   final IconData icon;
@@ -44,7 +48,7 @@ final List<MenuItemModel> adminMenuItems = [
   //   route: const DashboardPage(),
   // ),
   MenuItemModel(
-    icon: Icons.dashboard_outlined,
+    icon: Icons.control_camera_outlined,
     label: 'Control Panel',
     route: const ControlPanelPage(),
   ),
@@ -53,7 +57,13 @@ final List<MenuItemModel> adminMenuItems = [
     label: 'Notification',
     route: const NotificationPage(),
   ),
-  
+   MenuItemModel(
+    icon: Icons.dashboard_outlined,
+    label: 'All dashboards',
+    route: ListAllDashboardPage(
+        channel: WebSocketChannel.connect(Uri.parse(
+            dotenv.env['WS_API_URL_LOCAL'] ?? 'ws://localhost:3000'))),
+  ),
 ];
 
 final List<MenuItemModel> developerMenuItems = [

@@ -60,9 +60,17 @@ class DashboardController extends StateNotifier<DashboardState> {
       final url = Uri.parse('http://localhost:3000/api/dashboards');
 
       // No need for token and role, removed related logic
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      String? role = prefs.getString('userRole');
 
+      if (token == null || role == null) {
+        throw Exception('User token or role not found. Please login again.');
+      }
       final response = await http.get(url, headers: {
         "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+        "Role": role,
       });
 
       if (response.statusCode == 200) {

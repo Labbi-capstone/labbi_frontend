@@ -98,7 +98,7 @@ class _ListAllDashboardPageState extends ConsumerState<ListAllDashboardPage> {
     );
   }
 
-  void _fetchChartsForDashboard(String dashboardId) async {
+void _fetchChartsForDashboard(String dashboardId) async {
     setState(() {
       loadingCharts.add(dashboardId);
     });
@@ -106,28 +106,19 @@ class _ListAllDashboardPageState extends ConsumerState<ListAllDashboardPage> {
     try {
       await ref
           .read(chartControllerProvider.notifier)
-          .getChartsByDashboardId(dashboardId);
+          .fetchChartsForDashboard(dashboardId);
       final fetchedCharts = ref.read(chartControllerProvider).charts;
       setState(() {
         cachedCharts[dashboardId] = fetchedCharts;
         loadingCharts.remove(dashboardId);
       });
-
-      // Start or update timers and request data for each chart
-      for (var chart in fetchedCharts) {
-        chartTimerService.startOrUpdateTimer(
-          socketService,
-          chart.id,
-          chart.prometheusEndpointId,
-          chart.chartType,
-        );
-      }
     } catch (error) {
       setState(() {
         loadingCharts.remove(dashboardId);
       });
     }
   }
+
 
   Widget _buildChartList(List<Chart> charts) {
     return charts.isEmpty

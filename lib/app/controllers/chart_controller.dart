@@ -1,14 +1,20 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:labbi_frontend/app/services/chart_timer_service.dart';
+import 'package:labbi_frontend/app/services/websocket_service.dart';
 import '../models/chart.dart';
 import '../state/chart_state.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ChartController extends StateNotifier<ChartState> {
-  // Constructor
-  ChartController() : super(ChartState());
+  final ChartTimerService chartTimerService;
+  final WebSocketService socketService;
+
+  ChartController(
+      {required this.chartTimerService, required this.socketService})
+      : super(ChartState());
 
   // Fetch all charts from the backend
   Future<void> fetchCharts() async {
@@ -79,7 +85,38 @@ class ChartController extends StateNotifier<ChartState> {
       return null;
     }
   }
+  // Fetch charts by dashboard ID and update state
+  Future<void> fetchChartsForDashboard(String dashboardId) async {
+    state = state.copyWith(isLoading: true);
+    try {
+      final apiUrl =
+          kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
+      final response =
+          await http.get(Uri.parse("$apiUrl/charts/dashboard/$dashboardId"));
 
+      if (response.statusCode == 200) {
+        List<dynamic> data = jsonDecode(response.body);
+        List<Chart> charts = data.map((json) => Chart.fromJson(json)).toList();
+
+        // Update the state with the fetched charts
+        state = state.copyWith(charts: charts, isLoading: false);
+
+        // Start or update timers and request data for each chart
+        for (var chart in charts) {
+          chartTimerService.startOrUpdateTimer(
+            socketService,
+            chart.id,
+            chart.prometheusEndpointId,
+            chart.chartType,
+          );
+        }
+      } else {
+        throw Exception('Failed to get charts by dashboard');
+      }
+    } catch (e) {
+      state = state.copyWith(error: e.toString(), isLoading: false);
+    }
+  }
   // Update a chart by ID
   Future<void> updateChart(String id, Chart chart) async {
     try {
