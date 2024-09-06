@@ -7,14 +7,29 @@ import 'package:labbi_frontend/app/components/charts/pie_chart_giang.dart';
 
 class DashboardItem extends StatelessWidget {
   final String title;
+  final String chartType;
 
   const DashboardItem({
     required this.title,
+    required this.chartType,
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    Widget chartWidget;
+
+    switch (chartType) {
+      case 'line':
+        chartWidget = LineChartState();
+        break;
+      case 'bar':
+        chartWidget = BarChartState();
+        break;
+      default:
+        chartWidget = Center(child: Text('Invalid chart type'));
+    }
+
     return Card(
       margin: const EdgeInsets.all(10),
       child: Padding(
@@ -25,15 +40,11 @@ class DashboardItem extends StatelessWidget {
             Center(
               child: Text(
                 title,
-                style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
             SizedBox(height: 10),
-            RectangleStat2(),
-            SizedBox(height: 10),
-            RectangleStat(),
-            //RectangleStat: unsupportted operation: Platform._version;
+            chartWidget, // This will render the appropriate chart based on chartType
           ],
         ),
       ),
@@ -41,7 +52,7 @@ class DashboardItem extends StatelessWidget {
   }
 }
 
-class RectangleStat extends StatelessWidget {
+class LineChartState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -56,7 +67,7 @@ class RectangleStat extends StatelessWidget {
   }
 }
 
-class RectangleStat2 extends StatelessWidget {
+class BarChartState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -71,18 +82,18 @@ class RectangleStat2 extends StatelessWidget {
   }
 }
 
-class SquareStat extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 200,
-      decoration: BoxDecoration(
-        color: Colors.grey[300],
-        borderRadius: BorderRadius.circular(12),
-      ),
-      padding: const EdgeInsets.all(8.0),
-      child:
-          PieChartGiang(title: "Pie Chart"), // Instantiating the widget class
-    );
-  }
-}
+// class SquareStat extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       height: 200,
+//       decoration: BoxDecoration(
+//         color: Colors.grey[300],
+//         borderRadius: BorderRadius.circular(12),
+//       ),
+//       padding: const EdgeInsets.all(8.0),
+//       child:
+//           PieChartGiang(title: "Pie Chart"), // Instantiating the widget class
+//     );
+//   }
+// }

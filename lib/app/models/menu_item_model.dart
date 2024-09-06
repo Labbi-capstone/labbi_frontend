@@ -5,6 +5,7 @@ import 'package:labbi_frontend/app/screens/control_panel_page/control_panel_page
 import 'package:labbi_frontend/app/screens/dashboard_page/dashboard_page.dart';
 import 'package:labbi_frontend/app/screens/notification/notification_page.dart';
 import 'package:labbi_frontend/app/screens/user_org/user_org_home_page.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class MenuItemModel {
   final IconData icon;
@@ -14,12 +15,13 @@ class MenuItemModel {
   MenuItemModel({required this.icon, required this.label, required this.route});
 }
 
+
 final List<MenuItemModel> userMenuItems = [
-  MenuItemModel(
-    icon: Icons.home_outlined,
-    label: 'Dashboard',
-    route: const DashboardPage(),
-  ),
+  // MenuItemModel(
+  //   icon: Icons.home_outlined,
+  //   label: 'Dashboard',
+  //   route: const DashboardPage(channel : channel),
+  // ),
   MenuItemModel(
     icon: Icons.notifications_active_outlined,
     label: 'Notification',
@@ -57,11 +59,11 @@ final List<MenuItemModel> adminMenuItems = [
 ];
 
 final List<MenuItemModel> developerMenuItems = [
-  MenuItemModel(
-    icon: Icons.home_outlined,
-    label: 'Dashboard',
-    route: const DashboardPage(),
-  ),
+  // MenuItemModel(
+  //   icon: Icons.home_outlined,
+  //   label: 'Dashboard',
+  //   route: const DashboardPage(),
+  // ),
   MenuItemModel(
     icon: Icons.dashboard_outlined,
     label: 'Control Panel',
@@ -80,11 +82,11 @@ final List<MenuItemModel> developerMenuItems = [
 ];
 
 final List<MenuItemModel> orgAdminMenuItems = [
-  MenuItemModel(
-    icon: Icons.home_outlined,
-    label: 'Dashboard',
-    route: const DashboardPage(),
-  ),
+  // MenuItemModel(
+  //   icon: Icons.home_outlined,
+  //   label: 'Dashboard',
+  //   route: const DashboardPage(),
+  // ),
   MenuItemModel(
     icon: Icons.notifications_active_outlined,
     label: 'Notification',
