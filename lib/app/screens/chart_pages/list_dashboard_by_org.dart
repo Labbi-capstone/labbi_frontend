@@ -22,39 +22,36 @@ class ListDashboardByOrgPage extends ConsumerStatefulWidget {
   _ListDashboardByOrgPageState createState() => _ListDashboardByOrgPageState();
 }
 
-class _ListDashboardByOrgPageState
-    extends ConsumerState<ListDashboardByOrgPage> {
+class _ListDashboardByOrgPageState extends ConsumerState<ListDashboardByOrgPage>
+    with WidgetsBindingObserver {
   late WebSocketService socketService;
   late ChartTimerService chartTimerService;
   Map<String, List<Chart>> cachedCharts = {};
   Set<String> loadingCharts = {};
   Map<String, Map<String, dynamic>> allChartData = {};
 
-  // Keep track of the StreamSubscription
   StreamSubscription? _webSocketSubscription;
 
   @override
   void initState() {
     super.initState();
 
-    // Access the WebSocket channel from the provider
+    // Add the observer to watch for app lifecycle changes
+    WidgetsBinding.instance.addObserver(this);
+
     final webSocketChannel = ref.read(webSocketChannelProvider);
 
-    // Cancel any previous WebSocket subscription before creating a new one
-    _webSocketSubscription?.cancel();
-
-    // Initialize WebSocketService
+    // Initialize WebSocket and ChartTimerService
     socketService = WebSocketService(webSocketChannel);
     chartTimerService = ChartTimerService();
 
-    // Listen for WebSocket messages
+    // Listen to WebSocket messages
     socketService.listenForMessages().then((stream) {
       _webSocketSubscription = stream.listen((message) {
         _handleWebSocketMessage(message);
       });
     });
 
-    // Fetch dashboards by organization ID after the first frame
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref
           .read(dashboardControllerProvider.notifier)
@@ -62,14 +59,47 @@ class _ListDashboardByOrgPageState
     });
   }
 
-@override
-void dispose() {
-  _webSocketSubscription?.cancel();  // Cancel any active WebSocket subscription
-  socketService.dispose();  // Properly dispose of the WebSocket service
-  chartTimerService.clearTimers();  // Stop any chart timers
-  super.dispose();
-}
+  @override
+  void dispose() {
+    socketService.pause(); // Pause WebSocket when page is disposed
+    _webSocketSubscription?.cancel();
+    chartTimerService.clearTimers(); // Stop chart timers when navigating away
+    WidgetsBinding.instance.removeObserver(this); // Remove observer
+    super.dispose();
+  }
 
+  // Override the lifecycle methods
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // The app is back in the foreground. Resume WebSocket.
+      final chartId = 'someChartId'; // Pass your actual chartId here
+      final prometheusEndpointId = 'someEndpointId'; // Replace with actual data
+      final chartType = 'line'; // Replace with actual chart type
+
+      socketService.resume(chartId, prometheusEndpointId, chartType);
+      _restartChartTimers();
+    } else if (state == AppLifecycleState.paused) {
+      // The app is going into the background. Pause WebSocket.
+      socketService.pause();
+    }
+  }
+
+  // Method to restart chart timers when returning to the page
+  void _restartChartTimers() {
+    cachedCharts.forEach((dashboardId, charts) {
+      for (var chart in charts) {
+        if (!chartTimerService.isTimerActive(chart.id)) {
+          chartTimerService.startOrUpdateTimer(
+            socketService,
+            chart.id,
+            chart.prometheusEndpointId,
+            chart.chartType,
+          );
+        }
+      }
+    });
+  }
 
   void _handleWebSocketMessage(String message) {
     try {
@@ -91,7 +121,7 @@ void dispose() {
     }
   }
 
- @override
+  @override
   Widget build(BuildContext context) {
     final dashboardState = ref.watch(dashboardControllerProvider);
 
@@ -148,6 +178,7 @@ void dispose() {
         loadingCharts.remove(dashboardId);
       });
 
+      // Start or update timers for fetched charts
       for (var chart in fetchedCharts) {
         chartTimerService.startOrUpdateTimer(
           socketService,
@@ -229,7 +260,7 @@ void dispose() {
                                               child: Text(
                                                   'Chart type not supported'),
                                             ),
-                                )
+                                ),
                               ],
                             ),
                     ],
