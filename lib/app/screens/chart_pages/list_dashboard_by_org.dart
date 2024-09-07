@@ -40,75 +40,36 @@ class _ListDashboardByOrgPageState
     // Access the WebSocket channel from the provider
     final webSocketChannel = ref.read(webSocketChannelProvider);
 
-    // Initialize WebSocketService if not already initialized
-    if (_webSocketSubscription == null) {
-      socketService = WebSocketService(webSocketChannel);
-      chartTimerService = ChartTimerService();
+    // Cancel any previous WebSocket subscription before creating a new one
+    _webSocketSubscription?.cancel();
 
-      // Listen for WebSocket messages and store chart data
-      _webSocketSubscription =
-          socketService.listenForMessages().listen((message) {
+    // Initialize WebSocketService
+    socketService = WebSocketService(webSocketChannel);
+    chartTimerService = ChartTimerService();
+
+    // Listen for WebSocket messages
+    socketService.listenForMessages().then((stream) {
+      _webSocketSubscription = stream.listen((message) {
         _handleWebSocketMessage(message);
       });
-    }
+    });
 
-    // Fetch dashboards by organization ID
-    Future.microtask(() {
+    // Fetch dashboards by organization ID after the first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       ref
           .read(dashboardControllerProvider.notifier)
           .fetchDashboardsByOrg(widget.orgId);
     });
   }
 
-  @override
-  void dispose() {
-    // Cancel the WebSocket stream subscription when leaving the page
-    _webSocketSubscription?.cancel();
+@override
+void dispose() {
+  _webSocketSubscription?.cancel();  // Cancel any active WebSocket subscription
+  socketService.dispose();  // Properly dispose of the WebSocket service
+  chartTimerService.clearTimers();  // Stop any chart timers
+  super.dispose();
+}
 
-    // Dispose of the WebSocket service and chart timers
-    socketService.dispose();
-    chartTimerService.clearTimers();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final dashboardState = ref.watch(dashboardControllerProvider);
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Organizations and Dashboards'),
-      ),
-      body: dashboardState.isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : dashboardState.errorMessage != null
-              ? Center(child: Text('Error: ${dashboardState.errorMessage}'))
-              : ListView.builder(
-                  itemCount: dashboardState.dashboards.length,
-                  itemBuilder: (context, index) {
-                    final dashboard = dashboardState.dashboards[index];
-                    return ExpansionTile(
-                      title: Text(dashboard.name),
-                      onExpansionChanged: (isExpanded) {
-                        if (isExpanded &&
-                            !cachedCharts.containsKey(dashboard.id)) {
-                          _fetchChartsForDashboard(dashboard.id);
-                        }
-                      },
-                      children: [
-                        loadingCharts.contains(dashboard.id)
-                            ? const Center(child: CircularProgressIndicator())
-                            : cachedCharts.containsKey(dashboard.id)
-                                ? _buildChartList(cachedCharts[dashboard.id]!)
-                                : const ListTile(
-                                    title: Text('No charts found'),
-                                  ),
-                      ],
-                    );
-                  },
-                ),
-    );
-  }
 
   void _handleWebSocketMessage(String message) {
     try {
@@ -128,6 +89,48 @@ class _ListDashboardByOrgPageState
     } catch (e) {
       debugPrint("Error handling WebSocket message: $e");
     }
+  }
+
+ @override
+  Widget build(BuildContext context) {
+    final dashboardState = ref.watch(dashboardControllerProvider);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Organizations and Dashboards'),
+      ),
+      body: dashboardState.isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : dashboardState.errorMessage != null
+              ? Center(child: Text('Error: ${dashboardState.errorMessage}'))
+              : SingleChildScrollView(
+                  child: ListView.builder(
+                    shrinkWrap: true, // Ensure it doesn't take all the height
+                    itemCount: dashboardState.dashboards.length,
+                    itemBuilder: (context, index) {
+                      final dashboard = dashboardState.dashboards[index];
+                      return ExpansionTile(
+                        title: Text(dashboard.name),
+                        onExpansionChanged: (isExpanded) {
+                          if (isExpanded &&
+                              !cachedCharts.containsKey(dashboard.id)) {
+                            _fetchChartsForDashboard(dashboard.id);
+                          }
+                        },
+                        children: [
+                          loadingCharts.contains(dashboard.id)
+                              ? const Center(child: CircularProgressIndicator())
+                              : cachedCharts.containsKey(dashboard.id)
+                                  ? _buildChartList(cachedCharts[dashboard.id]!)
+                                  : const ListTile(
+                                      title: Text('No charts found'),
+                                    ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+    );
   }
 
   void _fetchChartsForDashboard(String dashboardId) async {
@@ -161,6 +164,7 @@ class _ListDashboardByOrgPageState
     }
   }
 
+  // Pass the charts list as a parameter to the _buildChartList function
   Widget _buildChartList(List<Chart> charts) {
     return charts.isEmpty
         ? const ListTile(title: Text('No charts found'))
@@ -172,8 +176,15 @@ class _ListDashboardByOrgPageState
               final chart = charts[chartIndex];
               final chartDataForThisChart = allChartData[chart.id] ?? {};
 
-              chartTimerService.startOrUpdateTimer(socketService, chart.id,
-                  chart.prometheusEndpointId, chart.chartType);
+              // Ensure the timer is only started if not already active
+              if (!chartTimerService.isTimerActive(chart.id)) {
+                chartTimerService.startOrUpdateTimer(
+                  socketService,
+                  chart.id,
+                  chart.prometheusEndpointId,
+                  chart.chartType,
+                );
+              }
 
               return Card(
                 elevation: 2,

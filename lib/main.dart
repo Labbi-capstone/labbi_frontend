@@ -87,11 +87,11 @@ class MyApp extends StatelessWidget {
         Routes.cpuDisplay: (context) => CPUUsagePage(),
         Routes.PrometheusCPUDataPage: (context) =>
             const PrometheusCPUDataPage(),
-        Routes.ListAllChartsPage: (context) =>
-            ListAllChartsPage(channel: channel),
-        Routes.ListAllDashboardPage: (context) => ListAllDashboardPage(
-              channel: channel,
-            ),
+        // Routes.ListAllChartsPage: (context) =>
+        //     ListAllChartsPage(channel: channel),
+        // Routes.ListAllDashboardPage: (context) => ListAllDashboardPage(
+        //       channel: channel,
+        //     ),
            // Routes.ListDashboardByOrgPage: (context) =>  ListDashboardByOrgPage(channel: channel,),
       },
       onUnknownRoute: (settings) => MaterialPageRoute(
