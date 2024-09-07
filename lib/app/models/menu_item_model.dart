@@ -60,9 +60,7 @@ final List<MenuItemModel> adminMenuItems = [
    MenuItemModel(
     icon: Icons.dashboard_outlined,
     label: 'All dashboards',
-    route: ListAllDashboardPage(
-        channel: WebSocketChannel.connect(Uri.parse(
-            dotenv.env['WS_API_URL_LOCAL'] ?? 'ws://localhost:3000'))),
+    route: NotificationPage(),
   ),
 ];
 
