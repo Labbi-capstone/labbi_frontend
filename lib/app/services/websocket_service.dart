@@ -8,6 +8,9 @@ class WebSocketService {
   StreamSubscription? _subscription;
   bool _isClosed = false; // Track WebSocket closure
 
+  // Public getter for _isClosed
+  bool get isClosed => _isClosed;
+
   WebSocketService(this._channel) {
     _broadcastStream = _channel.stream.asBroadcastStream(
       onListen: (subscription) {
@@ -22,7 +25,9 @@ class WebSocketService {
   // Safely handle multiple attempts to listen
   Future<Stream<dynamic>> listenForMessages() async {
     if (_isClosed) {
-      throw StateError("Cannot listen: WebSocket is closed.");
+      print("Cannot listen: WebSocket is closed.");
+      await attemptReconnection();
+      return _broadcastStream; // Return the broadcast stream after reconnection
     }
 
     // If a subscription exists and is not paused, return the existing stream
@@ -31,18 +36,10 @@ class WebSocketService {
       return _broadcastStream;
     }
 
-    void attemptReconnection() {
-      if (!_isClosed) {
-        print("Attempting to reconnect to WebSocket...");
-        listenForMessages(); // Reconnect WebSocket
-      }
-    }
-
     _subscription = _broadcastStream.listen(
       (event) {
         // Handle incoming event
         try {
-          // Attempt to parse the incoming event (message)
           var parsedEvent = jsonDecode(event);
           if (parsedEvent != null) {
             print("Received WebSocket event: $parsedEvent");
@@ -54,11 +51,7 @@ class WebSocketService {
               String chartType = parsedEvent['chartType'];
               var data = parsedEvent['data'];
 
-              // Handle the received chart data
               print("Chart ID: $chartId, Chart Type: $chartType, Data: $data");
-
-              // You can call additional functions here to process the chart data
-              // or update the application state as required.
             } else {
               print("Unrecognized WebSocket message format: $parsedEvent");
             }
@@ -69,15 +62,26 @@ class WebSocketService {
       },
       onError: (error) {
         print("WebSocket error: $error");
-        attemptReconnection(); // Try reconnecting on error
+        attemptReconnection();
       },
       onDone: () {
         print("WebSocket closed.");
-        attemptReconnection(); // Try reconnecting on close
+        attemptReconnection();
       },
     );
 
     return _broadcastStream;
+  }
+
+  // Check if the WebSocket connection is closed and attempt reconnection
+  Future<void> attemptReconnection() async {
+    if (!_isClosed) {
+      print("Attempting to reconnect to WebSocket...");
+      _isClosed = false;
+      await listenForMessages(); // Reconnect WebSocket
+    } else {
+      print("WebSocket is already closed, cannot reconnect.");
+    }
   }
 
   // Send data through WebSocket

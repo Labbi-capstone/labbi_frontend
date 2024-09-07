@@ -30,31 +30,30 @@ class _ListDashboardByOrgPageState
   Set<String> loadingCharts = {};
   Map<String, Map<String, dynamic>> allChartData = {};
 
-  // Keep track of the StreamSubscription
   StreamSubscription? _webSocketSubscription;
 
-  @override
+@override
   void initState() {
     super.initState();
 
-    // Access the WebSocket channel from the provider
     final webSocketChannel = ref.read(webSocketChannelProvider);
 
-    // Cancel any previous WebSocket subscription before creating a new one
-    _webSocketSubscription?.cancel();
-
-    // Initialize WebSocketService
+    // Initialize socketService
     socketService = WebSocketService(webSocketChannel);
+
+    // Start WebSocket listening and reconnection logic here
+    _webSocketSubscription
+        ?.cancel(); // Cancel any previous WebSocket subscriptions
     chartTimerService = ChartTimerService();
 
-    // Listen for WebSocket messages
+    // WebSocket listener setup
     socketService.listenForMessages().then((stream) {
       _webSocketSubscription = stream.listen((message) {
         _handleWebSocketMessage(message);
       });
     });
 
-    // Fetch dashboards by organization ID after the first frame
+    // Fetch the dashboards after the widget is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref
           .read(dashboardControllerProvider.notifier)
@@ -62,14 +61,16 @@ class _ListDashboardByOrgPageState
     });
   }
 
-@override
-void dispose() {
-  _webSocketSubscription?.cancel();  // Cancel any active WebSocket subscription
-  socketService.dispose();  // Properly dispose of the WebSocket service
-  chartTimerService.clearTimers();  // Stop any chart timers
-  super.dispose();
-}
 
+
+  @override
+  void dispose() {
+    _webSocketSubscription
+        ?.cancel(); // Cancel any active WebSocket subscription
+    socketService.dispose(); // Properly dispose of the WebSocket service
+    chartTimerService.clearTimers(); // Stop any chart timers
+    super.dispose();
+  }
 
   void _handleWebSocketMessage(String message) {
     try {
@@ -91,7 +92,7 @@ void dispose() {
     }
   }
 
- @override
+  @override
   Widget build(BuildContext context) {
     final dashboardState = ref.watch(dashboardControllerProvider);
 
@@ -148,6 +149,7 @@ void dispose() {
         loadingCharts.remove(dashboardId);
       });
 
+      // Start or update timers for fetched charts
       for (var chart in fetchedCharts) {
         chartTimerService.startOrUpdateTimer(
           socketService,
