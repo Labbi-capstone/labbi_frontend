@@ -2,11 +2,14 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:labbi_frontend/app/components/buttons/add_button.dart';
 import 'package:labbi_frontend/app/components/charts/bar_chart_component.dart';
 import 'package:labbi_frontend/app/components/charts/line_chart_component.dart';
 import 'package:labbi_frontend/app/controllers/dashboard_controller.dart';
 import 'package:labbi_frontend/app/controllers/chart_controller.dart';
 import 'package:labbi_frontend/app/models/chart.dart';
+import 'package:labbi_frontend/app/screens/admin_system/add_user_to_org.dart';
+import 'package:labbi_frontend/app/screens/chart_pages/create_dashboard_page.dart';
 import 'package:labbi_frontend/app/services/websocket_service.dart';
 import 'package:labbi_frontend/app/services/chart_timer_service.dart';
 import 'package:labbi_frontend/app/providers.dart';
@@ -85,7 +88,8 @@ class _ListAllDashboardPageState extends ConsumerState<ListAllDashboardPage>
   @override
   Widget build(BuildContext context) {
     final dashboardState = ref.watch(dashboardControllerProvider);
-
+    var screenWidth = MediaQuery.of(context).size.width;
+    var screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
         title: const Text('All Dashboards'),
@@ -121,9 +125,14 @@ class _ListAllDashboardPageState extends ConsumerState<ListAllDashboardPage>
                     },
                   ),
                 ),
+      floatingActionButton: AddButton(
+        pageToNavigate: const CreateDashboardPage(),
+        screenHeight: screenHeight,
+        screenWidth: screenWidth,
+      ),
     );
   }
-
+  
   void _fetchChartsForDashboard(String dashboardId) async {
     setState(() {
       loadingCharts.add(dashboardId);
