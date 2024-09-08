@@ -8,7 +8,6 @@ import 'package:labbi_frontend/app/screens/admin_org/admin_org_history.dart';
 import 'package:labbi_frontend/app/screens/admin_system/dashboard_list_in_org_page.dart';
 import 'package:labbi_frontend/app/screens/admin_system/user_list_in_org_page.dart';
 import 'package:labbi_frontend/app/screens/chart_pages/list_dashboard_by_org.dart';
-import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
 import 'package:labbi_frontend/app/mockDatas/user_device_test.dart';
 
 class AdminOrgHomePage extends StatefulWidget {
@@ -59,9 +58,10 @@ class _AdminOrgHomePageState extends State<AdminOrgHomePage>
             ),
           ),
         ),
-        leading: Builder(
-          builder: (BuildContext context) {
-            return const MenuButton();
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context); // Pops to the previous page
           },
         ),
         title: SizedBox(
@@ -106,7 +106,7 @@ class _AdminOrgHomePageState extends State<AdminOrgHomePage>
           ),
         ],
       ),
-      drawer: const MenuTaskbar(),
+      // Removed the drawer, replaced with normal navigation button
       body: TabBarView(
         controller: _tabController,
         children: [

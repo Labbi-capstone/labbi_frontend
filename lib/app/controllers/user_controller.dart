@@ -217,6 +217,53 @@ class UserController extends StateNotifier<UserState> {
       state = state.copyWith(errorMessage: e.toString(), isLoading: false);
     }
   }
+
+ Future<void> fetchAllUsers() async {
+    debugPrint('Fetching all users');
+    state = state.copyWith(isLoading: true);
+    try {
+      final apiUrl =
+          kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
+      final url = Uri.parse('$apiUrl/users');
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      String? role = prefs.getString('userRole');
+
+      if (token == null || role == null) {
+        throw Exception('User token or role not found. Please login again.');
+      }
+
+      final response = await http.get(url, headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+        "Role": role,
+      });
+
+      debugPrint("Response status: ${response.statusCode}");
+      debugPrint("Response body: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final List<dynamic> usersJson = jsonDecode(response.body)['users'];
+        final List<User> users = usersJson.map((userJson) {
+          return User(
+            id: userJson['_id'] ?? '',
+            fullName: userJson['fullName'] ?? 'Unknown',
+            email: userJson['email'] ?? 'No email',
+            role: userJson['role'] ?? 'user',
+          );
+        }).toList();
+
+        state = state.copyWith(users: users, isLoading: false);
+      } else {
+        throw Exception('Failed to load users');
+      }
+    } catch (e) {
+      state = state.copyWith(errorMessage: e.toString(), isLoading: false);
+      debugPrint("Error fetching all users: $e");
+    }
+  }
+
 }
 
 final userControllerProvider =

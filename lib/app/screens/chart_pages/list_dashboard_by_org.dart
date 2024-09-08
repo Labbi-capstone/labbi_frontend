@@ -70,20 +70,6 @@ class _ListDashboardByOrgPageState extends ConsumerState<ListDashboardByOrgPage>
 
   // Override the lifecycle methods
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      // The app is back in the foreground. Resume WebSocket.
-      final chartId = 'someChartId'; // Pass your actual chartId here
-      final prometheusEndpointId = 'someEndpointId'; // Replace with actual data
-      final chartType = 'line'; // Replace with actual chart type
-
-      socketService.resume(chartId, prometheusEndpointId, chartType);
-      _restartChartTimers();
-    } else if (state == AppLifecycleState.paused) {
-      // The app is going into the background. Pause WebSocket.
-      socketService.pause();
-    }
-  }
 
   // Method to restart chart timers when returning to the page
   void _restartChartTimers() {

@@ -21,6 +21,6 @@ class Routes {
   static const String ListAllChartsPage = '/ListAllChartsPage';
   static const String ListAllDashboardPage = '/ListAllDashboardPage';
   static const String ListDashboardByOrgPage = '/ListDashboardByOrgPage';
-  
-  // Add more routes as needed
+  static const String UserOrgDeviceDetailPage = '/UserOrgDeviceDetailPage';
+static const String ListAllUserPage = '/ListAllUserPage';
 }
