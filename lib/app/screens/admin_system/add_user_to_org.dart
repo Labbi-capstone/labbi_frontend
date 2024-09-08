@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:labbi_frontend/app/providers.dart';
 import '../../models/user.dart';
 import '../../controllers/user_controller.dart';
-import '../../components/lists/user_list_item.dart';
 
 class AddUserToOrgPage extends ConsumerStatefulWidget {
   final String orgId;
@@ -18,10 +18,13 @@ class _AddUserToOrgPageState extends ConsumerState<AddUserToOrgPage> {
   String searchKeyword = '';
   String selectedRole = 'Member'; // Default role
 
+  // Track multiple selected user IDs
+  Set<String> selectedUserIds = {}; // Track multiple selections
+
   @override
   void initState() {
     super.initState();
-    // Delay the fetch to ensure it's after the widget tree has built
+    // Fetch users after the widget tree has been built
     Future.microtask(() {
       _fetchUsers();
     });
@@ -30,16 +33,53 @@ class _AddUserToOrgPageState extends ConsumerState<AddUserToOrgPage> {
   void _fetchUsers() async {
     final userController = ref.read(userControllerProvider.notifier);
     await userController.fetchUsersNotInOrg(widget.orgId);
+
+    // Log the users fetched
+    final userState = ref.read(userControllerProvider);
+    debugPrint(
+        "Fetched users: ${userState.usersNotInOrg.map((u) => u.fullName + " (" + u.id + ")").toList()}");
   }
 
-  void _addUsersToOrganization() async {
-    final userController = ref.read(userControllerProvider.notifier);
-    if (selectedRole == 'Member') {
-      await userController.addOrgMember(widget.orgId);
-    } else {
-      await userController.addOrgAdmin(widget.orgId);
+  // Toggle user selection in the Set
+  void _toggleUserSelection(String userId) {
+    setState(() {
+      if (selectedUserIds.contains(userId)) {
+        selectedUserIds.remove(userId);
+      } else {
+        selectedUserIds.add(userId);
+      }
+      debugPrint('Selected users updated: $selectedUserIds');
+    });
+  }
+
+  // Add selected users to the organization
+  void _addUserToOrganization() async {
+    if (selectedUserIds.isEmpty) {
+      // Show an alert if no user is selected
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content:
+            Text('Please select at least one user to add to the organization'),
+      ));
+      return;
     }
-    // Handle success or error, e.g., showing a confirmation message
+
+    final userController = ref.read(userControllerProvider.notifier);
+
+    if (selectedRole == 'Member') {
+      await userController.addOrgMember(widget.orgId, selectedUserIds.toList());
+    } else {
+      await userController.addOrgAdmin(widget.orgId, selectedUserIds.toList());
+    }
+
+    // Optionally, you can reset the selectedUserIds after adding the users
+    setState(() {
+      selectedUserIds.clear();
+    });
+
+    // Show a confirmation message
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('Users added to organization successfully'),
+    ));
   }
 
   @override
@@ -50,12 +90,18 @@ class _AddUserToOrgPageState extends ConsumerState<AddUserToOrgPage> {
     // Fetch the user state, which includes a list of users
     final userState = ref.watch(userControllerProvider);
 
+    // Log usersNotInOrg before filtering
+    debugPrint(
+        'Unfiltered users: ${userState.usersNotInOrg.map((u) => u.fullName + " (" + u.id + ")").toList()}');
+
     // Filter users based on the search keyword
     final filteredUsers = userState.usersNotInOrg.where((user) {
       return user.fullName.toLowerCase().contains(searchKeyword.toLowerCase());
     }).toList();
 
-    final userController = ref.read(userControllerProvider.notifier);
+    // Log filtered users
+    debugPrint(
+        'Filtered users: ${filteredUsers.map((u) => u.fullName + " (" + u.id + ")").toList()}');
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -139,7 +185,7 @@ class _AddUserToOrgPageState extends ConsumerState<AddUserToOrgPage> {
                       ),
                       child: const Divider(color: Colors.grey),
                     ),
-                    // Member List
+                    // Member List with Checkboxes for multiple selection
                     Expanded(
                       child: Padding(
                         padding: EdgeInsets.symmetric(
@@ -150,13 +196,16 @@ class _AddUserToOrgPageState extends ConsumerState<AddUserToOrgPage> {
                           itemBuilder: (context, index) {
                             final user = filteredUsers[index];
                             final isSelected =
-                                userController.isUserSelected(user.id);
-                            return UserListItem(
-                              user: user,
-                              isSelected: isSelected,
-                              onToggleSelection: (String userId) {
-                                userController.toggleUserSelection(userId);
-                              },
+                                selectedUserIds.contains(user.id);
+
+                            return ListTile(
+                              title: Text(user.fullName),
+                              leading: Checkbox(
+                                value: isSelected,
+                                onChanged: (bool? value) {
+                                  _toggleUserSelection(user.id);
+                                },
+                              ),
                             );
                           },
                         ),
@@ -204,7 +253,7 @@ class _AddUserToOrgPageState extends ConsumerState<AddUserToOrgPage> {
                             elevation: 0,
                             backgroundColor: const Color(0xff3ac7f9),
                           ),
-                          onPressed: _addUsersToOrganization,
+                          onPressed: _addUserToOrganization,
                           child: Text(
                             'Add',
                             style: TextStyle(

@@ -12,7 +12,8 @@ class LogoutButton extends ConsumerWidget {
 
     return TextButton.icon(
       onPressed: () {
-        ref.read(authControllerProvider.notifier).logoutUser(context);
+        // Pass both context and ref to the logoutUser method
+        ref.read(authControllerProvider.notifier).logoutUser(context, ref);
       },
       icon: Padding(
         padding: EdgeInsets.only(

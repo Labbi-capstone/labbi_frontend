@@ -16,7 +16,7 @@ class User {
    // Updated fromJson method to handle missing fields and _id mapping
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['_id'] ?? '', // Ensuring we map _id and avoid null
+      id: json['id'] ?? '', // Ensuring we map _id and avoid null
       fullName:
           json['fullName'] ?? 'Unknown', // Providing a default value for null
       email: json['email'] ?? 'No email', // Providing a default value for null

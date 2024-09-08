@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:labbi_frontend/app/controllers/user_controller.dart';
+import 'package:labbi_frontend/app/providers.dart';
 
 class EditUserInfoPage extends ConsumerStatefulWidget {
   final String userId;

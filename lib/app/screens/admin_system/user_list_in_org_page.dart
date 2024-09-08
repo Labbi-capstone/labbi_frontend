@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/models/user.dart';
 import 'package:labbi_frontend/app/controllers/user_controller.dart';
+import 'package:labbi_frontend/app/providers.dart';
 import 'package:labbi_frontend/app/screens/admin_system/add_user_to_org.dart';
 import '../../components/pagination.dart';
 import '../../components/buttons/add_button.dart'; // Import the AddButton

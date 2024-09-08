@@ -2,18 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:labbi_frontend/app/components/buttons/logout_button.dart';
 import 'package:labbi_frontend/app/models/menu_item_model.dart';
+import 'package:labbi_frontend/app/screens/dashboard_page/dashboard_page.dart';
 import 'package:labbi_frontend/app/screens/menu/menu_item.dart';
 import 'package:labbi_frontend/app/screens/user_profile/user_profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// Provider to load user information
-final userInfoProvider = FutureProvider<Map<String, String>>((ref) async {
-  final prefs = await SharedPreferences.getInstance();
-  return {
-    'userName': prefs.getString('userName') ?? '',
-    'userRole': prefs.getString('userRole') ?? 'user',
-  };
-});
+
 
 class MenuTaskbar extends ConsumerWidget {
   const MenuTaskbar({super.key});
@@ -25,19 +19,22 @@ class MenuTaskbar extends ConsumerWidget {
     return userInfoAsyncValue.when(
       data: (userInfo) {
         final userName = userInfo['userName']!;
+        print("userName: $userName");
         final userRole = userInfo['userRole']!;
-        return buildDrawer(context, userName, userRole);
+        print("userRole: $userRole");
+        return buildDrawer(context, userName, userRole);  // Build the menu drawer based on new user info
       },
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) =>
-          const Center(child: Text('Error loading user info')),
+      error: (error, stack) => const Center(child: Text('Error loading user info')),
     );
   }
+
 
   Widget buildDrawer(BuildContext context, String userName, String userRole) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
-
+print("passed userName: $userName");
+print("passed userRole: $userRole");
     return Drawer(
       width: screenWidth * 0.7,
       child: Column(
@@ -51,8 +48,7 @@ class MenuTaskbar extends ConsumerWidget {
               children: [
                 // Menu Items
                 MenuItem(
-                  menuItem: getMenuItems(
-                      userRole), // Dynamically choose based on user role
+                  menuItem: getMenuItems(userRole), // Dynamically choose based on user role
                   screenHeight: screenHeight,
                   screenWidth: screenWidth,
                 ),
@@ -74,6 +70,8 @@ class MenuTaskbar extends ConsumerWidget {
       ),
     );
   }
+}
+
 
   Widget buildHeader(BuildContext context, double screenHeight,
       double screenWidth, String userName) {
@@ -143,4 +141,4 @@ class MenuTaskbar extends ConsumerWidget {
         return userMenuItems;
     }
   }
-}
+

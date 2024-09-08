@@ -7,6 +7,7 @@ import 'package:labbi_frontend/app/state/dashboard_state.dart';
 import 'package:labbi_frontend/app/state/user_state.dart';
 import 'package:labbi_frontend/app/services/chart_timer_service.dart';
 import 'package:labbi_frontend/app/services/websocket_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'controllers/chart_controller.dart';
 import 'state/chart_state.dart';
@@ -54,10 +55,23 @@ final webSocketChannelProvider = Provider<WebSocketChannel>((ref) {
   return channel; // Make sure to return the WebSocketChannel
 });
 
+// FutureProvider to load user information from SharedPreferences
+final userInfoProvider = FutureProvider<Map<String, String>>((ref) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
 
-// Global provider for UserController
+  // Retrieve user information from SharedPreferences
+  return {
+    'userName': prefs.getString('userName') ?? 'Unknown User',
+    'userRole': prefs.getString('userRole') ??
+        'user', // Default to 'user' if role is not set
+    'userId': prefs.getString('userId') ?? '',
+    'userEmail': prefs.getString('userEmail') ?? '',
+  };
+});
+
+// Global provider for UserController, passing ref as the argument
 final userControllerProvider = StateNotifierProvider<UserController, UserState>(
-  (ref) => UserController(),
+  (ref) => UserController(ref), // Correct instantiation with ref
 );
 
 final dashboardControllerProvider =
