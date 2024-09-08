@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/Theme/app_colors.dart';
 import 'package:labbi_frontend/app/models/notification_message.dart';
+import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart'; // Import MenuTaskbar
 import 'package:labbi_frontend/app/screens/notification/notification_container.dart';
 
 class NotificationPage extends StatefulWidget {
@@ -20,8 +21,8 @@ class _NotificationPageState extends State<NotificationPage> {
     dynamic screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      // extendBodyBehindAppBar: true,
-      resizeToAvoidBottomInset: false,
+      // Add the drawer property and include the MenuTaskbar
+      drawer: const MenuTaskbar(),
       appBar: AppBar(
         elevation: 0,
         flexibleSpace: Container(
@@ -39,13 +40,6 @@ class _NotificationPageState extends State<NotificationPage> {
           ),
         ),
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            color: Colors.white,
-          ),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
         title: Text(
           "Notification",
           style: TextStyle(

@@ -2,14 +2,16 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'package:labbi_frontend/app/controllers/org_controller.dart';
 import 'package:labbi_frontend/app/routes.dart';
+import 'package:labbi_frontend/app/screens/dashboard_page/dashboard_page.dart';
 import 'package:labbi_frontend/app/state/auth_state.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // State class to manage the authentication state
-
 
 class AuthController extends StateNotifier<AuthState> {
   final Ref ref;
@@ -32,22 +34,20 @@ class AuthController extends StateNotifier<AuthState> {
     state = state.copyWith(isLoading: loading);
   }
 
-  Future<void> loginUser(BuildContext context) async {
+  Future<void> loginUser(BuildContext context, WidgetRef ref) async {
     setLoading(true);
 
     try {
-      // Select API URL based on the platform
       final apiUrl =
           kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
-          
+
       final reqBody = {
         "email": emailController.text.trim(),
         "password": passwordController.text,
       };
 
       final response = await http.post(
-        Uri.parse(
-            '$apiUrl/users/login'), // Adjusted URL for emulator
+        Uri.parse('$apiUrl/users/login'),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(reqBody),
       );
@@ -61,32 +61,45 @@ class AuthController extends StateNotifier<AuthState> {
         final userEmail = jsonRes['user']['email'];
         final token = jsonRes['token'];
 
-        prefs.setString('userName', userName);
-        prefs.setString('userId', userId);
-        prefs.setString('userRole', userRole);
-        prefs.setString('userEmail', userEmail);
-        prefs.setString('token', token);
+        // Store user details in SharedPreferences
+       SharedPreferences prefs = await SharedPreferences.getInstance();
+        print(
+            '[LOGIN] Current stored user before setting: ${prefs.getString('userName')}');
+        await prefs.setString('userName', userName);
+        await prefs.setString('userId', userId);
+        await prefs.setString('userRole', userRole);
+        await prefs.setString('userEmail', userEmail);
+        await prefs.setString('token', token);
+        print(
+            '[LOGIN] Current stored user after setting: ${prefs.getString('userName')}');
+
+
+        // Invalidate the userInfoProvider and ensure UI refresh
+        ref.invalidate(
+            userInfoProvider); // Invalidate to trigger fresh state fetching
 
         if (context.mounted) {
           switch (userRole) {
             case 'admin':
-              Navigator.pushReplacementNamed(context, '/listOfOrg');
+              Navigator.pushReplacementNamed(context, Routes.listOfOrg);
             case 'developer':
-            case 'adminOrg':
-              Navigator.pushReplacementNamed(context, '/dashboard');
+              Navigator.pushReplacementNamed(context, Routes.notificationPage);
+              break;
+            case 'user':
+              Navigator.pushReplacementNamed(context, Routes.notificationPage);
               break;
             default:
-              Navigator.pushReplacementNamed(context, '/dashboard');
+              Navigator.pushReplacementNamed(context, Routes.dashboard);
           }
         }
       } else {
         if (context.mounted) {
-          // Handle login failure (e.g., show an alert dialog or a different UI element)
+          // Handle login failure
         }
       }
     } catch (e) {
       if (context.mounted) {
-        // Handle unexpected error (e.g., show an alert dialog or a different UI element)
+        // Handle unexpected error
       }
     } finally {
       setLoading(false);
@@ -155,12 +168,30 @@ class AuthController extends StateNotifier<AuthState> {
     }
   }
 
-  Future<void> logoutUser(BuildContext context) async {
+  Future<void> logoutUser(BuildContext context, WidgetRef ref) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    print('[LOGOUT] Current stored user: ${prefs.getString('userName')}');
+
+    // Clear all saved data
     await prefs.clear();
+
+    // Invalidate the userInfoProvider and any other user-specific providers
+    ref.invalidate(userInfoProvider);
+    ref.invalidate(
+        orgControllerProvider); // Reset organization data if tied to the user
+
+    // Ensure that navigation happens after providers have been invalidated and preferences cleared
     if (context.mounted) {
-      Navigator.pushReplacementNamed(context, Routes.login);
+      Future.delayed(Duration.zero, () {
+        Navigator.pushReplacementNamed(context, Routes.login);
+      });
     }
+
+    print(
+        '[LOGOUT] Current stored user after clearing: ${prefs.getString('userName')}');
   }
+
+
 }
 
 final authControllerProvider =

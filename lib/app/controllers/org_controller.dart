@@ -122,6 +122,60 @@ class OrgController extends StateNotifier<OrgState> {
     }
   }
 
+  Future<void> fetchOrganizationsByUserId(String userId) async {
+    debugPrint('[MY_APP] Fetching organizations for user $userId...');
+    setLoading(true);
+
+    try {
+      final apiUrl =
+          kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      if (token == null) {
+        debugPrint('[MY_APP] User token not found.');
+        setLoading(false);
+        state = state.copyWith(
+            errorMessage: 'User token not found. Please login again.');
+        return;
+      }
+
+      final url = Uri.parse('$apiUrl/organizations/user/$userId/orgs');
+
+      final response = await http.get(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        debugPrint(
+            '[MY_APP] Successfully fetched organizations for user $userId.');
+        final List<dynamic> data = jsonDecode(response.body);
+        final organizations =
+            data.map((org) => Organization.fromJson(org)).toList();
+        state =
+            state.copyWith(organizationList: organizations, errorMessage: null);
+      } else if (response.statusCode == 404) {
+        debugPrint('[MY_APP] No organizations found for this user.');
+        state = state.copyWith(
+            errorMessage: 'No organizations found for this user.');
+      } else {
+        debugPrint('[MY_APP] Failed to fetch organizations for user $userId.');
+        state = state.copyWith(
+            errorMessage: 'Failed to fetch organizations. Please try again.');
+      }
+    } catch (e) {
+      debugPrint('[MY_APP] Error fetching organizations for user $userId: $e');
+      state =
+          state.copyWith(errorMessage: 'An error occurred. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
   void setLoading(bool loading) {
     state = state.copyWith(isLoading: loading);
   }

@@ -97,7 +97,8 @@ class LoginPage extends ConsumerWidget {
                   // Sign in button
                   MyButton(
                     onTap: () {
-                      authController.loginUser(context);
+                      authController.loginUser(
+                          context, ref); // Pass both context and ref
                     },
                     child: Container(
                       alignment: Alignment.center,
@@ -116,6 +117,7 @@ class LoginPage extends ConsumerWidget {
                       ),
                     ),
                   ),
+
                   const SizedBox(height: 30),
                   // Google sign in
                   const Padding(

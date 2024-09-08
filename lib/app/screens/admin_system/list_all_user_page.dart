@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/models/user.dart';
 import 'package:labbi_frontend/app/controllers/user_controller.dart';
+import 'package:labbi_frontend/app/providers.dart';
 import 'package:labbi_frontend/app/screens/admin_system/edit_user_info_page.dart';
 import '../../components/pagination.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
