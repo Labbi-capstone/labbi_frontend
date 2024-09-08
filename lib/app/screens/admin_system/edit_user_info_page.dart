@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:labbi_frontend/app/controllers/user_controller.dart';
 
-class EditUserInfoPage extends StatefulWidget {
+class EditUserInfoPage extends ConsumerStatefulWidget {
   final String userId;
 
   const EditUserInfoPage({Key? key, required this.userId}) : super(key: key);
@@ -9,7 +11,7 @@ class EditUserInfoPage extends StatefulWidget {
   _EditUserInfoPageState createState() => _EditUserInfoPageState();
 }
 
-class _EditUserInfoPageState extends State<EditUserInfoPage> {
+class _EditUserInfoPageState extends ConsumerState<EditUserInfoPage> {
   final _formKey = GlobalKey<FormState>();
   String _fullName = '';
   String _email = '';
@@ -18,22 +20,28 @@ class _EditUserInfoPageState extends State<EditUserInfoPage> {
   @override
   void initState() {
     super.initState();
-    // Here you can fetch the current user data using widget.userId if needed
-    // For this example, I'm initializing empty values
+    // Optionally, you can fetch the user's current data here and pre-populate the form fields.
   }
 
-  void _saveChanges() {
+  Future<void> _saveChanges() async {
     if (_formKey.currentState!.validate()) {
-      // Handle the logic to save the changes here
-      print('Saving changes for user ID: ${widget.userId}');
-      print('Updated Name: $_fullName');
-      print('Updated Email: $_email');
-      print('Selected Role: $_selectedRole');
+      try {
+        // Call editUserInfo method from UserController with full name, email, and role
+        await ref.read(userControllerProvider.notifier).editUserInfo(
+              widget.userId,
+              _fullName,
+              _email,
+              _selectedRole, // passing the selected role to the update method
+            );
 
-      // You can perform the update here by calling your backend API or state management logic.
-
-      // Pop the page after saving
-      Navigator.pop(context);
+        // After a successful update, navigate back to the previous screen
+        Navigator.pop(context);
+      } catch (e) {
+        print('Error updating user info: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to update user info: $e')),
+        );
+      }
     }
   }
 
