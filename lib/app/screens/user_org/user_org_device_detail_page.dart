@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/mockDatas/user_device_test.dart';
 
 class UserOrgDeviceDetailPage extends StatelessWidget {
-  final UserDevice device;
-  const UserOrgDeviceDetailPage({super.key, required this.device,});
+
+  const UserOrgDeviceDetailPage({super.key, required UserDevice device});
   
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class UserOrgDeviceDetailPage extends StatelessWidget {
               ),
             ), 
           ),
-        title: Text(device.name,
+        title: Text("device.name",
           style: TextStyle(
             fontSize: screenHeight*0.037,
             fontWeight: FontWeight.bold,
@@ -63,7 +63,7 @@ class UserOrgDeviceDetailPage extends StatelessWidget {
                     child: Center(
                       child: Column(
                         children: [
-                          Text(device.status, style: TextStyle(fontSize: screenHeight*0.023, color: Colors.green)),
+                          Text("device.status", style: TextStyle(fontSize: screenHeight*0.023, color: Colors.green)),
                         ],
                       ),
                     ),
