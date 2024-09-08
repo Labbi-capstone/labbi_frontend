@@ -61,10 +61,8 @@ final List<MenuItemModel> adminMenuItems = [
   ),
   MenuItemModel(
     icon: Icons.dashboard_outlined,
-    label: 'All dashboards',
-    route: const ListDashboardByOrgPage(
-      orgId: '66a181d07a2007c79a23ce98',
-    ),
+    label: 'Dashboards management', 
+    route: const ListAllDashboardPage(),
   ),
   MenuItemModel(
     icon: Icons.dashboard_outlined,
