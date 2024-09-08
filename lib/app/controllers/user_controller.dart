@@ -263,6 +263,48 @@ class UserController extends StateNotifier<UserState> {
       debugPrint("Error fetching all users: $e");
     }
   }
+// Update user info including role
+  // Update user info including role
+  Future<void> editUserInfo(
+      String userId, String newName, String newEmail, String newRole) async {
+    state = state.copyWith(isLoading: true);
+    try {
+      final apiUrl =
+          kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
+      final url = Uri.parse('$apiUrl/users/update-user-info/$userId');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      if (token == null) {
+        throw Exception('User token not found. Please login again.');
+      }
+
+      final response = await http.put(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: jsonEncode(<String, String>{
+          "fullName": newName,
+          "email": newEmail,
+          "role": newRole,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        debugPrint('User info updated successfully');
+      } else {
+        throw Exception('Failed to update user info: ${response.body}');
+      }
+
+      state = state.copyWith(isLoading: false);
+    } catch (e) {
+      state = state.copyWith(errorMessage: e.toString(), isLoading: false);
+      debugPrint("Error updating user info: $e");
+    }
+  }
+
 
 }
 
