@@ -21,6 +21,7 @@ class ListOrgPage extends ConsumerStatefulWidget {
 
 class _ListOrgPageState extends ConsumerState<ListOrgPage> {
   String searchKeyWord = '';
+  String? userRole; // To store the user role
 
   @override
   void initState() {
@@ -32,7 +33,7 @@ class _ListOrgPageState extends ConsumerState<ListOrgPage> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
 
       // Retrieve user role and user ID from SharedPreferences
-      String? userRole = prefs.getString('userRole');
+      userRole = prefs.getString('userRole');
       String? userId = prefs.getString('userId');
 
       if (userRole == 'admin') {
@@ -147,11 +148,13 @@ class _ListOrgPageState extends ConsumerState<ListOrgPage> {
                           ],
                         ),
                       ),
-                      AddButton(
-                        screenHeight: screenHeight,
-                        screenWidth: screenWidth,
-                        pageToNavigate: const CreateOrgPage(),
-                      ),
+                      // Conditionally display the AddButton if userRole is 'admin'
+                      if (userRole == 'admin')
+                        AddButton(
+                          screenHeight: screenHeight,
+                          screenWidth: screenWidth,
+                          pageToNavigate: const CreateOrgPage(),
+                        ),
                     ],
                   ),
                 ),
