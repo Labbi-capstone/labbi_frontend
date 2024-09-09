@@ -4,7 +4,8 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:labbi_frontend/app/models/chart.dart';
 
 class LineChartComponent extends StatefulWidget {
-  const LineChartComponent({super.key, required this.title, required this.chartRawData});
+  const LineChartComponent(
+      {super.key, required this.title, required this.chartRawData});
 
   final String title;
   final Map<String, dynamic> chartRawData;
@@ -37,12 +38,12 @@ class _LineChartComponentState extends State<LineChartComponent> {
     super.didUpdateWidget(oldWidget);
     if (widget.chartRawData != oldWidget.chartRawData) {
       setState(() {
-        metricData = _extractData(widget.chartRawData, existingData: metricData);
+        metricData =
+            _extractData(widget.chartRawData, existingData: metricData);
         series = _createSeries();
       });
     }
   }
-
 
   Map<String, List<LineData>> _extractData(Map<String, dynamic> chartRawData, {Map<String, List<LineData>>? existingData}) {
     final DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
@@ -121,7 +122,8 @@ class _LineChartComponentState extends State<LineChartComponent> {
                 width: double.infinity,
                 height: 600,
                 child: SfCartesianChart(
-                  key: ValueKey<DateTime>(DateTime.now()), // Key for rebuilding the chart when data changes
+                  key: ValueKey<DateTime>(DateTime
+                      .now()), // Key for rebuilding the chart when data changes
                   title: ChartTitle(
                     text: 'Dynamic Metrics Data Over Time',
                     textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),

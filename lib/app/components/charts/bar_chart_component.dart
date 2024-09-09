@@ -5,7 +5,10 @@ import 'package:labbi_frontend/app/models/chart.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class BarChartComponent extends StatefulWidget {
-  const BarChartComponent({Key? key, required this.title, required this.chartRawData}) : super(key: key);
+  const BarChartComponent(
+      {Key? key, required this.title, required this.chartRawData})
+      : super(key: key);
+
 
   final String title;
   final Map<String, dynamic> chartRawData;
@@ -30,13 +33,15 @@ class _BarChartComponentState extends State<BarChartComponent> {
     super.didUpdateWidget(oldWidget);
     if (widget.chartRawData != oldWidget.chartRawData) {
       setState(() {
-        metricData = _extractData(widget.chartRawData, existingData: metricData);
+        metricData =
+            _extractData(widget.chartRawData, existingData: metricData);
         series = _createSeries();
       });
     }
   }
 
-  Map<String, List<BarData>> _extractData(Map<String, dynamic> chartRawData, {Map<String, List<BarData>>? existingData}) {
+  Map<String, List<BarData>> _extractData(Map<String, dynamic> chartRawData,
+      {Map<String, List<BarData>>? existingData}) {
     final DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
     final Map<String, List<BarData>> updatedData = existingData ?? {};
 
@@ -47,8 +52,8 @@ class _BarChartComponentState extends State<BarChartComponent> {
 
       final timestamp = valueList[0] as double;
       final formattedTimestamp = dateFormat.format(
-        DateTime.fromMillisecondsSinceEpoch((timestamp * 1000).toInt())
-      );
+
+      DateTime.fromMillisecondsSinceEpoch((timestamp * 1000).toInt()));
 
       final value = double.tryParse(valueList[1].toString()) ?? 0.0;
       final scaledValue = value * 1000000; // Adjust scale as needed
@@ -89,7 +94,8 @@ class _BarChartComponentState extends State<BarChartComponent> {
       final dataPoints = entry.value;
 
       // Assign a color from the list, cycling if there are more metrics than colors
-      final colorIndex = metricData.keys.toList().indexOf(metricName) % colors.length;
+      final colorIndex =
+          metricData.keys.toList().indexOf(metricName) % colors.length;
       final color = colors[colorIndex];
 
       return BarSeries<BarData, String>(

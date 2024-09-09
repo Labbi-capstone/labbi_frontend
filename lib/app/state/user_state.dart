@@ -25,7 +25,7 @@ class UserState {
     List<User>? usersNotInOrg,
     bool? isLoading,
     String? errorMessage,
-    Set<String>? selectedUserIds,
+    Set<String>? selectedUserIds, // Ensure this is correctly handled
   }) {
     return UserState(
       users: users ?? this.users,
@@ -33,7 +33,8 @@ class UserState {
       usersNotInOrg: usersNotInOrg ?? this.usersNotInOrg,
       isLoading: isLoading ?? this.isLoading,
       errorMessage: errorMessage ?? this.errorMessage,
-      selectedUserIds: selectedUserIds ?? this.selectedUserIds,
+      selectedUserIds:
+          selectedUserIds ?? this.selectedUserIds, // Handle selected users
     );
   }
 }

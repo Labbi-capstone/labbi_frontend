@@ -15,14 +15,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // UserState class to handle users, loading, errors, and selections
 // user_controller.dart
 class UserController extends StateNotifier<UserState> {
-  UserController() : super(UserState());
+  UserController(this.ref) : super(UserState());
 
+  final Ref ref;
+// Maintain a Set of selected user IDs to track individual selections
+  Set<String> selectedUserIds = {};
   String? errorMessage;
   bool isLoading = false;
 
   // Fetch users not in organization
- // In user_controller.dart
- Future<void> fetchUsersNotInOrg(String orgId) async {
+  // In user_controller.dart
+  Future<void> fetchUsersNotInOrg(String orgId) async {
     debugPrint('Fetching users NOT in organization $orgId');
     state = state.copyWith(isLoading: true);
     try {
@@ -44,8 +47,9 @@ class UserController extends StateNotifier<UserState> {
         "Role": role,
       });
 
+      // Log the raw response body before parsing
+      debugPrint("Raw response body: ${response.body}");
       debugPrint("Response status: ${response.statusCode}");
-      debugPrint("Response body: ${response.body}");
 
       if (response.statusCode == 200) {
         final List<dynamic> usersJson = jsonDecode(response.body)['users'];
@@ -55,6 +59,8 @@ class UserController extends StateNotifier<UserState> {
 
         state = state.copyWith(
             usersNotInOrg: users, users: users, isLoading: false);
+        debugPrint(
+            "Fetched users: ${users.map((u) => u.fullName + ' (' + u.id + ')').toList()}");
       } else {
         throw Exception('Failed to load users not in the organization');
       }
@@ -63,8 +69,6 @@ class UserController extends StateNotifier<UserState> {
       debugPrint("Error fetching users not in org: $e");
     }
   }
-
-
 
   // Fetch users by organization ID
   Future<void> fetchUsersByOrg(String orgId) async {
@@ -77,16 +81,14 @@ class UserController extends StateNotifier<UserState> {
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
-      String? role = prefs.getString('userRole');
 
-      if (token == null || role == null) {
+      if (token == null) {
         throw Exception('User token or role not found. Please login again.');
       }
 
       final response = await http.get(url, headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer $token",
-        "Role": role,
       });
 
       if (response.statusCode == 200) {
@@ -105,18 +107,19 @@ class UserController extends StateNotifier<UserState> {
     }
   }
 
-
   // Toggle user selection
   void toggleUserSelection(String userId) {
-    final selectedUserIds = Set<String>.from(state.selectedUserIds);
+    Set<String> updatedSelectedUserIds = {...state.selectedUserIds};
 
-    if (selectedUserIds.contains(userId)) {
-      selectedUserIds.remove(userId);
+    if (updatedSelectedUserIds.contains(userId)) {
+      updatedSelectedUserIds.remove(userId); // Unselect user
     } else {
-      selectedUserIds.add(userId);
+      updatedSelectedUserIds.add(userId); // Select user
     }
 
-    state = state.copyWith(selectedUserIds: selectedUserIds);
+    state = state.copyWith(
+        selectedUserIds:
+            updatedSelectedUserIds); // Update the state to trigger UI refresh
   }
 
   bool isUserSelected(String userId) {
@@ -157,7 +160,8 @@ class UserController extends StateNotifier<UserState> {
   }
 
   // Add users to organization
-  Future<void> addOrgMember(String orgId) async {
+  // Add users to organization
+  Future<void> addOrgMember(String orgId, List<String> selectedUserIds) async {
     state = state.copyWith(isLoading: true);
     try {
       final apiUrl =
@@ -173,10 +177,10 @@ class UserController extends StateNotifier<UserState> {
           "Authorization": "Bearer $token",
         },
         body: jsonEncode({
-          "members": state.selectedUserIds.toList(),
+          "members": selectedUserIds, // Pass selected user IDs here
         }),
       );
-
+      print("addOrgMember status: ${response.statusCode}");
       if (response.statusCode == 200) {
         state = state.copyWith(selectedUserIds: {}, isLoading: false);
       } else {
@@ -187,8 +191,8 @@ class UserController extends StateNotifier<UserState> {
     }
   }
 
-  // Add multiple users as admins
-  Future<void> addOrgAdmin(String orgId) async {
+// Add multiple users as admins
+  Future<void> addOrgAdmin(String orgId, List<String> selectedUserIds) async {
     state = state.copyWith(isLoading: true);
     try {
       final apiUrl =
@@ -204,10 +208,10 @@ class UserController extends StateNotifier<UserState> {
           "Authorization": "Bearer $token",
         },
         body: jsonEncode({
-          "orgAdmins": state.selectedUserIds.toList(),
+          "orgAdmins": selectedUserIds, // Pass selected user IDs here
         }),
       );
-
+      print("addOrgAdmin response: ${response.body}");
       if (response.statusCode == 200) {
         state = state.copyWith(selectedUserIds: {}, isLoading: false);
       } else {
@@ -217,9 +221,92 @@ class UserController extends StateNotifier<UserState> {
       state = state.copyWith(errorMessage: e.toString(), isLoading: false);
     }
   }
-}
 
-final userControllerProvider =
-    StateNotifierProvider<UserController, UserState>((ref) {
-  return UserController();
-});
+  Future<void> fetchAllUsers() async {
+    debugPrint('Fetching all users');
+    state = state.copyWith(isLoading: true);
+    try {
+      final apiUrl =
+          kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
+      final url = Uri.parse('$apiUrl/users');
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      String? role = prefs.getString('userRole');
+
+      if (token == null || role == null) {
+        throw Exception('User token or role not found. Please login again.');
+      }
+
+      final response = await http.get(url, headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+        "Role": role,
+      });
+
+      debugPrint("Response status: ${response.statusCode}");
+      debugPrint("Response body: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final List<dynamic> usersJson = jsonDecode(response.body)['users'];
+        final List<User> users = usersJson.map((userJson) {
+          return User(
+            id: userJson['_id'] ?? '',
+            fullName: userJson['fullName'] ?? 'Unknown',
+            email: userJson['email'] ?? 'No email',
+            role: userJson['role'] ?? 'user',
+          );
+        }).toList();
+
+        state = state.copyWith(users: users, isLoading: false);
+      } else {
+        throw Exception('Failed to load users');
+      }
+    } catch (e) {
+      state = state.copyWith(errorMessage: e.toString(), isLoading: false);
+      debugPrint("Error fetching all users: $e");
+    }
+  }
+
+// Update user info including role
+  // Update user info including role
+  Future<void> editUserInfo(
+      String userId, String newName, String newEmail, String newRole) async {
+    state = state.copyWith(isLoading: true);
+    try {
+      final apiUrl =
+          kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
+      final url = Uri.parse('$apiUrl/users/update-user-info/$userId');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      if (token == null) {
+        throw Exception('User token not found. Please login again.');
+      }
+
+      final response = await http.put(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: jsonEncode(<String, String>{
+          "fullName": newName,
+          "email": newEmail,
+          "role": newRole,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        debugPrint('User info updated successfully');
+      } else {
+        throw Exception('Failed to update user info: ${response.body}');
+      }
+
+      state = state.copyWith(isLoading: false);
+    } catch (e) {
+      state = state.copyWith(errorMessage: e.toString(), isLoading: false);
+      debugPrint("Error updating user info: $e");
+    }
+  }
+}

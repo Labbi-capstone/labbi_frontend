@@ -10,15 +10,19 @@ import 'package:labbi_frontend/app/models/chart.dart';
 import 'package:labbi_frontend/app/services/websocket_service.dart';
 import 'package:labbi_frontend/app/services/chart_timer_service.dart';
 import 'package:labbi_frontend/app/providers.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
-class ListAllDashboardPage extends ConsumerStatefulWidget {
-  const ListAllDashboardPage({Key? key}) : super(key: key);
+class ListDashboardByOrgPage extends ConsumerStatefulWidget {
+  final String orgId; // Include orgId
+
+  const ListDashboardByOrgPage({Key? key, required this.orgId})
+      : super(key: key);
 
   @override
-  _ListAllDashboardPageState createState() => _ListAllDashboardPageState();
+  _ListDashboardByOrgPageState createState() => _ListDashboardByOrgPageState();
 }
 
-class _ListAllDashboardPageState extends ConsumerState<ListAllDashboardPage>
+class _ListDashboardByOrgPageState extends ConsumerState<ListDashboardByOrgPage>
     with WidgetsBindingObserver {
   late WebSocketService socketService;
   late ChartTimerService chartTimerService;
@@ -49,7 +53,9 @@ class _ListAllDashboardPageState extends ConsumerState<ListAllDashboardPage>
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(dashboardControllerProvider.notifier).fetchAllDashboards();
+      ref
+          .read(dashboardControllerProvider.notifier)
+          .fetchDashboardsByOrg(widget.orgId);
     });
   }
 
@@ -60,6 +66,25 @@ class _ListAllDashboardPageState extends ConsumerState<ListAllDashboardPage>
     chartTimerService.clearTimers(); // Stop chart timers when navigating away
     WidgetsBinding.instance.removeObserver(this); // Remove observer
     super.dispose();
+  }
+
+  // Override the lifecycle methods
+  @override
+
+  // Method to restart chart timers when returning to the page
+  void _restartChartTimers() {
+    cachedCharts.forEach((dashboardId, charts) {
+      for (var chart in charts) {
+        if (!chartTimerService.isTimerActive(chart.id)) {
+          chartTimerService.startOrUpdateTimer(
+            socketService,
+            chart.id,
+            chart.prometheusEndpointId,
+            chart.chartType,
+          );
+        }
+      }
+    });
   }
 
   void _handleWebSocketMessage(String message) {
@@ -88,7 +113,7 @@ class _ListAllDashboardPageState extends ConsumerState<ListAllDashboardPage>
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('All Dashboards'),
+        title: const Text('Organizations and Dashboards'),
       ),
       body: dashboardState.isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -177,8 +202,6 @@ class _ListAllDashboardPageState extends ConsumerState<ListAllDashboardPage>
                   chart.chartType,
                 );
               }
-
-              print("chartdata: $chartDataForThisChart");
 
               return Card(
                 elevation: 2,

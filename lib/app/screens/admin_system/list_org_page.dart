@@ -10,6 +10,7 @@ import 'package:labbi_frontend/app/screens/admin_system/user_list_in_org_page.da
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
 import 'package:labbi_frontend/app/screens/admin_org/admin_org_home_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ListOrgPage extends ConsumerStatefulWidget {
   const ListOrgPage({super.key});
@@ -26,9 +27,24 @@ class _ListOrgPageState extends ConsumerState<ListOrgPage> {
     super.initState();
 
     // Delaying the fetchOrganizations call to avoid modifying the provider during build
-    Future.delayed(Duration.zero, () {
+    Future.delayed(Duration.zero, () async {
       final orgController = ref.read(orgControllerProvider.notifier);
-      orgController.fetchOrganizations();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+
+      // Retrieve user role and user ID from SharedPreferences
+      String? userRole = prefs.getString('userRole');
+      String? userId = prefs.getString('userId');
+
+      if (userRole == 'admin') {
+        // If the user is an admin, fetch all organizations
+        orgController.fetchOrganizations();
+      } else if (userRole == 'user' && userId != null) {
+        // If the user is a regular user, fetch organizations by user ID
+        orgController.fetchOrganizationsByUserId(userId);
+      } else {
+        // Handle case when userRole is not set
+        print('Error: User role is not recognized');
+      }
     });
   }
 
@@ -46,7 +62,6 @@ class _ListOrgPageState extends ConsumerState<ListOrgPage> {
     final isLoading = ref.watch(orgControllerLoadingProvider);
     final errorMessage = ref.watch(orgControllerErrorMessageProvider);
     final organizationList = ref.watch(orgControllerProvider).organizationList;
-    final orgState = ref.watch(orgControllerProvider);
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -82,8 +97,7 @@ class _ListOrgPageState extends ConsumerState<ListOrgPage> {
         ),
       ),
       drawer: const MenuTaskbar(),
-      body:
-       isLoading
+      body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : errorMessage != null
               ? Center(child: Text(errorMessage))
@@ -122,7 +136,9 @@ class _ListOrgPageState extends ConsumerState<ListOrgPage> {
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
-                                                  AdminOrgHomePage(orgId: org.id,), // Navigate to OrgPage
+                                                  AdminOrgHomePage(
+                                                orgId: org.id,
+                                              ), // Navigate to OrgPage
                                             ),
                                           );
                                         },

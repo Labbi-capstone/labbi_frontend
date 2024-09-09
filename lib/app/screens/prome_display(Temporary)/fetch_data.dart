@@ -77,3 +77,4 @@ class DataFetcher {
     dataList.add(newData);
   }
 }
+

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:labbi_frontend/app/Theme/app_colors.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:labbi_frontend/app/controllers/user_controller.dart';
+import 'package:labbi_frontend/app/providers.dart';
 import 'package:labbi_frontend/app/utils/user_info_helper.dart';
 import 'package:labbi_frontend/app/components/text_fields/edit_text_field.dart';
 
