@@ -1,28 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:labbi_frontend/app/controllers/org_controller.dart';
+import 'package:labbi_frontend/app/controllers/dashboard_controller.dart';
+import 'package:labbi_frontend/app/models/organization.dart';
+import 'package:labbi_frontend/app/providers.dart';
 
-class CreateDashboardPage extends StatefulWidget {
+class CreateDashboardPage extends ConsumerStatefulWidget {
   const CreateDashboardPage({Key? key}) : super(key: key);
 
   @override
   _CreateDashboardPageState createState() => _CreateDashboardPageState();
 }
 
-class _CreateDashboardPageState extends State<CreateDashboardPage> {
+class _CreateDashboardPageState extends ConsumerState<CreateDashboardPage> {
   final _formKey = GlobalKey<FormState>();
   String? _dashboardName;
-
-  // Mock list of organizations and charts, replace with actual data from your backend
-  List<String> _organizations = ['Org 1', 'Org 2', 'Org 3'];
-  List<String> _charts = ['Chart 1', 'Chart 2', 'Chart 3', 'Chart 4'];
-
   String _searchOrgQuery = '';
-  String _searchChartQuery = '';
-
   String? _selectedOrg;
-  List<String> _selectedCharts = [];
+
+  @override
+  void initState() {
+    super.initState();
+    ref.read(orgControllerProvider.notifier).fetchOrganizations();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final orgState = ref.watch(orgControllerProvider);
+    final dashboardController = ref.read(dashboardControllerProvider.notifier);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Create New Dashboard'),
@@ -52,31 +58,54 @@ class _CreateDashboardPageState extends State<CreateDashboardPage> {
               // Search bar and organization list
               _buildOrgSearchBar(),
               const SizedBox(height: 16),
-              Expanded(child: _buildOrgList()),
 
-              // Search bar and chart list
-              const SizedBox(height: 16),
-              _buildChartSearchBar(),
-              const SizedBox(height: 16),
-              Expanded(child: _buildChartList()),
+              // Organization list from fetched data
+              Expanded(child: _buildOrgList(orgState.organizationList)),
 
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
 
-                    // Handle form submission logic here
-                    print('Dashboard Name: $_dashboardName');
-                    print('Selected Org: $_selectedOrg');
-                    print('Selected Charts: $_selectedCharts');
+                    if (_selectedOrg == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Please select an organization'),
+                        ),
+                      );
+                      return;
+                    }
 
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Dashboard Created Successfully')),
-                    );
+                    // Create dashboard data
+                    Map<String, dynamic> dashboardData = {
+                      'name': _dashboardName,
+                      'organization_id': _selectedOrg,
+                      // Add other fields required by the backend if needed
+                    };
 
-                    // Optionally navigate back or clear the form after submission
+                    // Call the createDashboard method from the DashboardController
+                    await dashboardController.createDashboard(dashboardData);
+
+                    // Check the current state to display the correct message
+                    final dashboardState =
+                        ref.read(dashboardControllerProvider);
+                    if (dashboardState.errorMessage != null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                              'Failed to create dashboard: ${dashboardState.errorMessage}'),
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Dashboard Created Successfully'),
+                        ),
+                      );
+
+                      // Optionally navigate back or clear the form after submission
+                    }
                   }
                 },
                 child: const Text('Create Dashboard'),
@@ -104,68 +133,30 @@ class _CreateDashboardPageState extends State<CreateDashboardPage> {
   }
 
   // List of organizations with radio buttons (single selection)
-  Widget _buildOrgList() {
-    List<String> filteredOrgs = _organizations
-        .where((org) => org.toLowerCase().contains(_searchOrgQuery))
+  Widget _buildOrgList(List<Organization> organizations) {
+    List<Organization> filteredOrgs = organizations
+        .where((org) => org.name.toLowerCase().contains(_searchOrgQuery))
         .toList();
 
-    return ListView.builder(
-      itemCount: filteredOrgs.length,
-      itemBuilder: (context, index) {
-        final org = filteredOrgs[index];
-        return RadioListTile<String>(
-          title: Text(org),
-          value: org,
-          groupValue: _selectedOrg,
-          onChanged: (String? value) {
-            setState(() {
-              _selectedOrg = value;
-            });
-          },
-        );
-      },
-    );
-  }
-
-  // Chart search bar
-  Widget _buildChartSearchBar() {
-    return TextField(
-      decoration: const InputDecoration(
-        labelText: 'Search Charts',
-        border: OutlineInputBorder(),
-      ),
-      onChanged: (value) {
-        setState(() {
-          _searchChartQuery = value.toLowerCase();
-        });
-      },
-    );
-  }
-
-  // List of charts with checkboxes (multiple selections)
-  Widget _buildChartList() {
-    List<String> filteredCharts = _charts
-        .where((chart) => chart.toLowerCase().contains(_searchChartQuery))
-        .toList();
-
-    return ListView.builder(
-      itemCount: filteredCharts.length,
-      itemBuilder: (context, index) {
-        final chart = filteredCharts[index];
-        return CheckboxListTile(
-          title: Text(chart),
-          value: _selectedCharts.contains(chart),
-          onChanged: (bool? value) {
-            setState(() {
-              if (value == true) {
-                _selectedCharts.add(chart);
-              } else {
-                _selectedCharts.remove(chart);
-              }
-            });
-          },
-        );
-      },
-    );
+    return organizations.isEmpty
+        ? const Center(
+            child: CircularProgressIndicator(),
+          ) // Show loading indicator while fetching
+        : ListView.builder(
+            itemCount: filteredOrgs.length,
+            itemBuilder: (context, index) {
+              final org = filteredOrgs[index];
+              return RadioListTile<String>(
+                title: Text(org.name),
+                value: org.id,
+                groupValue: _selectedOrg,
+                onChanged: (String? value) {
+                  setState(() {
+                    _selectedOrg = value;
+                  });
+                },
+              );
+            },
+          );
   }
 }

@@ -25,6 +25,8 @@ class ChartController extends StateNotifier<ChartState> {
           kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
       final response = await http.get(Uri.parse("$apiUrl/charts/"));
 
+      debugPrint('API Response: ${response.body}'); // Debug the response
+
       if (response.statusCode == 200) {
         List<dynamic> data = jsonDecode(response.body);
         List<Chart> charts = data.map((json) => Chart.fromJson(json)).toList();
@@ -42,6 +44,7 @@ class ChartController extends StateNotifier<ChartState> {
       );
     }
   }
+
 
   // Create a new chart
   Future<void> createChart(Chart chart) async {

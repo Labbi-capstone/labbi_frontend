@@ -16,14 +16,18 @@ class DashboardController extends StateNotifier<DashboardState> {
     try {
       final apiUrl =
           kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
       final response = await http.post(
-        Uri.parse("$apiUrl/dashboard/create"),
+        Uri.parse("$apiUrl/dashboards/create"),
         headers: {
           'Content-Type': 'application/json',
+          "Authorization": "Bearer $token",
         },
         body: jsonEncode(dashboardData),
       );
-
+      print("Response: ${response.body}");
       if (response.statusCode == 201) {
         // Handle successful dashboard creation
         state = state.copyWith(message: "Dashboard created successfully.");
@@ -76,7 +80,7 @@ class DashboardController extends StateNotifier<DashboardState> {
       final apiUrl =
           kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
       final response = await http.put(
-        Uri.parse("$apiUrl/dashboard/$id"),
+        Uri.parse("$apiUrl/dashboards/$id"),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -132,7 +136,7 @@ class DashboardController extends StateNotifier<DashboardState> {
       final apiUrl =
           kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
       final response = await http.delete(
-        Uri.parse("$apiUrl/dashboard/$id"),
+        Uri.parse("$apiUrl/dashboards/$id"),
       );
 
       if (response.statusCode == 200) {

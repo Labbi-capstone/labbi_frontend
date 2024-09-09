@@ -16,10 +16,8 @@ import 'state/chart_state.dart';
 final chartControllerProvider =
     StateNotifierProvider<ChartController, ChartState>(
   (ref) {
-    // Initialize ChartTimerService and WebSocketService here
     final chartTimerService = ChartTimerService();
-    final socketService = ref.watch(
-        webSocketServiceProvider); // Assuming WebSocketService is managed by another provider
+    final socketService = ref.watch(webSocketServiceProvider);
 
     return ChartController(
       chartTimerService: chartTimerService,
@@ -27,6 +25,7 @@ final chartControllerProvider =
     );
   },
 );
+
 
 // Provider for WebSocketService
 final webSocketServiceProvider = Provider<WebSocketService>((ref) {
