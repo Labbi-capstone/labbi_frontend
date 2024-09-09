@@ -21,7 +21,7 @@ class _ListAllUserPageState extends ConsumerState<ListAllUserPage> {
   @override
   void initState() {
     super.initState();
-    // Delay the fetch to ensure it's after the widget tree has built
+    // Fetch the user data when the page is first built
     Future.microtask(() {
       ref.read(userControllerProvider.notifier).fetchAllUsers();
     });
@@ -62,13 +62,19 @@ class _ListAllUserPageState extends ConsumerState<ListAllUserPage> {
     });
   }
 
-  void _onUpdate(User user) {
-    Navigator.push(
+  Future<void> _onUpdate(User user) async {
+    // Navigate to the EditUserInfoPage and wait for the result
+    final updated = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => EditUserInfoPage(userId: user.id), // Pass user ID
       ),
     );
+
+    // If the user was updated (returned true), fetch the updated user list
+    if (updated == true) {
+      ref.read(userControllerProvider.notifier).fetchAllUsers();
+    }
   }
 
   void _onDelete(User user) {

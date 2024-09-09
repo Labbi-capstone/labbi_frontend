@@ -48,8 +48,6 @@ class UserController extends StateNotifier<UserState> {
       });
 
       // Log the raw response body before parsing
-      debugPrint("Raw response body: ${response.body}");
-      debugPrint("Response status: ${response.statusCode}");
 
       if (response.statusCode == 200) {
         final List<dynamic> usersJson = jsonDecode(response.body)['users'];

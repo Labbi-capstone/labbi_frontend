@@ -19,9 +19,7 @@ class MenuTaskbar extends ConsumerWidget {
     return userInfoAsyncValue.when(
       data: (userInfo) {
         final userName = userInfo['userName']!;
-        print("userName: $userName");
         final userRole = userInfo['userRole']!;
-        print("userRole: $userRole");
         return buildDrawer(context, userName, userRole);  // Build the menu drawer based on new user info
       },
       loading: () => const Center(child: CircularProgressIndicator()),

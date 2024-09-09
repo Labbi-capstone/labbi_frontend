@@ -2,8 +2,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:labbi_frontend/app/controllers/dashboard_controller.dart';
+import 'package:labbi_frontend/app/controllers/prometheus_controller.dart';
 import 'package:labbi_frontend/app/controllers/user_controller.dart';
 import 'package:labbi_frontend/app/state/dashboard_state.dart';
+import 'package:labbi_frontend/app/state/prometheus_state.dart';
 import 'package:labbi_frontend/app/state/user_state.dart';
 import 'package:labbi_frontend/app/services/chart_timer_service.dart';
 import 'package:labbi_frontend/app/services/websocket_service.dart';
@@ -76,4 +78,9 @@ final userControllerProvider = StateNotifierProvider<UserController, UserState>(
 final dashboardControllerProvider =
     StateNotifierProvider<DashboardController, DashboardState>(
   (ref) => DashboardController(),
+);
+
+final prometheusControllerProvider =
+    StateNotifierProvider<PrometheusController, PrometheusState>(
+  (ref) => PrometheusController(ref),
 );

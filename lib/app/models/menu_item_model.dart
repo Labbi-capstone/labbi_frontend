@@ -4,7 +4,9 @@ import 'package:labbi_frontend/app/routes.dart';
 import 'package:labbi_frontend/app/screens/admin_org/admin_org_home_page.dart';
 import 'package:labbi_frontend/app/screens/admin_system/list_all_user_page.dart';
 import 'package:labbi_frontend/app/screens/admin_system/list_org_page.dart';
+import 'package:labbi_frontend/app/screens/chart_pages/list_all_charts_page.dart';
 import 'package:labbi_frontend/app/screens/chart_pages/list_all_dashboard.dart';
+import 'package:labbi_frontend/app/screens/chart_pages/list_all_prometheus_endpoint_page.dart';
 import 'package:labbi_frontend/app/screens/chart_pages/list_dashboard_by_org.dart';
 import 'package:labbi_frontend/app/screens/control_panel_page/control_panel_page.dart';
 import 'package:labbi_frontend/app/screens/dashboard_page/dashboard_page.dart';
@@ -63,6 +65,16 @@ final List<MenuItemModel> adminMenuItems = [
     icon: Icons.dashboard_outlined,
     label: 'Dashboards management', 
     route: const ListAllDashboardPage(),
+  ),
+  MenuItemModel(
+    icon: Icons.dashboard_outlined,
+    label: 'Charts management',
+    route: const ListAllChartsPage(),
+  ),
+  MenuItemModel(
+    icon: Icons.dashboard_outlined,
+    label: 'Prometheus Endpoint management',
+    route: const ListAllPrometheusEndpointsPage(),
   ),
   MenuItemModel(
     icon: Icons.dashboard_outlined,
