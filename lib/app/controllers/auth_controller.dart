@@ -5,6 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:labbi_frontend/app/controllers/org_controller.dart';
+import 'package:labbi_frontend/app/providers.dart';
 import 'package:labbi_frontend/app/routes.dart';
 import 'package:labbi_frontend/app/screens/dashboard_page/dashboard_page.dart';
 import 'package:labbi_frontend/app/state/auth_state.dart';

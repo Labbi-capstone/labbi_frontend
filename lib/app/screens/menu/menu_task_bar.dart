@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:labbi_frontend/app/components/buttons/logout_button.dart';
 import 'package:labbi_frontend/app/models/menu_item_model.dart';
+import 'package:labbi_frontend/app/providers.dart';
 import 'package:labbi_frontend/app/screens/dashboard_page/dashboard_page.dart';
 import 'package:labbi_frontend/app/screens/menu/menu_item.dart';
 import 'package:labbi_frontend/app/screens/user_profile/user_profile.dart';
