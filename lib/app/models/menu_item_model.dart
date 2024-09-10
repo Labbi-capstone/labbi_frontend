@@ -41,6 +41,12 @@ final List<MenuItemModel> userMenuItems = [
 ];
 
 final List<MenuItemModel> adminMenuItems = [
+
+  // MenuItemModel(
+  //   icon: Icons.work_outline,
+  //   label: 'ChartPage',
+  //   route: const ChartPage(chartId: '66dfc0ccf0441b2130c396db', prometheusEndpointId: '66c65a1f48ce26e4b4cb8a01', chartType: 'line',),
+  // ),
   MenuItemModel(
     icon: Icons.work_outline,
     label: 'Organization',

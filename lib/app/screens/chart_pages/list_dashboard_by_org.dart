@@ -8,12 +8,11 @@ import 'package:labbi_frontend/app/controllers/dashboard_controller.dart';
 import 'package:labbi_frontend/app/controllers/chart_controller.dart';
 import 'package:labbi_frontend/app/models/chart.dart';
 import 'package:labbi_frontend/app/services/websocket_service.dart';
-import 'package:labbi_frontend/app/services/chart_timer_service.dart';
 import 'package:labbi_frontend/app/providers.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class ListDashboardByOrgPage extends ConsumerStatefulWidget {
-  final String orgId; // Include orgId
+  final String orgId;
 
   const ListDashboardByOrgPage({Key? key, required this.orgId})
       : super(key: key);
@@ -25,66 +24,42 @@ class ListDashboardByOrgPage extends ConsumerStatefulWidget {
 class _ListDashboardByOrgPageState extends ConsumerState<ListDashboardByOrgPage>
     with WidgetsBindingObserver {
   late WebSocketService socketService;
-  late ChartTimerService chartTimerService;
+  StreamSubscription? _webSocketSubscription;
   Map<String, List<Chart>> cachedCharts = {};
   Set<String> loadingCharts = {};
   Map<String, Map<String, dynamic>> allChartData = {};
-
-  StreamSubscription? _webSocketSubscription;
+  bool isWebSocketConnected = false;
 
   @override
   void initState() {
     super.initState();
-
-    // Add the observer to watch for app lifecycle changes
-    WidgetsBinding.instance.addObserver(this);
-
     final webSocketChannel = ref.read(webSocketChannelProvider);
-
-    // Initialize WebSocket and ChartTimerService
     socketService = WebSocketService(webSocketChannel);
-    chartTimerService = ChartTimerService();
 
-    // Listen to WebSocket messages
-    socketService.listenForMessages().then((stream) {
-      _webSocketSubscription = stream.listen((message) {
-        _handleWebSocketMessage(message);
-      });
-    });
+    WidgetsBinding.instance.addObserver(this); // Observe lifecycle changes
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref
           .read(dashboardControllerProvider.notifier)
           .fetchDashboardsByOrg(widget.orgId);
     });
+
+    _initializeWebSocket(); // Initialize WebSocket connection
   }
 
-  @override
-  void dispose() {
-    socketService.pause(); // Pause WebSocket when page is disposed
-    _webSocketSubscription?.cancel();
-    chartTimerService.clearTimers(); // Stop chart timers when navigating away
-    WidgetsBinding.instance.removeObserver(this); // Remove observer
-    super.dispose();
-  }
-
-  // Override the lifecycle methods
-  @override
-
-  // Method to restart chart timers when returning to the page
-  void _restartChartTimers() {
-    cachedCharts.forEach((dashboardId, charts) {
-      for (var chart in charts) {
-        if (!chartTimerService.isTimerActive(chart.id)) {
-          chartTimerService.startOrUpdateTimer(
-            socketService,
-            chart.id,
-            chart.prometheusEndpointId,
-            chart.chartType,
-          );
-        }
-      }
-    });
+  void _initializeWebSocket() {
+    if (!isWebSocketConnected) {
+      socketService.listenForMessages().then((stream) {
+        _webSocketSubscription = stream.listen((message) {
+          _handleWebSocketMessage(message);
+        });
+        setState(() {
+          isWebSocketConnected = true;
+        });
+        debugPrint(
+            "[MY_APP] WebSocket initialized, starting to listen for messages...");
+      });
+    }
   }
 
   void _handleWebSocketMessage(String message) {
@@ -107,6 +82,73 @@ class _ListDashboardByOrgPageState extends ConsumerState<ListDashboardByOrgPage>
     }
   }
 
+  void _fetchChartsForDashboard(String dashboardId) async {
+    if (!loadingCharts.contains(dashboardId)) {
+      setState(() {
+        loadingCharts.add(dashboardId);
+      });
+
+      try {
+        await ref
+            .read(chartControllerProvider.notifier)
+            .fetchChartsForDashboard(dashboardId);
+        final fetchedCharts = ref.read(chartControllerProvider).charts;
+        setState(() {
+          cachedCharts[dashboardId] = fetchedCharts;
+          loadingCharts.remove(dashboardId);
+        });
+
+        // Only send data once, when fetching the charts
+        for (var chart in fetchedCharts) {
+          if (isWebSocketConnected) {
+            socketService.sendData(
+                chart.id, chart.prometheusEndpointId, chart.chartType);
+          } else {
+            debugPrint(
+                "[MY_APP] WebSocket is not connected. Cannot send data.");
+          }
+        }
+      } catch (error) {
+        debugPrint("Error fetching charts for dashboard: $error");
+        setState(() {
+          loadingCharts.remove(dashboardId);
+        });
+      }
+    }
+  }
+
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      debugPrint("[MY_APP] App resumed, reconnecting WebSocket.");
+      final newWebSocketChannel =
+          WebSocketChannel.connect(Uri.parse("YOUR_WEBSOCKET_URL"));
+      socketService
+          .reconnect(newWebSocketChannel); // Reconnect WebSocket on resume
+    } else if (state == AppLifecycleState.paused) {
+      debugPrint("[MY_APP] App paused, closing WebSocket connection.");
+      socketService.dispose(); // Close WebSocket on pause
+    }
+  }
+
+  void _closeWebSocket() {
+    if (isWebSocketConnected) {
+      _webSocketSubscription?.cancel();
+      socketService.dispose();
+      setState(() {
+        isWebSocketConnected = false;
+      });
+      debugPrint("[MY_APP] WebSocket connection closed.");
+    }
+  }
+
+  @override
+  void dispose() {
+    debugPrint("[MY_APP] Disposing ListDashboardByOrgPage...");
+    _closeWebSocket();
+    WidgetsBinding.instance.removeObserver(this); // Remove lifecycle observer
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final dashboardState = ref.watch(dashboardControllerProvider);
@@ -121,7 +163,7 @@ class _ListDashboardByOrgPageState extends ConsumerState<ListDashboardByOrgPage>
               ? Center(child: Text('Error: ${dashboardState.errorMessage}'))
               : SingleChildScrollView(
                   child: ListView.builder(
-                    shrinkWrap: true, // Ensure it doesn't take all the height
+                    shrinkWrap: true,
                     itemCount: dashboardState.dashboards.length,
                     itemBuilder: (context, index) {
                       final dashboard = dashboardState.dashboards[index];
@@ -139,8 +181,7 @@ class _ListDashboardByOrgPageState extends ConsumerState<ListDashboardByOrgPage>
                               : cachedCharts.containsKey(dashboard.id)
                                   ? _buildChartList(cachedCharts[dashboard.id]!)
                                   : const ListTile(
-                                      title: Text('No charts found'),
-                                    ),
+                                      title: Text('No charts found')),
                         ],
                       );
                     },
@@ -149,39 +190,6 @@ class _ListDashboardByOrgPageState extends ConsumerState<ListDashboardByOrgPage>
     );
   }
 
-  void _fetchChartsForDashboard(String dashboardId) async {
-    setState(() {
-      loadingCharts.add(dashboardId);
-    });
-
-    try {
-      await ref
-          .read(chartControllerProvider.notifier)
-          .fetchChartsForDashboard(dashboardId);
-      final fetchedCharts = ref.read(chartControllerProvider).charts;
-      setState(() {
-        cachedCharts[dashboardId] = fetchedCharts;
-        loadingCharts.remove(dashboardId);
-      });
-
-      // Start or update timers for fetched charts
-      for (var chart in fetchedCharts) {
-        chartTimerService.startOrUpdateTimer(
-          socketService,
-          chart.id,
-          chart.prometheusEndpointId,
-          chart.chartType,
-        );
-      }
-    } catch (error) {
-      debugPrint("Error fetching charts for dashboard: $error");
-      setState(() {
-        loadingCharts.remove(dashboardId);
-      });
-    }
-  }
-
-  // Pass the charts list as a parameter to the _buildChartList function
   Widget _buildChartList(List<Chart> charts) {
     return charts.isEmpty
         ? const ListTile(title: Text('No charts found'))
@@ -192,16 +200,6 @@ class _ListDashboardByOrgPageState extends ConsumerState<ListDashboardByOrgPage>
             itemBuilder: (context, chartIndex) {
               final chart = charts[chartIndex];
               final chartDataForThisChart = allChartData[chart.id] ?? {};
-
-              // Ensure the timer is only started if not already active
-              if (!chartTimerService.isTimerActive(chart.id)) {
-                chartTimerService.startOrUpdateTimer(
-                  socketService,
-                  chart.id,
-                  chart.prometheusEndpointId,
-                  chart.chartType,
-                );
-              }
 
               return Card(
                 elevation: 2,
@@ -244,8 +242,7 @@ class _ListDashboardByOrgPageState extends ConsumerState<ListDashboardByOrgPage>
                                             )
                                           : const Center(
                                               child: Text(
-                                                  'Chart type not supported'),
-                                            ),
+                                                  'Chart type not supported')),
                                 ),
                               ],
                             ),

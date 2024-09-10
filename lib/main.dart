@@ -53,13 +53,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final wsApiUrl = kIsWeb
-        ? dotenv.env['WS_API_URL_LOCAL']
-        : dotenv.env['WS_API_URL_PHYSICAL'];
-    // Create a WebSocketChannel for the ChartTestScreen
-    final WebSocketChannel channel = WebSocketChannel.connect(
-      Uri.parse('$wsApiUrl'),
-    );
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
