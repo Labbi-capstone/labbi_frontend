@@ -7,7 +7,8 @@ class Pagination extends StatelessWidget {
   final VoidCallback onNext;
   final ValueChanged<int> onPageSelected;
 
-  const Pagination({super.key, 
+  const Pagination({
+    super.key,
     required this.currentPage,
     required this.totalPages,
     required this.onPrev,
@@ -24,7 +25,7 @@ class Pagination extends StatelessWidget {
           child: Text(
             '$i',
             style: TextStyle(
-              color: i == currentPage ? Colors.purple : Colors.grey,
+              color: i == currentPage ? Colors.white : Colors.grey,
               fontWeight:
                   i == currentPage ? FontWeight.bold : FontWeight.normal,
             ),
@@ -45,7 +46,7 @@ class Pagination extends StatelessWidget {
           child: Text(
             'PREV',
             style: TextStyle(
-              color: currentPage > 1 ? Colors.purple : Colors.grey,
+              color: currentPage > 1 ? Colors.white : Colors.grey,
             ),
           ),
         ),
@@ -57,7 +58,7 @@ class Pagination extends StatelessWidget {
           child: Text(
             'NEXT',
             style: TextStyle(
-              color: currentPage < totalPages ? Colors.purple : Colors.grey,
+              color: currentPage < totalPages ? Colors.white : Colors.grey,
             ),
           ),
         ),
