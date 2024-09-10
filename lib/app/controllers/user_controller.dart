@@ -304,4 +304,41 @@ class UserController extends StateNotifier<UserState> {
       debugPrint("Error updating user info: $e");
     }
   }
+  // Delete user by ID
+  Future<void> deleteUser(String userId) async {
+    state = state.copyWith(isLoading: true);
+    try {
+      final apiUrl =
+          kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
+      final url = Uri.parse('$apiUrl/users/delete/$userId');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      if (token == null) {
+        throw Exception('User token not found. Please login again.');
+      }
+
+      final response = await http.delete(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        debugPrint('User deleted successfully');
+        // Optionally, fetch updated list of users after deletion
+        await fetchAllUsers();
+      } else {
+        throw Exception('Failed to delete user: ${response.body}');
+      }
+
+      state = state.copyWith(isLoading: false);
+    } catch (e) {
+      state = state.copyWith(errorMessage: e.toString(), isLoading: false);
+      debugPrint("Error deleting user: $e");
+    }
+  }
+
 }
