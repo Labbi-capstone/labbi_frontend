@@ -89,20 +89,35 @@ final List<MenuItemModel> developerMenuItems = [
     label: 'Dashboard',
     route: const NotificationPage(),
   ),
-  MenuItemModel(
-    icon: Icons.dashboard_outlined,
-    label: 'Control Panel',
-    route: const ControlPanelPage(),
-  ),
-  MenuItemModel(
-    icon: Icons.notifications_active_outlined,
-    label: 'Notification',
-    route: const NotificationPage(),
-  ),
+  // MenuItemModel(
+  //   icon: Icons.dashboard_outlined,
+  //   label: 'Control Panel',
+  //   route: const ControlPanelPage(),
+  // ),
+  // MenuItemModel(
+  //   icon: Icons.notifications_active_outlined,
+  //   label: 'Notification',
+  //   route: const NotificationPage(),
+  // ),
   MenuItemModel(
     icon: Icons.work_outline,
     label: 'Organization',
-    route: const AdminOrgHomePage(orgId: ''),
+    route: const ListOrgPage(),
+  ),
+   MenuItemModel(
+    icon: Icons.dashboard_outlined,
+    label: 'Dashboards management',
+    route: const ListAllDashboardPage(),
+  ),
+  MenuItemModel(
+    icon: Icons.dashboard_outlined,
+    label: 'Charts management',
+    route: const ListAllChartsPage(),
+  ),
+  MenuItemModel(
+    icon: Icons.dashboard_outlined,
+    label: 'Prometheus Endpoint management',
+    route: const ListAllPrometheusEndpointsPage(),
   ),
 ];
 

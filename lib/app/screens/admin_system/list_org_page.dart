@@ -38,6 +38,9 @@ class _ListOrgPageState extends ConsumerState<ListOrgPage> {
       if (userRole == 'admin') {
         // If the user is an admin, fetch all organizations
         orgController.fetchOrganizations();
+      } else if (userRole == 'developer' && userId != null) {
+        // If the user is an admin, fetch all organizations
+        orgController.fetchOrganizations();
       } else if (userRole == 'user' && userId != null) {
         // If the user is a regular user, fetch organizations by user ID
         orgController.fetchOrganizationsByUserId(userId);
