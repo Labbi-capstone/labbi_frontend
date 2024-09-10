@@ -6,10 +6,10 @@ class OrgContainer extends StatelessWidget {
   final VoidCallback onTap;
 
   const OrgContainer({
-    Key? key,
+    super.key,
     required this.organization,
     required this.onTap, // Add this parameter for the onTap callback
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

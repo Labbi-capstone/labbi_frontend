@@ -4,21 +4,38 @@ import 'package:labbi_frontend/app/components/list_box.dart';
 import 'package:labbi_frontend/app/components/buttons/menu_button.dart';
 import 'package:labbi_frontend/app/screens/admin_org/admin_org_device_details.dart';
 import 'package:labbi_frontend/app/screens/admin_org/admin_org_users.dart';
-import 'package:labbi_frontend/app/screens/admin_system/create_org_page.dart';
 import 'package:labbi_frontend/app/screens/admin_org/admin_org_history.dart';
-import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
+import 'package:labbi_frontend/app/screens/admin_system/dashboard_list_in_org_page.dart';
+import 'package:labbi_frontend/app/screens/admin_system/user_list_in_org_page.dart';
+import 'package:labbi_frontend/app/screens/chart_pages/list_dashboard_by_org.dart';
 import 'package:labbi_frontend/app/mockDatas/user_device_test.dart';
 
 class AdminOrgHomePage extends StatefulWidget {
-  const AdminOrgHomePage({super.key});
+  final String orgId;
+  const AdminOrgHomePage({super.key, required this.orgId});
 
   @override
-  _AdminHomeOrgState createState() => _AdminHomeOrgState();
+  _AdminOrgHomePageState createState() => _AdminOrgHomePageState();
 }
 
-class _AdminHomeOrgState extends State<AdminOrgHomePage> {
+class _AdminOrgHomePageState extends State<AdminOrgHomePage>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
   // Fetch the list of user devices
   List<UserDevice> deviceList = getUserDevices();
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,9 +58,10 @@ class _AdminHomeOrgState extends State<AdminOrgHomePage> {
             ),
           ),
         ),
-        leading: Builder(
-          builder: (BuildContext context) {
-            return const MenuButton();
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context); // Pops to the previous page
           },
         ),
         title: SizedBox(
@@ -55,154 +73,135 @@ class _AdminHomeOrgState extends State<AdminOrgHomePage> {
           ),
         ),
         centerTitle: true,
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: Colors.white,
+          labelColor: Colors.white,
+          unselectedLabelColor: Colors.grey,
+          tabs: [
+            Tab(
+              icon: Icon(Icons.insert_chart_outlined_outlined,
+                  size: screenHeight * 0.05),
+              text: 'Dashboards',
+            ),
+            Tab(
+              icon: Icon(Icons.person, size: screenHeight * 0.05),
+              text: 'Users',
+            ),
+          ],
+        ),
         actions: [
           IconButton(
-            icon: Icon(Icons.history, color: Colors.white),
+            icon: const Icon(Icons.history, color: Colors.white),
             tooltip: 'History',
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const AdminOrgDeviceHistoryPage(),
+                  builder: (context) =>
+                      const AdminOrgDeviceHistoryPage(orgId: ''),
                 ),
               );
             },
           ),
         ],
       ),
-      drawer: const MenuTaskbar(),
-      body: Container(
-        width: screenWidth,
-        height: screenHeight,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              AppColors.primary,
-              AppColors.secondary,
-            ],
-            begin: FractionalOffset(0.0, 0.0),
-            end: FractionalOffset(1.0, 0.0),
-            stops: [0.0, 1.0],
-            tileMode: TileMode.clamp,
-          ),
-        ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-              horizontal: screenWidth * 0.05, vertical: screenHeight * 0.02),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      // Removed the drawer, replaced with normal navigation button
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          // tab "Dashboards"
+          Container(
+            width: screenWidth,
+            height: screenHeight,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  AppColors.primary,
+                  AppColors.secondary,
+                ],
+                begin: FractionalOffset(0.0, 0.0),
+                end: FractionalOffset(1.0, 0.0),
+                stops: [0.0, 1.0],
+                tileMode: TileMode.clamp,
+              ),
+            ),
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: screenWidth * 0.05,
+                vertical: screenHeight * 0.02,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  TextButton.icon(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const AdminOrgHomePage(),
-                        ),
-                      );
-                    },
-                    icon: Icon(Icons.devices, size: screenHeight * 0.05),
-                    label: Text('Devices',
-                        style: TextStyle(fontSize: screenHeight * 0.02)),
-                    style: TextButton.styleFrom(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: screenWidth * 0.04,
-                          vertical: screenHeight * 0.03),
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.black,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+                  SizedBox(height: screenHeight * 0.025),
+                  Text(
+                    'List of Dashboards in Organization',
+                    style: TextStyle(
+                      fontSize: screenHeight * 0.02,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
-                  TextButton.icon(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const AdminOrgUsersPage(),
-                        ),
-                      );
-                    },
-                    icon: Icon(Icons.person, size: screenHeight * 0.05),
-                    label: Text('View Users',
-                        style: TextStyle(
-                          fontSize: screenHeight * 0.02,
-                        )),
-                    style: TextButton.styleFrom(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: screenWidth * 0.04,
-                          vertical: screenHeight * 0.03),
-                      backgroundColor: Colors.grey,
-                      foregroundColor: Colors.black,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                  ),
+                  const Divider(color: Colors.white),
+                  Expanded(
+                      child: Container(
+                          width: screenWidth,
+                          height: screenHeight,
+                          child: Container(
+                              width: screenWidth,
+                              height: screenHeight,
+                              child: ListDashboardByOrgPage(
+                                orgId: widget.orgId,
+                              )))),
                 ],
               ),
-              SizedBox(height: screenHeight * 0.025),
-              Text(
-                'List of Devices in Organization',
-                style: TextStyle(
-                  fontSize: screenHeight * 0.02,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-              const Divider(color: Colors.white),
-              Expanded(
-                child: ListBox(
-                  children: deviceList
-                      .map((device) => ListTile(
-                            title: Text(
-                              device.name,
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            subtitle: Text(
-                                'Type: ${device.type}\nStatus: ${device.status}'),
-                            leading: const Icon(Icons.device_hub),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.info_outline),
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            AdminOrgDeviceDetailsPage(
-                                          device: device,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      AdminOrgDeviceDetailsPage(
-                                    device: device,
-                                  ),
-                                ),
-                              );
-                            },
-                          ))
-                      .toList(),
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
+          // tab "Users"
+          Container(
+            width: screenWidth,
+            height: screenHeight,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  AppColors.primary,
+                  AppColors.secondary,
+                ],
+                begin: FractionalOffset(0.0, 0.0),
+                end: FractionalOffset(1.0, 0.0),
+                stops: [0.0, 1.0],
+                tileMode: TileMode.clamp,
+              ),
+            ),
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: screenWidth * 0.05,
+                vertical: screenHeight * 0.02,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(height: screenHeight * 0.025),
+                  Text(
+                    'List of Users in Organization',
+                    style: TextStyle(
+                      fontSize: screenHeight * 0.02,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const Divider(color: Colors.white),
+                  Expanded(
+                      child: Container(
+                          width: screenWidth,
+                          height: screenHeight,
+                          child: UserListInOrgPage(orgId: widget.orgId))),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -1,24 +1,107 @@
 import 'package:flutter/material.dart';
-import 'package:labbi_frontend/app/controllers/user_controller.dart';
-import 'package:labbi_frontend/app/view_model/user_view_model.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:labbi_frontend/app/providers.dart';
+import '../../models/user.dart';
+import '../../controllers/user_controller.dart';
 
-class AddUserToOrgPage extends StatefulWidget {
-  const AddUserToOrgPage({super.key});
+class AddUserToOrgPage extends ConsumerStatefulWidget {
+  final String orgId;
+
+  const AddUserToOrgPage({super.key, required this.orgId});
 
   @override
-  State<AddUserToOrgPage> createState() => _AddUserToOrgPageState();
+  ConsumerState<AddUserToOrgPage> createState() => _AddUserToOrgPageState();
 }
 
-class _AddUserToOrgPageState extends State<AddUserToOrgPage> {
+class _AddUserToOrgPageState extends ConsumerState<AddUserToOrgPage> {
   final _formKey = GlobalKey<FormState>();
   String searchKeyword = '';
+  String selectedRole = 'Member'; // Default role
+
+  // Track multiple selected user IDs
+  Set<String> selectedUserIds = {}; // Track multiple selections
+
+  @override
+  void initState() {
+    super.initState();
+    // Fetch users after the widget tree has been built
+    Future.microtask(() {
+      _fetchUsers();
+    });
+  }
+
+  void _fetchUsers() async {
+    final userController = ref.read(userControllerProvider.notifier);
+    await userController.fetchUsersNotInOrg(widget.orgId);
+
+    // Log the users fetched
+    final userState = ref.read(userControllerProvider);
+    debugPrint(
+        "Fetched users: ${userState.usersNotInOrg.map((u) => u.fullName + " (" + u.id + ")").toList()}");
+  }
+
+  // Toggle user selection in the Set
+  void _toggleUserSelection(String userId) {
+    setState(() {
+      if (selectedUserIds.contains(userId)) {
+        selectedUserIds.remove(userId);
+      } else {
+        selectedUserIds.add(userId);
+      }
+      debugPrint('Selected users updated: $selectedUserIds');
+    });
+  }
+
+  // Add selected users to the organization
+  void _addUserToOrganization() async {
+    if (selectedUserIds.isEmpty) {
+      // Show an alert if no user is selected
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content:
+            Text('Please select at least one user to add to the organization'),
+      ));
+      return;
+    }
+
+    final userController = ref.read(userControllerProvider.notifier);
+
+    if (selectedRole == 'Member') {
+      await userController.addOrgMember(widget.orgId, selectedUserIds.toList());
+    } else {
+      await userController.addOrgAdmin(widget.orgId, selectedUserIds.toList());
+    }
+
+    // Optionally, you can reset the selectedUserIds after adding the users
+    setState(() {
+      selectedUserIds.clear();
+    });
+
+    // Show a confirmation message
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('Users added to organization successfully'),
+    ));
+  }
 
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
-    final userController = Provider.of<UserController>(context);
+
+    // Fetch the user state, which includes a list of users
+    final userState = ref.watch(userControllerProvider);
+
+    // Log usersNotInOrg before filtering
+    debugPrint(
+        'Unfiltered users: ${userState.usersNotInOrg.map((u) => u.fullName + " (" + u.id + ")").toList()}');
+
+    // Filter users based on the search keyword
+    final filteredUsers = userState.usersNotInOrg.where((user) {
+      return user.fullName.toLowerCase().contains(searchKeyword.toLowerCase());
+    }).toList();
+
+    // Log filtered users
+    debugPrint(
+        'Filtered users: ${filteredUsers.map((u) => u.fullName + " (" + u.id + ")").toList()}');
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -42,13 +125,6 @@ class _AddUserToOrgPageState extends State<AddUserToOrgPage> {
       body: SingleChildScrollView(
         child: Container(
           width: screenWidth,
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image:
-                  AssetImage("assets/images/create-dashboard-background.jpg"),
-              fit: BoxFit.fill,
-            ),
-          ),
           child: Padding(
             padding: EdgeInsets.only(
               top: 0.1 * screenHeight,
@@ -99,7 +175,6 @@ class _AddUserToOrgPageState extends State<AddUserToOrgPage> {
                           setState(() {
                             searchKeyword = value;
                           });
-                          userController.filterUsers(searchKeyword);
                         },
                       ),
                     ),
@@ -110,45 +185,56 @@ class _AddUserToOrgPageState extends State<AddUserToOrgPage> {
                       ),
                       child: const Divider(color: Colors.grey),
                     ),
-                    // Member List
+                    // Member List with Checkboxes for multiple selection
                     Expanded(
                       child: Padding(
                         padding: EdgeInsets.symmetric(
                           horizontal: 0.07 * screenWidth,
                         ),
                         child: ListView.builder(
-                          itemCount: userController.filteredUsers.length,
+                          itemCount: filteredUsers.length,
                           itemBuilder: (context, index) {
-                            UserViewModel userViewModel =
-                                userController.filteredUsers[index];
+                            final user = filteredUsers[index];
+                            final isSelected =
+                                selectedUserIds.contains(user.id);
+
                             return ListTile(
-                              title: Text(userViewModel.user.fullName),
-                              subtitle: Text(userViewModel.user.email),
-                              trailing: userViewModel.isSelected
-                                  ? Icon(Icons.check_circle,
-                                      color: Colors.green)
-                                  : Icon(Icons.radio_button_unchecked),
-                              onTap: () {
-                                userController
-                                    .toggleUserSelection(userViewModel);
-                              },
+                              title: Text(user.fullName),
+                              leading: Checkbox(
+                                value: isSelected,
+                                onChanged: (bool? value) {
+                                  _toggleUserSelection(user.id);
+                                },
+                              ),
                             );
                           },
                         ),
                       ),
                     ),
-                    // Error Message (if any)
-                    if (userController.errorMessage != null)
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          vertical: 0.01 * screenHeight,
-                          horizontal: 0.07 * screenWidth,
-                        ),
-                        child: Text(
-                          userController.errorMessage!,
-                          style: TextStyle(color: Colors.red),
-                        ),
+                    // Dropdown for Role Selection
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 0.07 * screenWidth,
+                        vertical: 0.02 * screenHeight,
                       ),
+                      child: DropdownButton<String>(
+                        value: selectedRole,
+                        items: const <DropdownMenuItem<String>>[
+                          DropdownMenuItem(
+                              value: 'Member', child: Text('Member')),
+                          DropdownMenuItem(
+                              value: 'Admin', child: Text('Admin')),
+                        ],
+                        onChanged: (String? newValue) {
+                          if (newValue != null) {
+                            setState(() {
+                              selectedRole = newValue;
+                            });
+                          }
+                        },
+                        isExpanded: true,
+                      ),
+                    ),
                     // Add Button
                     Padding(
                       padding: EdgeInsets.only(
@@ -167,23 +253,15 @@ class _AddUserToOrgPageState extends State<AddUserToOrgPage> {
                             elevation: 0,
                             backgroundColor: const Color(0xff3ac7f9),
                           ),
-                          onPressed: userController.isLoading
-                              ? null
-                              : () {
-                                  userController.addUsersToOrganization();
-                                },
-                          child: userController.isLoading
-                              ? CircularProgressIndicator(
-                                  color: Colors.white,
-                                )
-                              : Text(
-                                  'Add',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 0.025 * screenHeight,
-                                    color: Colors.white,
-                                  ),
-                                ),
+                          onPressed: _addUserToOrganization,
+                          child: Text(
+                            'Add',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 0.025 * screenHeight,
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
                       ),
                     ),

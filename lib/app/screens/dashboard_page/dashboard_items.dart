@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:labbi_frontend/app/models/dashboard.dart';
+import 'package:labbi_frontend/app/components/charts/bar_chart_component.dart';
 import 'package:labbi_frontend/app/components/charts/line_chart_component.dart';
-import 'package:labbi_frontend/app/components/charts/pie_chart_component.dart';
+import 'package:labbi_frontend/app/components/charts/pie_chart_giang.dart';
 
 class DashboardItem extends StatelessWidget {
   final String title;
-  final List<FlSpot> lineChartData;
-  final List<PieChartSectionData> pieChartData;
 
   const DashboardItem({
     required this.title,
-    required this.lineChartData,
-    required this.pieChartData,
     Key? key,
   }) : super(key: key);
 
@@ -27,25 +25,15 @@ class DashboardItem extends StatelessWidget {
             Center(
               child: Text(
                 title,
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
             SizedBox(height: 10),
-            Row(
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: SquareStat(pieChartData: pieChartData),
-                ),
-                SizedBox(width: 10),
-                Expanded(
-                  flex: 1,
-                  child: SquareStat(pieChartData: pieChartData),
-                ),
-              ],
-            ),
+            RectangleStat2(),
             SizedBox(height: 10),
-            RectangleStat(lineChartData: lineChartData),
+            RectangleStat(),
+            //RectangleStat: unsupportted operation: Platform._version;
           ],
         ),
       ),
@@ -54,30 +42,36 @@ class DashboardItem extends StatelessWidget {
 }
 
 class RectangleStat extends StatelessWidget {
-  final List<FlSpot> lineChartData;
-
-  const RectangleStat({required this.lineChartData, Key? key})
-      : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 200,
+      height: 500,
       decoration: BoxDecoration(
         color: Colors.grey[300],
         borderRadius: BorderRadius.circular(12),
       ),
-      padding: const EdgeInsets.all(8.0),
-      child: LineChartComponent(dataPoints: lineChartData),
+      child: const LineChartComponent(
+          title: "Line Chart", chartRawData: {},), // Instantiating the widget class
+    );
+  }
+}
+
+class RectangleStat2 extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 500,
+      decoration: BoxDecoration(
+        color: Colors.grey[300],
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: BarChartComponent(
+          title: "Bar Chart", chartRawData: {},), // Instantiating the widget class
     );
   }
 }
 
 class SquareStat extends StatelessWidget {
-  final List<PieChartSectionData> pieChartData;
-
-  const SquareStat({required this.pieChartData, Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -87,7 +81,8 @@ class SquareStat extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       padding: const EdgeInsets.all(8.0),
-      child: PieChartComponent(sections: pieChartData),
+      child:
+          PieChartGiang(title: "Pie Chart"), // Instantiating the widget class
     );
   }
 }

@@ -6,6 +6,7 @@ import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
 import 'package:labbi_frontend/app/screens/user_org/user_org_device_detail_page.dart';
 import 'package:labbi_frontend/app/screens/user_org/users_in_org_page.dart';
 import 'package:labbi_frontend/app/Theme/app_colors.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserOrgHomePage extends StatefulWidget {
   const UserOrgHomePage({super.key});
@@ -15,6 +16,23 @@ class UserOrgHomePage extends StatefulWidget {
 }
 
 class _UserOrgHomePageState extends State<UserOrgHomePage> {
+  @override
+  void initState() {
+    super.initState();
+    _printAllSharedPreferences();
+  }
+
+  Future<void> _printAllSharedPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // Retrieve all stored keys
+    Set<String> keys = prefs.getKeys();
+
+    // Print all key-value pairs
+    for (String key in keys) {
+      print('Key: $key, Value: ${prefs.get(key)}');
+    }
+  }
   @override
   Widget build(BuildContext context) {
     dynamic screenHeight = MediaQuery.of(context).size.height;
@@ -37,7 +55,7 @@ class _UserOrgHomePageState extends State<UserOrgHomePage> {
         // Menu button
         leading: Builder(
           builder: (BuildContext context) {
-            return MenuButton();
+            return const MenuButton();
           },
         ),
 

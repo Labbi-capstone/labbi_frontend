@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:labbi_frontend/app/components/control_panel_popup.dart';
 
 class ControlSliderComponent extends StatefulWidget {
@@ -10,7 +9,7 @@ class ControlSliderComponent extends StatefulWidget {
   final double min;
   final double max;
 
-  ControlSliderComponent({
+  const ControlSliderComponent({super.key, 
     required this.icon,
     required this.label,
     required this.value,
@@ -37,7 +36,7 @@ class _ControlSliderState extends State<ControlSliderComponent> {
     return Row(
       children: [
         Icon(widget.icon, size: 30),
-        SizedBox(width: 10),
+        const SizedBox(width: 10),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

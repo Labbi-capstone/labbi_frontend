@@ -15,5 +15,12 @@ class Routes {
   static const String controlPanelPage = '/controlPanelPage';
   static const String createDashboardPage = '/createDashboardPage';
   static const String userListPage = '/userListPage';
-  // Add more routes as needed
+  static const String listOfOrg = '/listOfOrg';
+  static const String cpuDisplay = '/cpuDisplay';
+  static const String PrometheusCPUDataPage = '/PrometheusCPUDataPage';
+  static const String ListAllChartsPage = '/ListAllChartsPage';
+  static const String ListAllDashboardPage = '/ListAllDashboardPage';
+  static const String ListDashboardByOrgPage = '/ListDashboardByOrgPage';
+  static const String UserOrgDeviceDetailPage = '/UserOrgDeviceDetailPage';
+static const String ListAllUserPage = '/ListAllUserPage';
 }

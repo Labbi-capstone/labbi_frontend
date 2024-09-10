@@ -1,52 +1,344 @@
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:labbi_frontend/app/models/user.dart';
-import 'package:labbi_frontend/app/view_model/user_view_model.dart';
+import 'package:labbi_frontend/app/state/user_state.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:developer';
+// user_state.dart
+import 'package:labbi_frontend/app/models/user.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class UserController with ChangeNotifier {
-  List<UserViewModel> _allUsers = [];
-  List<UserViewModel> filteredUsers = [];
-  bool isLoading = false;
+// UserState class to handle users, loading, errors, and selections
+// user_controller.dart
+class UserController extends StateNotifier<UserState> {
+  UserController(this.ref) : super(UserState());
+
+  final Ref ref;
+// Maintain a Set of selected user IDs to track individual selections
+  Set<String> selectedUserIds = {};
   String? errorMessage;
+  bool isLoading = false;
 
-  UserController() {
-    // Initialize users (you would normally fetch this from an API)
-    _allUsers = [
-      UserViewModel(User(
-          "Brooklyn Simmons", "brooklyns@ahffagon.com", "password", "Admin")),
-      UserViewModel(
-          User("Esther Howard", "estherh@ahffagon.com", "password", "Admin")),
-      // Add more users here...
-    ];
-    filteredUsers = List.from(_allUsers);
-  }
+  // Fetch users not in organization
+  // In user_controller.dart
+  Future<void> fetchUsersNotInOrg(String orgId) async {
+    debugPrint('Fetching users NOT in organization $orgId');
+    state = state.copyWith(isLoading: true);
+    try {
+      final apiUrl =
+          kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
+      final url = Uri.parse('$apiUrl/organizations/$orgId/users/not-in-org');
 
-  void filterUsers(String keyword) {
-    if (keyword.isEmpty) {
-      filteredUsers = List.from(_allUsers);
-    } else {
-      filteredUsers = _allUsers
-          .where((userViewModel) =>
-              userViewModel.user.fullName
-                  .toLowerCase()
-                  .contains(keyword.toLowerCase()) ||
-              userViewModel.user.email
-                  .toLowerCase()
-                  .contains(keyword.toLowerCase()))
-          .toList();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      String? role = prefs.getString('userRole');
+
+      if (token == null || role == null) {
+        throw Exception('User token or role not found. Please login again.');
+      }
+
+      final response = await http.get(url, headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+        "Role": role,
+      });
+
+      // Log the raw response body before parsing
+
+      if (response.statusCode == 200) {
+        final List<dynamic> usersJson = jsonDecode(response.body)['users'];
+        final List<User> users = usersJson.map((userJson) {
+          return User.fromJson(userJson);
+        }).toList();
+
+        state = state.copyWith(
+            usersNotInOrg: users, users: users, isLoading: false);
+        debugPrint(
+            "Fetched users: ${users.map((u) => u.fullName + ' (' + u.id + ')').toList()}");
+      } else {
+        throw Exception('Failed to load users not in the organization');
+      }
+    } catch (e) {
+      state = state.copyWith(errorMessage: e.toString(), isLoading: false);
+      debugPrint("Error fetching users not in org: $e");
     }
-    notifyListeners();
   }
 
-  void toggleUserSelection(UserViewModel userViewModel) {
-    userViewModel.isSelected = !userViewModel.isSelected;
-    notifyListeners();
+  // Fetch users by organization ID
+  Future<void> fetchUsersByOrg(String orgId) async {
+    debugPrint('Fetching users in organization $orgId');
+    state = state.copyWith(isLoading: true);
+    try {
+      final apiUrl =
+          kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
+      final url = Uri.parse('$apiUrl/organizations/$orgId/users');
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      if (token == null) {
+        throw Exception('User token or role not found. Please login again.');
+      }
+
+      final response = await http.get(url, headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      });
+
+      if (response.statusCode == 200) {
+        final List<dynamic> usersJson = jsonDecode(response.body)['users'];
+        final List<User> users = usersJson.map((userJson) {
+          return User.fromJson(userJson);
+        }).toList();
+
+        state =
+            state.copyWith(usersInOrg: users, users: users, isLoading: false);
+      } else {
+        throw Exception('Failed to load users');
+      }
+    } catch (e) {
+      state = state.copyWith(errorMessage: e.toString(), isLoading: false);
+    }
   }
 
-  void addUsersToOrganization() {
-    // Handle adding users to the organization here
-    // For example, filter the selected users and send them to an API
-    final selectedUsers =
-        _allUsers.where((userViewModel) => userViewModel.isSelected).toList();
-    // Add the selected users to the organization...
+  // Toggle user selection
+  void toggleUserSelection(String userId) {
+    Set<String> updatedSelectedUserIds = {...state.selectedUserIds};
+
+    if (updatedSelectedUserIds.contains(userId)) {
+      updatedSelectedUserIds.remove(userId); // Unselect user
+    } else {
+      updatedSelectedUserIds.add(userId); // Select user
+    }
+
+    state = state.copyWith(
+        selectedUserIds:
+            updatedSelectedUserIds); // Update the state to trigger UI refresh
   }
+
+  bool isUserSelected(String userId) {
+    return state.selectedUserIds.contains(userId);
+  }
+
+  // Update user info
+  Future<void> updateUserInfo(
+      String userId, String newName, String newEmail) async {
+    state = state.copyWith(isLoading: true);
+    try {
+      final apiUrl =
+          kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
+      final url = Uri.parse('$apiUrl/users/update/$userId');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      await http.put(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: jsonEncode(<String, String>{
+          "fullName": newName,
+          "email": newEmail,
+        }),
+      );
+
+      if (token == null) {
+        throw Exception('User token or role not found. Please login again.');
+      }
+
+      state = state.copyWith(isLoading: false);
+    } catch (e) {
+      state = state.copyWith(errorMessage: e.toString(), isLoading: false);
+    }
+  }
+
+  // Add users to organization
+  // Add users to organization
+  Future<void> addOrgMember(String orgId, List<String> selectedUserIds) async {
+    state = state.copyWith(isLoading: true);
+    try {
+      final apiUrl =
+          kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
+      final url = Uri.parse('$apiUrl/organizations/$orgId/addOrgMember');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: jsonEncode({
+          "members": selectedUserIds, // Pass selected user IDs here
+        }),
+      );
+      print("addOrgMember status: ${response.statusCode}");
+      if (response.statusCode == 200) {
+        state = state.copyWith(selectedUserIds: {}, isLoading: false);
+      } else {
+        throw Exception('Failed to add users to organization.');
+      }
+    } catch (e) {
+      state = state.copyWith(errorMessage: e.toString(), isLoading: false);
+    }
+  }
+
+// Add multiple users as admins
+  Future<void> addOrgAdmin(String orgId, List<String> selectedUserIds) async {
+    state = state.copyWith(isLoading: true);
+    try {
+      final apiUrl =
+          kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
+      final url = Uri.parse('$apiUrl/organizations/$orgId/addOrgAdmin');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: jsonEncode({
+          "orgAdmins": selectedUserIds, // Pass selected user IDs here
+        }),
+      );
+      print("addOrgAdmin response: ${response.body}");
+      if (response.statusCode == 200) {
+        state = state.copyWith(selectedUserIds: {}, isLoading: false);
+      } else {
+        throw Exception('Failed to add admins to organization.');
+      }
+    } catch (e) {
+      state = state.copyWith(errorMessage: e.toString(), isLoading: false);
+    }
+  }
+
+  Future<void> fetchAllUsers() async {
+    debugPrint('Fetching all users');
+    state = state.copyWith(isLoading: true);
+    try {
+      final apiUrl =
+          kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
+      final url = Uri.parse('$apiUrl/users');
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      String? role = prefs.getString('userRole');
+
+      if (token == null || role == null) {
+        throw Exception('User token or role not found. Please login again.');
+      }
+
+      final response = await http.get(url, headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+        "Role": role,
+      });
+
+      if (response.statusCode == 200) {
+        final List<dynamic> usersJson = jsonDecode(response.body)['users'];
+        final List<User> users = usersJson.map((userJson) {
+          return User(
+            id: userJson['_id'] ?? '',
+            fullName: userJson['fullName'] ?? 'Unknown',
+            email: userJson['email'] ?? 'No email',
+            role: userJson['role'] ?? 'user',
+          );
+        }).toList();
+
+        state = state.copyWith(users: users, isLoading: false);
+      } else {
+        throw Exception('Failed to load users');
+      }
+    } catch (e) {
+      state = state.copyWith(errorMessage: e.toString(), isLoading: false);
+      debugPrint("Error fetching all users: $e");
+    }
+  }
+
+// Update user info including role
+  // Update user info including role
+  Future<void> editUserInfo(
+      String userId, String newName, String newEmail, String newRole) async {
+    state = state.copyWith(isLoading: true);
+    try {
+      final apiUrl =
+          kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
+      final url = Uri.parse('$apiUrl/users/update-user-info/$userId');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      if (token == null) {
+        throw Exception('User token not found. Please login again.');
+      }
+
+      final response = await http.put(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: jsonEncode(<String, String>{
+          "fullName": newName,
+          "email": newEmail,
+          "role": newRole,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        debugPrint('User info updated successfully');
+      } else {
+        throw Exception('Failed to update user info: ${response.body}');
+      }
+
+      state = state.copyWith(isLoading: false);
+    } catch (e) {
+      state = state.copyWith(errorMessage: e.toString(), isLoading: false);
+      debugPrint("Error updating user info: $e");
+    }
+  }
+  // Delete user by ID
+  Future<void> deleteUser(String userId) async {
+    state = state.copyWith(isLoading: true);
+    try {
+      final apiUrl =
+          kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
+      final url = Uri.parse('$apiUrl/users/delete/$userId');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      if (token == null) {
+        throw Exception('User token not found. Please login again.');
+      }
+
+      final response = await http.delete(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        debugPrint('User deleted successfully');
+        // Optionally, fetch updated list of users after deletion
+        await fetchAllUsers();
+      } else {
+        throw Exception('Failed to delete user: ${response.body}');
+      }
+
+      state = state.copyWith(isLoading: false);
+    } catch (e) {
+      state = state.copyWith(errorMessage: e.toString(), isLoading: false);
+      debugPrint("Error deleting user: $e");
+    }
+  }
+
 }

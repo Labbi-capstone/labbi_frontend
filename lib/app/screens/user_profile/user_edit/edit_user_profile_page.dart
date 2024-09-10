@@ -3,7 +3,9 @@ import 'package:labbi_frontend/app/Theme/app_colors.dart';
 import 'package:labbi_frontend/app/screens/user_profile/user_edit/update_profile.dart';
 
 class EditUserProfilePage extends StatefulWidget {
-  const EditUserProfilePage({super.key});
+  const EditUserProfilePage({
+    super.key,
+  });
 
   @override
   _EditUserProfilePageState createState() => _EditUserProfilePageState();
@@ -17,7 +19,7 @@ class _EditUserProfilePageState extends State<EditUserProfilePage> {
     dynamic screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         elevation: 0,
         flexibleSpace: Container(
@@ -66,7 +68,7 @@ class _EditUserProfilePageState extends State<EditUserProfilePage> {
             tileMode: TileMode.clamp,
           ),
         ),
-        child: SingleChildScrollView(
+        child: const SingleChildScrollView(
           child: UpdateProfile(),
         ),
       ),

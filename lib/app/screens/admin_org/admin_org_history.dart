@@ -7,7 +7,8 @@ import 'package:labbi_frontend/app/screens/admin_org/admin_org_home_page.dart';
 import 'package:labbi_frontend/app/components/list_box.dart';
 
 class AdminOrgDeviceHistoryPage extends StatefulWidget {
-  const AdminOrgDeviceHistoryPage({super.key});
+  final String orgId;
+  const AdminOrgDeviceHistoryPage({super.key, required this.orgId});
 
   @override
   _AdminDeviceHistoryPageState createState() => _AdminDeviceHistoryPageState();
@@ -37,7 +38,7 @@ class _AdminDeviceHistoryPageState extends State<AdminOrgDeviceHistoryPage> {
         ),
         leading: Builder(
           builder: (BuildContext context) {
-            return MenuButton();
+            return const MenuButton();
           },
         ),
         title: SizedBox(
@@ -51,13 +52,13 @@ class _AdminDeviceHistoryPageState extends State<AdminOrgDeviceHistoryPage> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.redo, color: Colors.white),
+            icon: const Icon(Icons.redo, color: Colors.white),
             tooltip: 'Exit',
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const AdminOrgHomePage(),
+                  builder: (context) => const AdminOrgHomePage(orgId: '',),
                 ),
               );
             },
@@ -96,7 +97,7 @@ class _AdminDeviceHistoryPageState extends State<AdminOrgDeviceHistoryPage> {
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
-                                const AdminOrgDeviceHistoryPage()), // Stay page
+                                const AdminOrgDeviceHistoryPage(orgId: '')), // Stay page
                       );
                     },
                     icon: Icon(Icons.history, size: screenHeight * 0.05),

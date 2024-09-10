@@ -36,7 +36,7 @@ class _UsersInOrgPageState extends State<UsersInOrgPage> {
         // Menu button
         leading: Builder(
           builder: (BuildContext context) {
-            return MenuButton();
+            return const MenuButton();
           },
         ),
 
