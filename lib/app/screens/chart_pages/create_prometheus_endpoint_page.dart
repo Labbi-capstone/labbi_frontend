@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:labbi_frontend/app/Theme/app_colors.dart'; // Assuming you have custom colors defined
 import 'package:labbi_frontend/app/providers.dart';
 
 class CreatePrometheusEndpointPage extends ConsumerStatefulWidget {
@@ -17,10 +18,15 @@ class _CreatePrometheusEndpointPageState
   String _baseUrl = '';
   String _path = '';
   String _query = '';
+  bool _isLoading = false;
 
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
+
+      setState(() {
+        _isLoading = true;
+      });
 
       try {
         // Call the controller to create a new endpoint
@@ -36,6 +42,10 @@ class _CreatePrometheusEndpointPageState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to create Prometheus endpoint: $e')),
         );
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
   }
@@ -44,7 +54,27 @@ class _CreatePrometheusEndpointPageState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Prometheus Endpoint'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back,
+              color: Colors.white), // White back arrow
+          onPressed: () {
+            Navigator.pop(context); // Navigate back
+          },
+        ),
+        title: const Text(
+          'Create Prometheus Endpoint',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+        ),
+        centerTitle: true,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [AppColors.primary, AppColors.secondary],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -52,8 +82,20 @@ class _CreatePrometheusEndpointPageState
           key: _formKey,
           child: ListView(
             children: [
+              // Name Field
               TextFormField(
-                decoration: const InputDecoration(labelText: 'Name'),
+                decoration: InputDecoration(
+                  labelText: 'Name',
+                  labelStyle: const TextStyle(color: AppColors.primary),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: AppColors.primary),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: AppColors.primary),
+                  ),
+                ),
                 onSaved: (value) => _name = value ?? '',
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -62,8 +104,23 @@ class _CreatePrometheusEndpointPageState
                   return null;
                 },
               ),
+              const SizedBox(height: 16),
+
+              // Base URL Field
               TextFormField(
-                decoration: const InputDecoration(labelText: 'Base URL'),
+                decoration: InputDecoration(
+                  labelText: 'Base URL',
+                  labelStyle: const TextStyle(color: AppColors.primary),
+                  hintText: 'e.g., http://example.com',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: AppColors.primary),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: AppColors.primary),
+                  ),
+                ),
                 onSaved: (value) => _baseUrl = value ?? '',
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -72,8 +129,23 @@ class _CreatePrometheusEndpointPageState
                   return null;
                 },
               ),
+              const SizedBox(height: 16),
+
+              // Path Field
               TextFormField(
-                decoration: const InputDecoration(labelText: 'Path'),
+                decoration: InputDecoration(
+                  labelText: 'Path',
+                  labelStyle: const TextStyle(color: AppColors.primary),
+                  hintText: 'e.g., /api/v1',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: AppColors.primary),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: AppColors.primary),
+                  ),
+                ),
                 onSaved: (value) => _path = value ?? '',
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -82,8 +154,23 @@ class _CreatePrometheusEndpointPageState
                   return null;
                 },
               ),
+              const SizedBox(height: 16),
+
+              // Query Field
               TextFormField(
-                decoration: const InputDecoration(labelText: 'Query'),
+                decoration: InputDecoration(
+                  labelText: 'Query',
+                  labelStyle: const TextStyle(color: AppColors.primary),
+                  hintText: 'e.g., ?query=up',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: AppColors.primary),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: AppColors.primary),
+                  ),
+                ),
                 onSaved: (value) => _query = value ?? '',
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -92,10 +179,29 @@ class _CreatePrometheusEndpointPageState
                   return null;
                 },
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
+
+              // Submit Button with Loading Indicator
               ElevatedButton(
-                onPressed: _submitForm,
-                child: const Text('Create Endpoint'),
+                onPressed: _isLoading ? null : _submitForm,
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  backgroundColor: AppColors.primary,
+                ),
+                child: _isLoading
+                    ? const CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      )
+                    : const Text(
+                        'Create Endpoint',
+                        style: TextStyle(
+                            fontSize: 24,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold),
+                      ),
               ),
             ],
           ),
