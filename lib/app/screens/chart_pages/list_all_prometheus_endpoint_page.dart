@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:labbi_frontend/app/providers.dart';
 import 'package:labbi_frontend/app/screens/chart_pages/create_prometheus_endpoint_page.dart';
 import 'package:labbi_frontend/app/components/buttons/add_button.dart';
+import 'package:labbi_frontend/app/screens/chart_pages/edit_prometheus_info_page';
 
 class ListAllPrometheusEndpointsPage extends ConsumerStatefulWidget {
   const ListAllPrometheusEndpointsPage({Key? key}) : super(key: key);
@@ -85,7 +86,14 @@ class _ListAllPrometheusEndpointsPageState
                                 IconButton(
                                   icon: Icon(Icons.edit, color: Colors.green),
                                   onPressed: () {
-                                    // Handle edit action
+                                    // Navigate to the EditPrometheusInfoPage when the edit button is clicked
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            EditPrometheusInfoPage(
+                                                endpoint: endpoint),
+                                      ),
+                                    );
                                   },
                                 ),
                                 IconButton(

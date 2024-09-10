@@ -35,6 +35,45 @@ class _ListAllChartsPageState extends ConsumerState<ListAllChartsPage> {
     });
   }
 
+  Future<void> _confirmDeleteChart(BuildContext context, Chart chart) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Delete'),
+          content: Text(
+              'Are you sure you want to delete the chart "${chart.name}"? This action cannot be undone.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirm == true) {
+      try {
+        // Call the deleteChart function from ChartController
+        await ref.read(chartControllerProvider.notifier).deleteChart(chart.id);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text('Chart "${chart.name}" was deleted successfully.')),
+        );
+      } catch (error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to delete chart: $error')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final chartState = ref.watch(chartControllerProvider);
@@ -42,7 +81,7 @@ class _ListAllChartsPageState extends ConsumerState<ListAllChartsPage> {
     var screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-           appBar: AppBar(
+      appBar: AppBar(
         title: const Text('All Charts'),
       ),
       body: chartState.isLoading
@@ -106,7 +145,8 @@ class _ListAllChartsPageState extends ConsumerState<ListAllChartsPage> {
                                       icon: const Icon(Icons.delete,
                                           color: Colors.red),
                                       onPressed: () {
-                                        // Handle delete action
+                                        // Show confirmation dialog before deleting
+                                        _confirmDeleteChart(context, chart);
                                       },
                                     ),
                                   ],
