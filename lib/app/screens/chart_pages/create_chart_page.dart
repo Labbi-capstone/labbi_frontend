@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:labbi_frontend/app/Theme/app_colors.dart';
 import 'package:labbi_frontend/app/models/chart.dart';
 import 'package:labbi_frontend/app/models/prometheus_endpoint.dart';
 import 'package:labbi_frontend/app/models/dashboard.dart';
@@ -81,17 +82,51 @@ class _CreateChartPageState extends ConsumerState<CreateChartPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create New Chart'),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                AppColors.primary,
+                AppColors.secondary,
+              ],
+              begin: FractionalOffset(0.0, 0.0),
+              end: FractionalOffset(1.0, 0.0),
+              stops: [0.0, 1.0],
+              tileMode: TileMode.clamp,
+            ),
+          ),
+        ),
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text('Create New Chart',style: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),),
+        centerTitle: true,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(24.0),
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextFormField(
-                decoration: const InputDecoration(labelText: 'Chart Name'),
+                decoration: InputDecoration(labelText: 'Chart Name',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: AppColors.primary),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: AppColors.primary),
+                  ),
+                ),
                 onSaved: (value) {
                   _chartName = value;
                 },
@@ -105,7 +140,17 @@ class _CreateChartPageState extends ConsumerState<CreateChartPage> {
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
                 value: _chartType,
-                decoration: const InputDecoration(labelText: 'Chart Type'),
+                decoration: InputDecoration(labelText: 'Chart Type',
+                  labelStyle: const TextStyle(fontWeight: FontWeight.bold,),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: AppColors.primary),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: AppColors.primary),
+                  ),
+                ),
                 items: <String>['line', 'bar', 'pie'].map((String type) {
                   return DropdownMenuItem<String>(
                     value: type,
@@ -130,8 +175,17 @@ class _CreateChartPageState extends ConsumerState<CreateChartPage> {
               prometheusState.isLoading
                   ? const CircularProgressIndicator()
                   : DropdownButtonFormField<String>(
-                      decoration: const InputDecoration(
-                          labelText: 'Prometheus Endpoint'),
+                      decoration: InputDecoration(
+                        labelText: 'Prometheus Endpoint',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: const BorderSide(color: AppColors.primary),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: const BorderSide(color: AppColors.primary),
+                          ),
+                        ),
                       items: prometheusState.endpoints
                           .map((PrometheusEndpoint endpoint) {
                         return DropdownMenuItem<String>(
@@ -158,7 +212,16 @@ class _CreateChartPageState extends ConsumerState<CreateChartPage> {
               dashboardState.isLoading
                   ? const CircularProgressIndicator()
                   : DropdownButtonFormField<String>(
-                      decoration: const InputDecoration(labelText: 'Dashboard'),
+                      decoration: InputDecoration(labelText: 'Dashboard', 
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: const BorderSide(color: AppColors.primary),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: const BorderSide(color: AppColors.primary),
+                        ),
+                      ),
                       items:
                           dashboardState.dashboards.map((Dashboard dashboard) {
                         return DropdownMenuItem<String>(
@@ -183,7 +246,12 @@ class _CreateChartPageState extends ConsumerState<CreateChartPage> {
               Center(
                 child: ElevatedButton(
                   onPressed: _submitForm,
-                  child: const Text('Create Chart'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:AppColors.secondary,
+                  ),
+                  child: const Text('Create Chart',
+                    style: TextStyle( color: Colors.white)
+                  ),
                 ),
               ),
             ],
