@@ -35,8 +35,8 @@ class _EditUserInfoPageState extends ConsumerState<EditUserInfoPage> {
               _selectedRole, // passing the selected role to the update method
             );
 
-        // After a successful update, navigate back to the previous screen
-        Navigator.pop(context);
+        // Return true to indicate the user was updated successfully
+        Navigator.pop(context, true);
       } catch (e) {
         print('Error updating user info: $e');
         ScaffoldMessenger.of(context).showSnackBar(
@@ -45,6 +45,7 @@ class _EditUserInfoPageState extends ConsumerState<EditUserInfoPage> {
       }
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

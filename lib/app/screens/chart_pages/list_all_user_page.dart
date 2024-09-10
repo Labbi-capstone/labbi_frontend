@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:labbi_frontend/app/controllers/org_controller.dart';
 import 'package:labbi_frontend/app/models/user.dart';
 import 'package:labbi_frontend/app/controllers/user_controller.dart';
 import 'package:labbi_frontend/app/providers.dart';
-import 'package:labbi_frontend/app/screens/admin_system/edit_user_info_page.dart';
+import 'package:labbi_frontend/app/screens/chart_pages/edit_user_info_page.dart';
 import '../../components/pagination.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart'; // Import MenuTaskbar
@@ -21,7 +22,7 @@ class _ListAllUserPageState extends ConsumerState<ListAllUserPage> {
   @override
   void initState() {
     super.initState();
-    // Delay the fetch to ensure it's after the widget tree has built
+    // Fetch the user data when the page is first built
     Future.microtask(() {
       ref.read(userControllerProvider.notifier).fetchAllUsers();
     });
@@ -62,19 +63,83 @@ class _ListAllUserPageState extends ConsumerState<ListAllUserPage> {
     });
   }
 
-  void _onUpdate(User user) {
-    Navigator.push(
+  Future<void> _onUpdate(User user) async {
+    // Navigate to the EditUserInfoPage and wait for the result
+    final updated = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => EditUserInfoPage(userId: user.id), // Pass user ID
       ),
     );
+
+    // If the user was updated (returned true), fetch the updated user list
+    if (updated == true) {
+      ref.read(userControllerProvider.notifier).fetchAllUsers();
+    }
   }
 
-  void _onDelete(User user) {
-    // Handle delete action here
-    print('Delete user: ${user.fullName}');
+  void _onDelete(User user) async {
+    // Ask for confirmation before deleting the user
+    final confirmation = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Delete'),
+          content: Text(
+              'Are you sure you want to delete ${user.fullName}? This action cannot be undone.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmation == true) {
+      try {
+        // Fetch the organization ID dynamically
+        final orgController = ref.read(orgControllerProvider.notifier);
+        final userController = ref.read(userControllerProvider.notifier);
+
+        // Fetch organizations for the user
+        await orgController.fetchOrganizationsByUserId(user.id);
+        final orgState = ref.read(orgControllerProvider);
+
+        // Check if the user is in any organizations
+        if (orgState.organizationList.isEmpty) {
+          throw Exception('No organization found for this user.');
+        }
+
+        // Get the first organization ID where the user belongs (you can customize this if needed)
+        final orgId = orgState.organizationList.first.id;
+
+        // Remove user from the organization
+        await orgController.removeUserFromOrg(orgId, user.id);
+
+        // Then call the UserController to delete the user from the database
+        await userController.deleteUser(user.id);
+
+        // Fetch the updated list of users after deletion
+        userController.fetchAllUsers();
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${user.fullName} was deleted successfully.')),
+        );
+      } catch (error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to delete user: $error')),
+        );
+      }
+    }
   }
+
+
 
   @override
   Widget build(BuildContext context) {

@@ -175,6 +175,43 @@ class OrgController extends StateNotifier<OrgState> {
       setLoading(false);
     }
   }
+Future<void> removeUserFromOrg(String orgId, String userId) async {
+    state = state.copyWith(isLoading: true);
+    try {
+      final apiUrl =
+          kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
+      // Ensure you're passing the actual orgId and userId
+      final url = Uri.parse('$apiUrl/organizations/$orgId/removeUser/$userId');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      if (token == null) {
+        throw Exception('User token not found. Please login again.');
+      }
+
+      final response = await http.delete(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        debugPrint('User removed from organization successfully');
+      } else {
+        throw Exception(
+            'Failed to remove user from organization: ${response.body}');
+      }
+
+      state = state.copyWith(isLoading: false);
+    } catch (e) {
+      state = state.copyWith(errorMessage: e.toString(), isLoading: false);
+      debugPrint("Error removing user from organization: $e");
+    }
+  }
+
+
 
   void setLoading(bool loading) {
     state = state.copyWith(isLoading: loading);
