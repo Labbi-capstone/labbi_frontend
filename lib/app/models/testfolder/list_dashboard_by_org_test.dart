@@ -112,32 +112,45 @@ class _ListDashboardByOrgTestPageState
                 final dashboard = dashboards[index];
                 final charts = chartsByDashboard[dashboard.id] ?? [];
 
-                return ExpansionTile(
-                  title: Text(dashboard.name),
-                  children: charts.map((chart) {
-                    return ListTile(
-                      title: Text(chart.name),
-                      subtitle: StreamBuilder(
-                        stream: _webSocketServiceTest
-                            .connect(chart.id, chart.prometheusEndpointId,
-                                chart.chartType)
-                            .stream,
-                        builder: (context, AsyncSnapshot snapshot) {
-                          if (snapshot.hasData) {
-                            final String? rawData = snapshot.data as String?;
-                            if (rawData != null) {
-                              final chartData = jsonDecode(rawData);
-                              return Text("Chart Data: ${chartData['data']}");
-                            } else {
-                              return Text("No data available");
-                            }
-                          } else {
-                            return Text("Loading data...");
-                          }
-                        },
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      dashboard.name,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),
-                    );
-                  }).toList(),
+                    ),
+                    Column(
+                      children: charts.map((chart) {
+                        return ListTile(
+                          title: Text(chart.name),
+                          subtitle: StreamBuilder(
+                            stream: _webSocketServiceTest
+                                .connect(chart.id, chart.prometheusEndpointId,
+                                    chart.chartType)
+                                .stream,
+                            builder: (context, AsyncSnapshot snapshot) {
+                              if (snapshot.hasData) {
+                                final String? rawData =
+                                    snapshot.data as String?;
+                                if (rawData != null) {
+                                  final chartData = jsonDecode(rawData);
+                                  return Text(
+                                      "Chart Data: ${chartData['data']}");
+                                } else {
+                                  return Text("No data available");
+                                }
+                              } else {
+                                return Text("Loading data...");
+                              }
+                            },
+                          ),
+                        );
+                      }).toList(),
+                    )
+                  ],
                 );
               },
             ),
