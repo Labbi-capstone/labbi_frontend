@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:labbi_frontend/app/routes.dart';
 import 'package:labbi_frontend/app/screens/admin_org/admin_org_home_page.dart';
-import 'package:labbi_frontend/app/screens/admin_system/list_all_user_page.dart';
+import 'package:labbi_frontend/app/screens/chart_pages/list_all_user_page.dart';
 import 'package:labbi_frontend/app/screens/admin_system/list_org_page.dart';
 import 'package:labbi_frontend/app/screens/chart_pages/list_all_charts_page.dart';
 import 'package:labbi_frontend/app/screens/chart_pages/list_all_dashboard.dart';
@@ -61,6 +61,11 @@ final List<MenuItemModel> adminMenuItems = [
     label: 'Notification',
     route: const NotificationPage(),
   ),
+   MenuItemModel(
+    icon: Icons.dashboard_outlined,
+    label: 'User management',
+    route: const ListAllUserPage(),
+  ),
   MenuItemModel(
     icon: Icons.dashboard_outlined,
     label: 'Dashboards management', 
@@ -75,11 +80,6 @@ final List<MenuItemModel> adminMenuItems = [
     icon: Icons.dashboard_outlined,
     label: 'Prometheus Endpoint management',
     route: const ListAllPrometheusEndpointsPage(),
-  ),
-  MenuItemModel(
-    icon: Icons.dashboard_outlined,
-    label: 'User management',
-    route: const ListAllUserPage(),
   ),
 ];
 

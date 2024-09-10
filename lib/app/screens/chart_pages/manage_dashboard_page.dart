@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:labbi_frontend/app/controllers/dashboard_controller.dart';
+import 'package:labbi_frontend/app/models/dashboard.dart';
 import 'package:labbi_frontend/app/providers.dart';
+import 'package:labbi_frontend/app/screens/chart_pages/edit_dashboard_info_page.dart';
 
 class ManageDashboardPage extends ConsumerWidget {
   const ManageDashboardPage({Key? key}) : super(key: key);
@@ -31,7 +33,6 @@ class ManageDashboardPage extends ConsumerWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text('Dashboard ID: ${dashboard.id}'),
-                            
                             // Add more information if necessary
                           ],
                         ),
@@ -41,7 +42,14 @@ class ManageDashboardPage extends ConsumerWidget {
                             IconButton(
                               icon: const Icon(Icons.edit, color: Colors.green),
                               onPressed: () {
-                                // Handle editing the dashboard
+                                // Navigate to the EditDashboardPage when the edit button is clicked
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => EditDashboardInfoPage(
+                                      dashboard: dashboard,
+                                    ),
+                                  ),
+                                );
                               },
                             ),
                             IconButton(
@@ -59,4 +67,3 @@ class ManageDashboardPage extends ConsumerWidget {
     );
   }
 }
-

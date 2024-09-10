@@ -74,15 +74,19 @@ class DashboardController extends StateNotifier<DashboardState> {
   }
 
 // Update a specific dashboard
+  // Update a specific dashboard
   Future<void> updateDashboard(
       String id, Map<String, dynamic> dashboardData) async {
     try {
       final apiUrl =
           kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
       final response = await http.put(
         Uri.parse("$apiUrl/dashboards/$id"),
         headers: {
           'Content-Type': 'application/json',
+          "Authorization": "Bearer $token",
         },
         body: jsonEncode(dashboardData),
       );
