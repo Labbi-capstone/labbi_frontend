@@ -98,6 +98,7 @@ class PrometheusController extends StateNotifier<PrometheusState> {
   }
 
   // Update a Prometheus endpoint by ID
+  // Update a Prometheus endpoint by ID
   Future<void> updateEndpoint(
       String id, String name, String baseUrl, String path, String query) async {
     state = state.copyWith(isLoading: true);

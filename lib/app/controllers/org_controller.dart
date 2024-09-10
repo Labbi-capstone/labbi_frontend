@@ -80,13 +80,13 @@ class OrgController extends StateNotifier<OrgState> {
           kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
-      String? role = prefs.getString('userRole');
+      print("Token: $token");
 
-      if (token == null || role == null) {
-        debugPrint('[MY_APP] User token or role not found.');
+      if (token == null) {
+        debugPrint('[MY_APP] User token not found.');
         setLoading(false);
         state = state.copyWith(
-            errorMessage: 'User token or role not found. Please login again.');
+            errorMessage: 'User token not found. Please login again.');
         return;
       }
 
@@ -97,7 +97,6 @@ class OrgController extends StateNotifier<OrgState> {
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token",
-          "Role": role,
         },
       );
 
