@@ -116,7 +116,6 @@ class DashboardController extends StateNotifier<DashboardState> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        debugPrint(response.body);
         // Ensure 'data' is in the correct format and contains a list
         final List<dynamic> dashboardsJson = data;
 

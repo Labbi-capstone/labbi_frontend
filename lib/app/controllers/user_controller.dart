@@ -242,9 +242,6 @@ class UserController extends StateNotifier<UserState> {
         "Role": role,
       });
 
-      debugPrint("Response status: ${response.statusCode}");
-      debugPrint("Response body: ${response.body}");
-
       if (response.statusCode == 200) {
         final List<dynamic> usersJson = jsonDecode(response.body)['users'];
         final List<User> users = usersJson.map((userJson) {

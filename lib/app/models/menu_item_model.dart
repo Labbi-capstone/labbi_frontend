@@ -51,16 +51,16 @@ final List<MenuItemModel> adminMenuItems = [
   //   label: 'Dashboard',
   //   route: const DashboardPage(),
   // ),
-  MenuItemModel(
-    icon: Icons.control_camera_outlined,
-    label: 'Control Panel',
-    route: const ControlPanelPage(),
-  ),
-  MenuItemModel(
-    icon: Icons.notifications_active_outlined,
-    label: 'Notification',
-    route: const NotificationPage(),
-  ),
+  // MenuItemModel(
+  //   icon: Icons.control_camera_outlined,
+  //   label: 'Control Panel',
+  //   route: const ControlPanelPage(),
+  // ),
+  // MenuItemModel(
+  //   icon: Icons.notifications_active_outlined,
+  //   label: 'Notification',
+  //   route: const NotificationPage(),
+  // ),
    MenuItemModel(
     icon: Icons.dashboard_outlined,
     label: 'User management',

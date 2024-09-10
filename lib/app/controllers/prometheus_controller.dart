@@ -37,10 +37,6 @@ class PrometheusController extends StateNotifier<PrometheusState> {
         "Authorization": "Bearer $token",
       });
 
-      // Debugging: Check response status and body
-      debugPrint('Response Status: ${response.statusCode}');
-      debugPrint('Response Body: ${response.body}');
-
       if (response.statusCode == 200) {
         final List<dynamic> endpointsJson = jsonDecode(response.body);
         final List<PrometheusEndpoint> endpoints =

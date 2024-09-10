@@ -25,8 +25,6 @@ class ChartController extends StateNotifier<ChartState> {
           kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
       final response = await http.get(Uri.parse("$apiUrl/charts/"));
 
-      debugPrint('API Response: ${response.body}'); // Debug the response
-
       if (response.statusCode == 200) {
         List<dynamic> data = jsonDecode(response.body);
         List<Chart> charts = data.map((json) => Chart.fromJson(json)).toList();
@@ -51,23 +49,37 @@ class ChartController extends StateNotifier<ChartState> {
     try {
       final apiUrl =
           kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
+
+      // Debug: log the API URL and the chart data being sent
+      print('API URL: $apiUrl/charts/create');
+      print('Chart data being sent: ${chart.toJson()}');
+
       final response = await http.post(
         Uri.parse("$apiUrl/charts/create"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(chart.toJson()),
       );
 
+      // Debug: log the response status code and body
+      print('Response status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
       if (response.statusCode == 201) {
+        print('Chart created successfully!');
         await fetchCharts(); // Fetch updated chart list
       } else {
+        print('Failed to create chart. Status code: ${response.statusCode}');
         throw Exception('Failed to create chart');
       }
     } catch (e) {
+      // Debug: log the error message
+      print('Error occurred while creating chart: $e');
       state = state.copyWith(
         error: e.toString(),
       );
     }
   }
+
 
   // Get chart by ID
   Future<Chart?> getChartById(String id) async {

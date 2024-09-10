@@ -4,6 +4,7 @@ import 'package:labbi_frontend/app/components/buttons/add_button.dart';
 import 'package:labbi_frontend/app/models/chart.dart';
 import 'package:labbi_frontend/app/providers.dart';
 import 'package:labbi_frontend/app/screens/chart_pages/create_chart_page.dart';
+import 'package:labbi_frontend/app/screens/chart_pages/edit_chart_info_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ListAllChartsPage extends ConsumerStatefulWidget {
@@ -41,7 +42,7 @@ class _ListAllChartsPageState extends ConsumerState<ListAllChartsPage> {
     var screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      appBar: AppBar(
+           appBar: AppBar(
         title: const Text('All Charts'),
       ),
       body: chartState.isLoading
@@ -87,20 +88,27 @@ class _ListAllChartsPageState extends ConsumerState<ListAllChartsPage> {
                                 Row(
                                   children: [
                                     IconButton(
-                                      icon:
-                                          Icon(Icons.edit, color: Colors.green),
+                                      icon: const Icon(Icons.edit,
+                                          color: Colors.green),
                                       onPressed: () {
-                                        // Handle edit action
+                                        // Navigate to EditChartInfoPage
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                EditChartInfoPage(
+                                              chart: chart,
+                                            ),
+                                          ),
+                                        );
                                       },
                                     ),
                                     IconButton(
-                                      icon:
-                                          Icon(Icons.delete, color: Colors.red),
+                                      icon: const Icon(Icons.delete,
+                                          color: Colors.red),
                                       onPressed: () {
                                         // Handle delete action
                                       },
                                     ),
-
                                   ],
                                 ),
                               ],
