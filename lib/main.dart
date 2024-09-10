@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:labbi_frontend/app/routes.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:labbi_frontend/app/screens/admin_system/list_all_user_page.dart';
+import 'package:labbi_frontend/app/screens/chart_pages/list_all_user_page.dart';
 import 'package:labbi_frontend/app/screens/admin_system/list_org_page.dart';
 import 'package:labbi_frontend/app/screens/admin_system/user_list_in_org_page.dart';
 import 'package:labbi_frontend/app/screens/authentication/login_page.dart';
@@ -55,7 +55,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final wsApiUrl = kIsWeb
         ? dotenv.env['WS_API_URL_LOCAL']
-        : dotenv.env['WS_API_URL_EMULATOR'];
+        : dotenv.env['WS_API_URL_PHYSICAL'];
     // Create a WebSocketChannel for the ChartTestScreen
     final WebSocketChannel channel = WebSocketChannel.connect(
       Uri.parse('$wsApiUrl'),

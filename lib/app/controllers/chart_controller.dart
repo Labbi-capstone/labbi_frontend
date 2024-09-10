@@ -3,6 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:labbi_frontend/app/services/chart_timer_service.dart';
 import 'package:labbi_frontend/app/services/websocket_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/chart.dart';
 import '../state/chart_state.dart';
 import 'dart:convert';
@@ -48,18 +49,31 @@ class ChartController extends StateNotifier<ChartState> {
     try {
       final apiUrl =
           kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
+
+      // Debug: log the API URL and the chart data being sent
+      print('API URL: $apiUrl/charts/create');
+      print('Chart data being sent: ${chart.toJson()}');
+
       final response = await http.post(
         Uri.parse("$apiUrl/charts/create"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(chart.toJson()),
       );
 
+      // Debug: log the response status code and body
+      print('Response status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
       if (response.statusCode == 201) {
+        print('Chart created successfully!');
         await fetchCharts(); // Fetch updated chart list
       } else {
+        print('Failed to create chart. Status code: ${response.statusCode}');
         throw Exception('Failed to create chart');
       }
     } catch (e) {
+      // Debug: log the error message
+      print('Error occurred while creating chart: $e');
       state = state.copyWith(
         error: e.toString(),
       );
@@ -85,6 +99,7 @@ class ChartController extends StateNotifier<ChartState> {
       return null;
     }
   }
+
   // Fetch charts by dashboard ID and update state
   Future<void> fetchChartsForDashboard(String dashboardId) async {
     state = state.copyWith(isLoading: true);
@@ -117,6 +132,7 @@ class ChartController extends StateNotifier<ChartState> {
       state = state.copyWith(error: e.toString(), isLoading: false);
     }
   }
+
   // Update a chart by ID
   Future<void> updateChart(String id, Chart chart) async {
     try {
@@ -141,26 +157,46 @@ class ChartController extends StateNotifier<ChartState> {
   }
 
   // Delete a chart by ID
-  Future<void> deleteChart(String id) async {
+  Future<void> deleteChart(String chartId) async {
     try {
       final apiUrl =
           kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
-      final response = await http.delete(Uri.parse("$apiUrl/charts/$id"));
 
-      if (response.statusCode == 200) {
-        await fetchCharts(); // Fetch updated chart list
-      } else {
-        throw Exception('Failed to delete chart');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      if (token == null) {
+        throw Exception('User token not found.');
       }
-    } catch (e) {
-      state = state.copyWith(
-        error: e.toString(),
+
+      // API call to delete the chart by its ID
+      final deleteChartUrl = Uri.parse("$apiUrl/charts/$chartId");
+      final deleteChartResponse = await http.delete(
+        deleteChartUrl,
+        headers: {
+          'Content-Type': 'application/json',
+          "Authorization": "Bearer $token",
+        },
       );
+
+      if (deleteChartResponse.statusCode == 200) {
+        // Successfully deleted the chart, fetch updated chart list
+        await fetchCharts();
+        state = state.copyWith(
+          message: "Chart deleted successfully.", // Now this works
+          isLoading: false,
+        );
+      } else {
+        throw Exception(
+            'Failed to delete chart. Status: ${deleteChartResponse.statusCode}');
+      }
+    } catch (error) {
+      state = state.copyWith(error: error.toString(), isLoading: false);
     }
   }
 
   // Get charts by Dashboard ID
- Future<void> getChartsByDashboardId(String dashboardId) async {
+  Future<void> getChartsByDashboardId(String dashboardId) async {
     state = state.copyWith(isLoading: true);
     try {
       final apiUrl =
@@ -179,8 +215,6 @@ class ChartController extends StateNotifier<ChartState> {
       state = state.copyWith(error: e.toString(), isLoading: false);
     }
   }
-
-
 
   // Get charts by Organization ID
   Future<void> getChartsByOrganizationId(String organizationId) async {

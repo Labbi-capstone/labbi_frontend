@@ -1,0 +1,125 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:labbi_frontend/app/models/prometheus_endpoint.dart';
+import 'package:labbi_frontend/app/providers.dart';
+
+class EditPrometheusInfoPage extends ConsumerStatefulWidget {
+  final PrometheusEndpoint endpoint;
+
+  const EditPrometheusInfoPage({Key? key, required this.endpoint})
+      : super(key: key);
+
+  @override
+  _EditPrometheusInfoPageState createState() => _EditPrometheusInfoPageState();
+}
+
+class _EditPrometheusInfoPageState extends ConsumerState<EditPrometheusInfoPage> {
+  late TextEditingController _nameController;
+  late TextEditingController _baseUrlController;
+  late TextEditingController _pathController;
+  late TextEditingController _queryController;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize text controllers with the existing endpoint values
+    _nameController = TextEditingController(text: widget.endpoint.name);
+    _baseUrlController = TextEditingController(text: widget.endpoint.baseUrl);
+    _pathController = TextEditingController(text: widget.endpoint.path);
+    _queryController = TextEditingController(text: widget.endpoint.query);
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _baseUrlController.dispose();
+    _pathController.dispose();
+    _queryController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _updateEndpoint() async {
+    // Create the updated PrometheusEndpoint object
+    final updatedEndpoint = PrometheusEndpoint(
+      id: widget.endpoint.id, // Keep the original ID
+      name: _nameController.text.trim(),
+      baseUrl: _baseUrlController.text.trim(),
+      path: _pathController.text.trim(),
+      query: _queryController.text.trim(),
+      // Add additional field processing if necessary
+    );
+
+    // Call the API to update the endpoint
+    await ref.read(prometheusControllerProvider.notifier).updateEndpoint(
+          updatedEndpoint.id,
+          updatedEndpoint.name,
+          updatedEndpoint.baseUrl,
+          updatedEndpoint.path,
+          updatedEndpoint.query,
+        );
+
+    // Navigate back or show a success message
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Prometheus endpoint updated successfully!')),
+    );
+    Navigator.pop(context); // Return to the previous page
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final prometheusState = ref.watch(prometheusControllerProvider);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Edit Prometheus Endpoint'),
+      ),
+      body: prometheusState.isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: _nameController,
+                      decoration: const InputDecoration(
+                        labelText: 'Endpoint Name',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: _baseUrlController,
+                      decoration: const InputDecoration(
+                        labelText: 'Base URL',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: _pathController,
+                      decoration: const InputDecoration(
+                        labelText: 'Path',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: _queryController,
+                      decoration: const InputDecoration(
+                        labelText: 'Query',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    ElevatedButton(
+                      onPressed: _updateEndpoint,
+                      child: const Text('Update Endpoint'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+    );
+  }
+}

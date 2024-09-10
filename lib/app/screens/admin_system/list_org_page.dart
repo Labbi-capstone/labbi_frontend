@@ -5,11 +5,10 @@ import 'package:labbi_frontend/app/components/org_search_bar.dart';
 import 'package:labbi_frontend/app/controllers/org_controller.dart';
 import 'package:labbi_frontend/app/components/org_container.dart';
 import 'package:labbi_frontend/app/components/buttons/add_button.dart';
+import 'package:labbi_frontend/app/screens/admin_org/admin_org_home_page.dart';
 import 'package:labbi_frontend/app/screens/admin_system/create_org_page.dart';
-import 'package:labbi_frontend/app/screens/admin_system/user_list_in_org_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart';
-import 'package:labbi_frontend/app/screens/admin_org/admin_org_home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ListOrgPage extends ConsumerStatefulWidget {
@@ -21,6 +20,7 @@ class ListOrgPage extends ConsumerStatefulWidget {
 
 class _ListOrgPageState extends ConsumerState<ListOrgPage> {
   String searchKeyWord = '';
+  String? userRole; // To store the user role
 
   @override
   void initState() {
@@ -32,10 +32,13 @@ class _ListOrgPageState extends ConsumerState<ListOrgPage> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
 
       // Retrieve user role and user ID from SharedPreferences
-      String? userRole = prefs.getString('userRole');
+      userRole = prefs.getString('userRole');
       String? userId = prefs.getString('userId');
 
       if (userRole == 'admin') {
+        // If the user is an admin, fetch all organizations
+        orgController.fetchOrganizations();
+      } else if (userRole == 'developer' && userId != null) {
         // If the user is an admin, fetch all organizations
         orgController.fetchOrganizations();
       } else if (userRole == 'user' && userId != null) {
@@ -101,59 +104,68 @@ class _ListOrgPageState extends ConsumerState<ListOrgPage> {
           ? const Center(child: CircularProgressIndicator())
           : errorMessage != null
               ? Center(child: Text(errorMessage))
-              : Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        AppColors.primary,
-                        AppColors.secondary,
-                      ],
-                      begin: FractionalOffset(0.0, 0.0),
-                      end: FractionalOffset(1.0, 0.0),
-                      stops: [0.0, 1.0],
-                      tileMode: TileMode.clamp,
-                    ),
-                  ),
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    alignment: Alignment.topCenter,
-                    children: [
-                      SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            OrgSearchBar(callback: updateSearchKey),
-                            ...organizationList
-                                .where((org) => org.name
-                                    .toLowerCase()
-                                    .contains(searchKeyWord.toLowerCase()))
-                                .map((org) => Padding(
-                                      padding: EdgeInsets.only(
-                                          bottom: screenHeight / 35),
-                                      child: OrgContainer(
-                                        organization: org,
-                                        onTap: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  AdminOrgHomePage(
-                                                orgId: org.id,
-                                              ), // Navigate to OrgPage
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    )),
+              : LayoutBuilder(
+                  builder: (context, constraints) {
+                    return Container(
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            AppColors.primary,
+                            AppColors.secondary,
                           ],
+                          begin: FractionalOffset(0.0, 0.0),
+                          end: FractionalOffset(1.0, 0.0),
+                          stops: [0.0, 1.0],
+                          tileMode: TileMode.clamp,
                         ),
                       ),
-                      AddButton(
-                        screenHeight: screenHeight,
-                        screenWidth: screenWidth,
-                        pageToNavigate: const CreateOrgPage(),
+                      child: Column(
+                        children: [
+                          // Search bar
+                          OrgSearchBar(callback: updateSearchKey),
+
+                          // Organization list
+                          Expanded(
+                            child: SingleChildScrollView(
+                              child: Column(
+                                children: organizationList
+                                    .where((org) => org.name
+                                        .toLowerCase()
+                                        .contains(searchKeyWord.toLowerCase()))
+                                    .map((org) => Padding(
+                                          padding: EdgeInsets.only(
+                                              bottom: screenHeight / 35),
+                                          child: OrgContainer(
+                                            organization: org,
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      AdminOrgHomePage(
+                                                    orgId: org.id,
+                                                  ), // Navigate to OrgPage
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ))
+                                    .toList(),
+                              ),
+                            ),
+                          ),
+
+                          // Conditionally display the AddButton if userRole is 'admin'
+                          if (userRole == 'admin')
+                            AddButton(
+                              screenHeight: screenHeight,
+                              screenWidth: screenWidth,
+                              pageToNavigate: const CreateOrgPage(),
+                            ),
+                        ],
                       ),
-                    ],
-                  ),
+                    );
+                  },
                 ),
     );
   }

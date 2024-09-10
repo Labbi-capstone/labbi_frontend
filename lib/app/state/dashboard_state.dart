@@ -9,11 +9,13 @@ final List<Dashboard> initialDashboards = [];
 class DashboardState {
   final List<Dashboard> dashboards;
   final bool isLoading;
+  final String? message;
   final String? errorMessage;
 
   DashboardState({
     this.dashboards = const [],
     this.isLoading = false,
+    this.message,
     this.errorMessage,
   });
 
@@ -21,11 +23,13 @@ class DashboardState {
   DashboardState copyWith({
     List<Dashboard>? dashboards,
     bool? isLoading,
+    String? message,
     String? errorMessage,
   }) {
     return DashboardState(
       dashboards: dashboards ?? this.dashboards,
       isLoading: isLoading ?? this.isLoading,
+      message: message ?? this.message,
       errorMessage: errorMessage ?? this.errorMessage,
     );
   }

@@ -28,6 +28,7 @@ class _UserListInOrgPageState extends ConsumerState<UserListInOrgPage> {
       ref.read(userControllerProvider.notifier).fetchUsersByOrg(widget.orgId);
     });
   }
+
   List<User> _getPaginatedUsers(List<User> usersInOrg) {
     final startIndex = (_currentPage - 1) * _usersPerPage;
 
@@ -66,6 +67,8 @@ class _UserListInOrgPageState extends ConsumerState<UserListInOrgPage> {
   @override
   Widget build(BuildContext context) {
     final userState = ref.watch(userControllerProvider); // Accessing UserState
+    final userInfo =
+        ref.watch(userInfoProvider); // Access SharedPreferences data
 
     var screenWidth = MediaQuery.of(context).size.width;
     var screenHeight = MediaQuery.of(context).size.height;
@@ -87,7 +90,8 @@ class _UserListInOrgPageState extends ConsumerState<UserListInOrgPage> {
           ),
         ],
       ),
-      body: userState.usersInOrg.isEmpty // Access the 'users' list inside UserState
+      body: userState
+              .usersInOrg.isEmpty // Access the 'users' list inside UserState
           ? Center(child: Text('No users found for this organization.'))
           : Padding(
               padding: EdgeInsets.all(16.0),
@@ -162,10 +166,23 @@ class _UserListInOrgPageState extends ConsumerState<UserListInOrgPage> {
                 ],
               ),
             ),
-      floatingActionButton: AddButton(
-        screenHeight: screenHeight,
-        screenWidth: screenWidth,
-        pageToNavigate: AddUserToOrgPage(orgId: widget.orgId),
+      // Conditionally render AddButton based on user role
+      floatingActionButton: userInfo.when(
+        data: (userData) {
+          if (userData['userRole'] == 'admin') {
+            return AddButton(
+              screenHeight: screenHeight,
+              screenWidth: screenWidth,
+              pageToNavigate: AddUserToOrgPage(orgId: widget.orgId),
+            );
+          } else {
+            return SizedBox.shrink(); // Return an empty widget if not admin
+          }
+        },
+        loading: () =>
+            CircularProgressIndicator(), // Show loading state while fetching user data
+        error: (err, stack) =>
+            SizedBox.shrink(), // Handle error state if needed
       ),
     );
   }
