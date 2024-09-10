@@ -1,14 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/Theme/app_colors.dart';
-import 'package:labbi_frontend/app/components/list_box.dart';
-import 'package:labbi_frontend/app/components/buttons/menu_button.dart';
-import 'package:labbi_frontend/app/screens/admin_org/admin_org_device_details.dart';
-import 'package:labbi_frontend/app/screens/admin_org/admin_org_users.dart';
-import 'package:labbi_frontend/app/screens/admin_org/admin_org_history.dart';
-import 'package:labbi_frontend/app/screens/admin_system/dashboard_list_in_org_page.dart';
 import 'package:labbi_frontend/app/screens/admin_system/user_list_in_org_page.dart';
 import 'package:labbi_frontend/app/screens/chart_pages/list_dashboard_by_org.dart';
-import 'package:labbi_frontend/app/mockDatas/user_device_test.dart';
+import 'package:labbi_frontend/app/screens/admin_org/admin_org_users.dart';
 
 class AdminOrgHomePage extends StatefulWidget {
   final String orgId;
@@ -22,25 +16,25 @@ class _AdminOrgHomePageState extends State<AdminOrgHomePage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
-  // Fetch the list of user devices
-  List<UserDevice> deviceList = getUserDevices();
-
   @override
   void initState() {
     super.initState();
+    debugPrint(
+        "[MY_APP] Initializing AdminOrgHomePage with orgId: ${widget.orgId}");
     _tabController = TabController(length: 2, vsync: this);
   }
 
   @override
   void dispose() {
+    debugPrint("[MY_APP] Disposing AdminOrgHomePage...");
     _tabController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    dynamic screenHeight = MediaQuery.of(context).size.height;
-    dynamic screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       appBar: AppBar(
@@ -61,7 +55,7 @@ class _AdminOrgHomePageState extends State<AdminOrgHomePage>
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            Navigator.pop(context); // Pops to the previous page
+            Navigator.pop(context); // Navigate back to the previous page
           },
         ),
         title: SizedBox(
@@ -90,27 +84,11 @@ class _AdminOrgHomePageState extends State<AdminOrgHomePage>
             ),
           ],
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.history, color: Colors.white),
-            tooltip: 'History',
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      const AdminOrgDeviceHistoryPage(orgId: ''),
-                ),
-              );
-            },
-          ),
-        ],
       ),
-      // Removed the drawer, replaced with normal navigation button
       body: TabBarView(
         controller: _tabController,
         children: [
-          // tab "Dashboards"
+          // Dashboards Tab
           Container(
             width: screenWidth,
             height: screenHeight,
@@ -145,20 +123,13 @@ class _AdminOrgHomePageState extends State<AdminOrgHomePage>
                   ),
                   const Divider(color: Colors.white),
                   Expanded(
-                      child: Container(
-                          width: screenWidth,
-                          height: screenHeight,
-                          child: Container(
-                              width: screenWidth,
-                              height: screenHeight,
-                              child: ListDashboardByOrgPage(
-                                orgId: widget.orgId,
-                              )))),
+                    child: ListDashboardByOrgPage(orgId: widget.orgId),
+                  ),
                 ],
               ),
             ),
           ),
-          // tab "Users"
+          // Users Tab
           Container(
             width: screenWidth,
             height: screenHeight,
@@ -193,10 +164,8 @@ class _AdminOrgHomePageState extends State<AdminOrgHomePage>
                   ),
                   const Divider(color: Colors.white),
                   Expanded(
-                      child: Container(
-                          width: screenWidth,
-                          height: screenHeight,
-                          child: UserListInOrgPage(orgId: widget.orgId))),
+                    child: UserListInOrgPage(orgId: widget.orgId),
+                  ),
                 ],
               ),
             ),

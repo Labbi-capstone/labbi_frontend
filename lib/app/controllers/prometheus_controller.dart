@@ -26,7 +26,6 @@ class PrometheusController extends StateNotifier<PrometheusState> {
 
       // Debugging: Check the API URL and Token
       debugPrint('API URL: $apiUrl');
-      debugPrint('Token: $token');
 
       if (token == null) {
         throw Exception('Token not found. Please login again.');
