@@ -8,6 +8,8 @@ class Routes {
   static const String userOrgHomePage = '/UserOrgHomePage';
   static const String userProfilePage = '/userProfilePage';
   static const String editUserProfilePage = '/editUserProfilePage';
+  static const String changePassword = '/changePasswordPage';
+  static const String changePasswordSuccessfully = '/changePasswordSuccessfullyPage';
   static const String notificationPage = '/notificationPage';
   static const String menuTaskbar = '/menuTaskbar';
   static const String adminOrgHomePage = '/adminOrgHomePage';

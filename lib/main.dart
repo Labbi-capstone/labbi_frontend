@@ -12,6 +12,7 @@ import 'package:labbi_frontend/app/screens/chart_pages/list_all_dashboard.dart';
 import 'package:labbi_frontend/app/screens/dashboard_page/dashboard_page.dart';
 import 'package:labbi_frontend/app/screens/chart_pages/list_all_charts_page.dart';
 import 'package:labbi_frontend/app/screens/user_org/user_org_device_detail_page.dart';
+import 'package:labbi_frontend/app/screens/user_profile/change_password/change_password_successfully.dart';
 import 'package:labbi_frontend/app/screens/user_profile/user_profile.dart';
 import 'package:labbi_frontend/app/screens/user_profile/user_edit/edit_user_profile_page.dart';
 import 'package:labbi_frontend/app/screens/notification/notification_page.dart';
@@ -24,6 +25,7 @@ import 'package:labbi_frontend/app/screens/user_org/user_org_home_page.dart';
 import 'package:labbi_frontend/app/screens/admin_system/create_org_page.dart';
 import 'package:labbi_frontend/app/screens/control_panel_page/control_panel_page.dart';
 import 'package:labbi_frontend/app/screens/dashboard_page/create_dashboard_page.dart';
+import 'package:labbi_frontend/app/screens/user_profile/change_password/change_password.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: "assets/.env");
@@ -53,6 +55,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
+    
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       initialRoute: Routes.login,
@@ -62,6 +65,8 @@ class MyApp extends StatelessWidget {
         // Routes.dashboard: (context) => const DashboardPage(),
         Routes.userProfilePage: (context) => const UserProfilePage(),
         Routes.editUserProfilePage: (context) => const EditUserProfilePage(),
+        Routes.changePassword: (context) => const ChangePasswordPage(),
+        Routes.changePasswordSuccessfully: (context) => const ChangePasswordSuccessfullyPage(),
         Routes.notificationPage: (context) => const NotificationPage(),
         Routes.menuTaskbar: (context) => const MenuTaskbar(),
         Routes.adminOrgHomePage: (context) => const AdminOrgHomePage(orgId: ''),
