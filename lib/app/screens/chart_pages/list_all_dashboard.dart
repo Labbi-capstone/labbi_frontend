@@ -96,26 +96,9 @@ class _ListAllDashboardPageState extends State<ListAllDashboardPage> {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("All Dashboards"),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              // Navigate to ManageDashboardPage when icon is clicked
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ManageDashboardPage(),
-                ),
-              );
-            },
-          ),
-        ],
       ),
       body: dashboards.isEmpty
           ? const Center(child: CircularProgressIndicator())
@@ -124,7 +107,6 @@ class _ListAllDashboardPageState extends State<ListAllDashboardPage> {
               itemBuilder: (context, index) {
                 final dashboard = dashboards[index];
                 final charts = chartsByDashboard[dashboard.id] ?? [];
-
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -161,23 +143,13 @@ class _ListAllDashboardPageState extends State<ListAllDashboardPage> {
                               }
                             },
                           ),
-                        ],
-                      );
-                    },
-                  ),
-          ),
-          // Positioned AddButton to ensure it's always visible
-          Positioned(
-            bottom: screenHeight * 0.02,
-            right: screenWidth * 0.06,
-            child: AddButton(
-              screenHeight: screenHeight,
-              screenWidth: screenWidth,
-              pageToNavigate: const CreateDashboardPage(),
+                        );
+                      }).toList(),
+                    )
+                  ],
+                );
+              },
             ),
-          ),
-        ],
-      ),
     );
   }
 }
