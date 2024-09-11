@@ -45,7 +45,8 @@ class _LineChartComponentState extends State<LineChartComponent> {
     }
   }
 
-  Map<String, List<LineData>> _extractData(Map<String, dynamic> chartRawData, {Map<String, List<LineData>>? existingData}) {
+  Map<String, List<LineData>> _extractData(Map<String, dynamic> chartRawData,
+      {Map<String, List<LineData>>? existingData}) {
     final DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
     final Map<String, List<LineData>> updatedData = existingData ?? {};
 
@@ -55,8 +56,7 @@ class _LineChartComponentState extends State<LineChartComponent> {
 
       final timestamp = valueList[0] as double;
       final formattedTimestamp = dateFormat.format(
-        DateTime.fromMillisecondsSinceEpoch((timestamp * 1000).toInt())
-      );
+          DateTime.fromMillisecondsSinceEpoch((timestamp * 1000).toInt()));
 
       final value = double.tryParse(valueList[1].toString()) ?? 0.0;
       final scaledValue = value * 100000000; // Adjust scale as needed
@@ -91,7 +91,8 @@ class _LineChartComponentState extends State<LineChartComponent> {
       final dataPoints = entry.value;
 
       // Assign a color from the list, cycling if there are more metrics than colors
-      final colorIndex = metricData.keys.toList().indexOf(metricName) % _lineColors.length;
+      final colorIndex =
+          metricData.keys.toList().indexOf(metricName) % _lineColors.length;
       final lineColor = _lineColors[colorIndex];
 
       return LineSeries<LineData, String>(
@@ -107,66 +108,59 @@ class _LineChartComponentState extends State<LineChartComponent> {
     }).toList();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-        ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                width: double.infinity,
-                height: 600,
-                child: SfCartesianChart(
-                  key: ValueKey<DateTime>(DateTime
-                      .now()), // Key for rebuilding the chart when data changes
-                  title: ChartTitle(
-                    text: 'Dynamic Metrics Data Over Time',
-                    textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  legend: Legend(
-                    isVisible: true,
-                    position: LegendPosition.bottom,
-                    isResponsive: true,
-                  ),
-                  series: series,
-                  primaryXAxis: CategoryAxis(
-                    title: AxisTitle(text: 'Time'),
-                    majorGridLines: MajorGridLines(width: 0.5),
-                    majorTickLines: MajorTickLines(width: 0.5),
-                    edgeLabelPlacement: EdgeLabelPlacement.shift,
-                    labelRotation: 45,
-                    labelStyle: TextStyle(fontSize: 10),
-                  ),
-                  primaryYAxis: NumericAxis(
-                    title: AxisTitle(text: 'Value (scaled by 1,000,000,000)'),
-                    majorGridLines: MajorGridLines(width: 0.5),
-                    majorTickLines: MajorTickLines(width: 0.5),
-                    labelFormat: '{value}',
-                    minimum: 0,
-                    maximum: 700000,
-                    interval: 100000,
-                  ),
-                  tooltipBehavior: TooltipBehavior(
-                    enable: true,
-                    canShowMarker: true,
-                    format: 'Time: {point.x}\nValue: {point.y}',
-                  ),
+        body: Column(
+          children: [
+            Expanded(
+              child: SfCartesianChart(
+                key: ValueKey<DateTime>(DateTime
+                    .now()), // Key for rebuilding the chart when data changes
+                title: ChartTitle(
+                  text: 'Dynamic Metrics Data Over Time',
+                  textStyle: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                legend: Legend(
+                  isVisible: true,
+                  position: LegendPosition.bottom,
+                  isResponsive: true,
+                ),
+                series: series,
+                primaryXAxis: CategoryAxis(
+                  title: AxisTitle(text: 'Time'),
+                  majorGridLines: const MajorGridLines(width: 0.5),
+                  majorTickLines: const MajorTickLines(width: 0.5),
+                  edgeLabelPlacement: EdgeLabelPlacement.shift,
+                  labelRotation: 45,
+                  labelStyle: const TextStyle(fontSize: 10),
+                ),
+                primaryYAxis: NumericAxis(
+                  title: AxisTitle(text: 'Value (scaled by 1,000,000,000)'),
+                  majorGridLines: const MajorGridLines(width: 0.5),
+                  majorTickLines: const MajorTickLines(width: 0.5),
+                  labelFormat: '{value}',
+                  minimum: 0,
+                  maximum: 700000,
+                  interval: 100000,
+                ),
+                tooltipBehavior: TooltipBehavior(
+                  enable: true,
+                  canShowMarker: true,
+                  format: 'Time: {point.x}\nValue: {point.y}',
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  'Note: Values are multiplied by 1,000,000,000 for clarity.',
-                  style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
-                ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: const Text(
+                'Note: Values are multiplied by 1,000,000,000 for clarity.',
+                style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

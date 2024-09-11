@@ -25,154 +25,156 @@ class LoginPage extends ConsumerWidget {
         resizeToAvoidBottomInset: true,
         body: SafeArea(
           child: SingleChildScrollView(
-            child: Container(
-              height: screenHeight,
-              width: screenWidth,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    AppColors.primary,
-                    AppColors.secondary,
-                  ],
-                  begin: FractionalOffset(0.0, 0.0),
-                  end: FractionalOffset(1.0, 0.0),
-                  stops: [0.0, 1.0],
-                  tileMode: TileMode.clamp,
-                ),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight:
+                    screenHeight, // Make sure the container at least matches the screen height
               ),
-              child: Center(
-                child: Column(
-                  children: [
-                    const SizedBox(height: 50),
-                    // Company Logo
-                    Image.asset(
-                      'assets/images/company-logo-white.png', // Path to your logo
-                      height: screenHeight *
-                          0.15, // Adjust the size based on your need
-                      width: screenWidth * 0.8,
+              child: IntrinsicHeight(
+                // This will help make content fit within the constraints
+                child: Container(
+                  width: screenWidth,
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        AppColors.primary,
+                        AppColors.secondary,
+                      ],
+                      begin: FractionalOffset(0.0, 0.0),
+                      end: FractionalOffset(1.0, 0.0),
+                      stops: [0.0, 1.0],
+                      tileMode: TileMode.clamp,
                     ),
-
-                    // Sign In text
-
-                    const SizedBox(height: 50),
-                    // Email textfield
-                    MyTextField(
-                      title: 'Email',
-                      controller: authController.emailController,
-                      hintText: 'Email',
-                      obscureText: false,
-                      titleStyle: const TextStyle(
-                          color: Colors.white), // Make label white
-                      hintStyle: const TextStyle(
-                          color: Colors.white), // Make hint text white
-                      errorText:
-                          authState.emptyEmail ? 'Please enter email' : '',
-                    ),
-                    const SizedBox(height: 30),
-                    // Password textfield
-                    MyTextField(
-                      title: 'Password',
-                      controller: authController.passwordController,
-                      hintText: 'Password',
-                      obscureText: true,
-                      titleStyle: const TextStyle(
-                          color: Colors.white), // Make label white
-                      hintStyle: const TextStyle(
-                          color: Colors.white), // Make hint text white
-                      errorText: authState.emptyPassword
-                          ? 'Please enter password'
-                          : '',
-                    ),
-                    const SizedBox(height: 20),
-
-                    // Sign in button
-                    MyButton(
-                      onTap: () {
-                        authController.loginUser(
-                            context, ref); // Pass both context and ref
-                      },
-                      child: Container(
-                        alignment: Alignment.center,
-                        height: 0.085 * screenHeight,
-                        width: 0.75 * screenWidth,
-                        padding: EdgeInsets.symmetric(
-                            horizontal:
-                                screenWidth * 0.05), // Apply padding here
-                        decoration: BoxDecoration(
-                          color: Colors.black,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Text(
-                          'Sign in',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
+                  ),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 50),
+                      // Company Logo
+                      Image.asset(
+                        'assets/images/company-logo-white.png',
+                        height: screenHeight * 0.15,
+                        width: screenWidth * 0.8,
+                        fit: BoxFit.contain,
                       ),
-                    ),
-                    const SizedBox(height: 30),
-                    // Google sign in
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 25),
-                      child: Row(
-                        children: [
-                          SizedBox(width: 40),
-                          Expanded(
-                            child: Divider(
-                              thickness: 2,
-                              color: Color.fromARGB(255, 255, 255, 255),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 10),
-                            child: Text(
-                              "Or",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w900,
-                                  fontSize: 18.0),
-                            ),
-                          ),
-                          Expanded(
-                            child: Divider(
-                              thickness: 2,
-                              color: Color.fromARGB(255, 255, 255, 255),
-                            ),
-                          ),
-                          SizedBox(width: 40),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 30),
 
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text('Don\'t have an account? ',
-                            style: TextStyle(color: Colors.white)),
-                        const SizedBox(width: 4),
-                        MyButton(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const RegisterPage()));
-                          },
+                      const SizedBox(height: 50),
+                      // Email textfield
+                      MyTextField(
+                        title: 'Email',
+                        controller: authController.emailController,
+                        hintText: 'Email',
+                        obscureText: false,
+                        titleStyle: const TextStyle(color: Colors.white),
+                        hintStyle: const TextStyle(color: Colors.white),
+                        errorText:
+                            authState.emptyEmail ? 'Please enter email' : '',
+                      ),
+                      const SizedBox(height: 30),
+                      // Password textfield
+                      MyTextField(
+                        title: 'Password',
+                        controller: authController.passwordController,
+                        hintText: 'Password',
+                        obscureText: true,
+                        titleStyle: const TextStyle(color: Colors.white),
+                        hintStyle: const TextStyle(color: Colors.white),
+                        errorText: authState.emptyPassword
+                            ? 'Please enter password'
+                            : '',
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Sign in button
+                      MyButton(
+                        onTap: () {
+                          authController.loginUser(context, ref);
+                        },
+                        child: Container(
+                          alignment: Alignment.center,
+                          height: 0.085 * screenHeight,
+                          width: 0.75 * screenWidth,
+                          padding: EdgeInsets.symmetric(
+                              horizontal: screenWidth * 0.05),
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                           child: const Text(
-                            'Register',
+                            'Sign in',
                             style: TextStyle(
-                              color: Colors.blue,
+                              color: Colors.white,
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                  ],
+                      ),
+                      const SizedBox(height: 30),
+
+                      // Or Divider
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 25),
+                        child: Row(
+                          children: [
+                            const SizedBox(width: 40),
+                            const Expanded(
+                              child: Divider(
+                                thickness: 2,
+                                color: Color.fromARGB(255, 255, 255, 255),
+                              ),
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              child: Text(
+                                "Or",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 18.0,
+                                ),
+                              ),
+                            ),
+                            const Expanded(
+                              child: Divider(
+                                thickness: 2,
+                                color: Color.fromARGB(255, 255, 255, 255),
+                              ),
+                            ),
+                            const SizedBox(width: 40),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+
+                      // Register Button
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text("Don't have an account? ",
+                              style: TextStyle(color: Colors.white)),
+                          const SizedBox(width: 4),
+                          MyButton(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const RegisterPage(),
+                                ),
+                              );
+                            },
+                            child: const Text(
+                              'Register',
+                              style: TextStyle(
+                                color: Colors.blue,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

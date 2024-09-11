@@ -29,7 +29,7 @@ class OrgContainer extends StatelessWidget {
             Expanded(
               flex: 3,
               child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 0.06 * screenHeight),
+                padding: EdgeInsets.symmetric(vertical: 0.04 * screenHeight),
                 child: Container(
                   height: screenHeight / 15,
                   width: screenHeight / 15,
@@ -50,24 +50,24 @@ class OrgContainer extends StatelessWidget {
                 children: [
                   Padding(
                     padding:
-                        EdgeInsets.symmetric(vertical: 0.015 * screenHeight),
+                        EdgeInsets.symmetric(vertical: 0.0005 * screenHeight),
                     child: Text(
                       organization.name,
                       style: TextStyle(
-                        fontSize: screenHeight / 50,
+                        fontSize: screenHeight / 40,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                   Padding(
                     padding:
-                        EdgeInsets.symmetric(vertical: 0.015 * screenHeight),
+                        EdgeInsets.symmetric(vertical: 0.0005 * screenHeight),
                     child: Text(
-                      'Number of Dashboards: ${organization.dashboardList.length}',
+                      "Organiztion's ID: ${organization.id}",
                       style: TextStyle(
                         fontSize: screenHeight / 50,
                         color: Colors.grey,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.normal,
                       ),
                     ),
                   ),

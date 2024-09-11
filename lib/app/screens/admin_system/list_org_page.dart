@@ -100,73 +100,81 @@ class _ListOrgPageState extends ConsumerState<ListOrgPage> {
         ),
       ),
       drawer: const MenuTaskbar(),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : errorMessage != null
-              ? Center(child: Text(errorMessage))
-              : LayoutBuilder(
-                  builder: (context, constraints) {
-                    return Container(
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            AppColors.primary,
-                            AppColors.secondary,
-                          ],
-                          begin: FractionalOffset(0.0, 0.0),
-                          end: FractionalOffset(1.0, 0.0),
-                          stops: [0.0, 1.0],
-                          tileMode: TileMode.clamp,
+      body: Stack(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  AppColors.primary,
+                  AppColors.secondary,
+                ],
+                begin: FractionalOffset(0.0, 0.0),
+                end: FractionalOffset(1.0, 0.0),
+                stops: [0.0, 1.0],
+                tileMode: TileMode.clamp,
+              ),
+            ),
+            child: Column(
+              children: [
+                // Search bar
+                OrgSearchBar(callback: updateSearchKey),
+
+                // Organization list
+                Expanded(
+                  child: ListView.builder(
+                    padding: EdgeInsets.only(bottom: screenHeight * 0.08),
+                    itemCount: organizationList
+                        .where((org) => org.name
+                            .toLowerCase()
+                            .contains(searchKeyWord.toLowerCase()))
+                        .length,
+                    itemBuilder: (context, index) {
+                      final org = organizationList
+                          .where((org) => org.name
+                              .toLowerCase()
+                              .contains(searchKeyWord.toLowerCase()))
+                          .toList()[index];
+                      return Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal:
+                              screenWidth * 0.04, // Add horizontal padding
+                          vertical: screenHeight * 0.01, // Add vertical padding
                         ),
-                      ),
-                      child: Column(
-                        children: [
-                          // Search bar
-                          OrgSearchBar(callback: updateSearchKey),
-
-                          // Organization list
-                          Expanded(
-                            child: SingleChildScrollView(
-                              child: Column(
-                                children: organizationList
-                                    .where((org) => org.name
-                                        .toLowerCase()
-                                        .contains(searchKeyWord.toLowerCase()))
-                                    .map((org) => Padding(
-                                          padding: EdgeInsets.only(
-                                              bottom: screenHeight / 35),
-                                          child: OrgContainer(
-                                            organization: org,
-                                            onTap: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      AdminOrgHomePage(
-                                                    orgId: org.id,
-                                                  ), // Navigate to OrgPage
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                        ))
-                                    .toList(),
+                        child: OrgContainer(
+                          organization: org,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AdminOrgHomePage(
+                                  orgId: org.id,
+                                ), // Navigate to OrgPage
                               ),
-                            ),
-                          ),
-
-                          // Conditionally display the AddButton if userRole is 'admin'
-                          if (userRole == 'admin')
-                            AddButton(
-                              screenHeight: screenHeight,
-                              screenWidth: screenWidth,
-                              pageToNavigate: const CreateOrgPage(),
-                            ),
-                        ],
-                      ),
-                    );
-                  },
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  ),
                 ),
+              ],
+            ),
+          ),
+
+          // Conditionally display the AddButton if userRole is 'admin'
+          if (userRole == 'admin')
+            Positioned(
+              bottom: screenHeight * 0.02,
+              right: screenWidth * 0.06,
+              child: AddButton(
+                screenHeight: screenHeight,
+                screenWidth: screenWidth,
+                pageToNavigate: const CreateOrgPage(),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }

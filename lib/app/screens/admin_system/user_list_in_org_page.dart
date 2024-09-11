@@ -75,20 +75,10 @@ class _UserListInOrgPageState extends ConsumerState<UserListInOrgPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('User List'),
+        title: Text('Members'),
         backgroundColor: Colors.white,
         elevation: 1,
         automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.list_alt, color: Colors.blueAccent),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: Icon(Icons.grid_view, color: Colors.blueGrey),
-            onPressed: () {},
-          ),
-        ],
       ),
       body: userState
               .usersInOrg.isEmpty // Access the 'users' list inside UserState

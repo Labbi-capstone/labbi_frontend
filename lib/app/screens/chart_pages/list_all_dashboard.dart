@@ -4,7 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:labbi_frontend/app/components/charts/chart_widget.dart';
 import 'package:labbi_frontend/app/components/buttons/add_button.dart';
 import 'package:labbi_frontend/app/screens/chart_pages/create_dashboard_page.dart';
-import 'package:labbi_frontend/app/screens/chart_pages/manage_dashboard_page.dart'; // Import ManageDashboardPage
+import 'package:labbi_frontend/app/screens/chart_pages/manage_dashboard_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:labbi_frontend/app/models/chart.dart';
@@ -96,60 +96,116 @@ class _ListAllDashboardPageState extends State<ListAllDashboardPage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("All Dashboards"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              // Navigate to ManageDashboardPage when the icon is clicked
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ManageDashboardPage(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
-      body: dashboards.isEmpty
-          ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              itemCount: dashboards.length,
-              itemBuilder: (context, index) {
-                final dashboard = dashboards[index];
-                final charts = chartsByDashboard[dashboard.id] ?? [];
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      dashboard.name,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Column(
-                      children: charts.map((chart) {
-                        return ListTile(
-                          title: Text(chart.name),
-                          subtitle: StreamBuilder(
-                            stream: _webSocketService
-                                .connect(chart.id, chart.prometheusEndpointId,
-                                    chart.chartType)
-                                .stream,
-                            builder: (context, AsyncSnapshot snapshot) {
-                              if (snapshot.hasData) {
-                                final String? rawData =
-                                    snapshot.data as String?;
-                                if (rawData != null) {
-                                  final chartData = jsonDecode(rawData);
-                                  return ChartWidget(chartName: chart.name, chartType: chart.chartType, chartData: chartData['data']);
-                                  // return Text(
-                                  //     "Chart Data: ${chartData['data']}");
-                                } else {
-                                  return const Text("No data available");
-                                }
-                              } else {
-                                return const Text("Loading data...");
-                              }
-                            },
+      body: Stack(
+        children: [
+          Container(
+            color: Colors.blue[100], // Light blue background for the dashboard
+            child: dashboards.isEmpty
+                ? const Center(child: CircularProgressIndicator())
+                : ListView.builder(
+                    itemCount: dashboards.length,
+                    itemBuilder: (context, index) {
+                      final dashboard = dashboards[index];
+                      final charts = chartsByDashboard[dashboard.id] ?? [];
+
+                      return Container(
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.white, // White background for dashboard
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 3,
+                              blurRadius: 5,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                dashboard.name,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Column(
+                                children: charts.map((chart) {
+                                  return StreamBuilder(
+                                    stream: _webSocketService
+                                        .connect(
+                                            chart.id,
+                                            chart.prometheusEndpointId,
+                                            chart.chartType)
+                                        .stream,
+                                    builder: (context, AsyncSnapshot snapshot) {
+                                      if (snapshot.hasData) {
+                                        final String? rawData =
+                                            snapshot.data as String?;
+                                        if (rawData != null) {
+                                          final chartData = jsonDecode(rawData);
+                                          return ChartWidget(
+                                            chartName: chart.name,
+                                            chartType: chart.chartType,
+                                            chartData: chartData['data'],
+                                          );
+                                        } else {
+                                          return const Text(
+                                              "No data available");
+                                        }
+                                      } else {
+                                        return const Text("Loading data...");
+                                      }
+                                    },
+                                  );
+                                }).toList(),
+                              ),
+                            ],
                           ),
-                        );
-                      }).toList(),
-                    )
-                  ],
-                );
-              },
+                        ),
+                      );
+                    },
+                  ),
+          ),
+          Positioned(
+            bottom: screenHeight * 0.02,
+            right: screenWidth * 0.06,
+            child: AddButton(
+              screenHeight: screenHeight,
+              screenWidth: screenWidth,
+              pageToNavigate: const CreateDashboardPage(),
             ),
+          ),
+        ],
+      ),
     );
   }
 }
