@@ -45,8 +45,7 @@ class _LineChartComponentState extends State<LineChartComponent> {
     }
   }
 
-  Map<String, List<LineData>> _extractData(Map<String, dynamic> chartRawData,
-      {Map<String, List<LineData>>? existingData}) {
+  Map<String, List<LineData>> _extractData(Map<String, dynamic> chartRawData, {Map<String, List<LineData>>? existingData}) {
     final DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
     final Map<String, List<LineData>> updatedData = existingData ?? {};
 
@@ -56,7 +55,8 @@ class _LineChartComponentState extends State<LineChartComponent> {
 
       final timestamp = valueList[0] as double;
       final formattedTimestamp = dateFormat.format(
-          DateTime.fromMillisecondsSinceEpoch((timestamp * 1000).toInt()));
+        DateTime.fromMillisecondsSinceEpoch((timestamp * 1000).toInt())
+      );
 
       final value = double.tryParse(valueList[1].toString()) ?? 0.0;
       final scaledValue = value * 100000000; // Adjust scale as needed
@@ -91,8 +91,7 @@ class _LineChartComponentState extends State<LineChartComponent> {
       final dataPoints = entry.value;
 
       // Assign a color from the list, cycling if there are more metrics than colors
-      final colorIndex =
-          metricData.keys.toList().indexOf(metricName) % _lineColors.length;
+      final colorIndex = metricData.keys.toList().indexOf(metricName) % _lineColors.length;
       final lineColor = _lineColors[colorIndex];
 
       return LineSeries<LineData, String>(
@@ -107,6 +106,7 @@ class _LineChartComponentState extends State<LineChartComponent> {
       );
     }).toList();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -126,8 +126,7 @@ class _LineChartComponentState extends State<LineChartComponent> {
                       .now()), // Key for rebuilding the chart when data changes
                   title: ChartTitle(
                     text: 'Dynamic Metrics Data Over Time',
-                    textStyle:
-                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   legend: Legend(
                     isVisible: true,

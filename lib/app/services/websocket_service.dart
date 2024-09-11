@@ -34,7 +34,7 @@ class WebSocketService {
       String chartId, String prometheusEndpointId, String chartType) {
     _timer?.cancel(); // Cancel any previous timer before starting a new one
 
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(Duration(seconds: 5), (timer) {
       _sendData(chartId, prometheusEndpointId, chartType);
     });
   }

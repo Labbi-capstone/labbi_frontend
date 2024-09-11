@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:labbi_frontend/app/components/charts/chart_widget.dart';
 import 'package:labbi_frontend/app/components/buttons/add_button.dart';
 import 'package:labbi_frontend/app/screens/chart_pages/create_dashboard_page.dart';
 import 'package:labbi_frontend/app/screens/chart_pages/manage_dashboard_page.dart'; // Import ManageDashboardPage
@@ -116,56 +117,49 @@ class _ListAllDashboardPageState extends State<ListAllDashboardPage> {
           ),
         ],
       ),
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: dashboards.isEmpty
-                ? const Center(child: CircularProgressIndicator())
-                : ListView.builder(
-                    itemCount: dashboards.length,
-                    itemBuilder: (context, index) {
-                      final dashboard = dashboards[index];
-                      final charts = chartsByDashboard[dashboard.id] ?? [];
+      body: dashboards.isEmpty
+          ? const Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              itemCount: dashboards.length,
+              itemBuilder: (context, index) {
+                final dashboard = dashboards[index];
+                final charts = chartsByDashboard[dashboard.id] ?? [];
 
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            dashboard.name,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Column(
-                            children: charts.map((chart) {
-                              return ListTile(
-                                title: Text(chart.name),
-                                subtitle: StreamBuilder(
-                                  stream: _webSocketService
-                                      .connect(
-                                          chart.id,
-                                          chart.prometheusEndpointId,
-                                          chart.chartType)
-                                      .stream,
-                                  builder: (context, AsyncSnapshot snapshot) {
-                                    if (snapshot.hasData) {
-                                      final String? rawData =
-                                          snapshot.data as String?;
-                                      if (rawData != null) {
-                                        final chartData = jsonDecode(rawData);
-                                        return Text(
-                                            "Chart Data: ${chartData['data']}");
-                                      } else {
-                                        return const Text("No data available");
-                                      }
-                                    } else {
-                                      return const Text("Loading data...");
-                                    }
-                                  },
-                                ),
-                              );
-                            }).toList(),
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      dashboard.name,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Column(
+                      children: charts.map((chart) {
+                        return ListTile(
+                          title: Text(chart.name),
+                          subtitle: StreamBuilder(
+                            stream: _webSocketService
+                                .connect(chart.id, chart.prometheusEndpointId,
+                                    chart.chartType)
+                                .stream,
+                            builder: (context, AsyncSnapshot snapshot) {
+                              if (snapshot.hasData) {
+                                final String? rawData =
+                                    snapshot.data as String?;
+                                if (rawData != null) {
+                                  final chartData = jsonDecode(rawData);
+                                  return ChartWidget(chartName: chart.name, chartType: chart.chartType, chartData: chartData['data']);
+                                  // return Text(
+                                  //     "Chart Data: ${chartData['data']}");
+                                } else {
+                                  return const Text("No data available");
+                                }
+                              } else {
+                                return const Text("Loading data...");
+                              }
+                            },
                           ),
                         ],
                       );

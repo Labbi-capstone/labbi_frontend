@@ -2,6 +2,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:labbi_frontend/app/components/charts/bar_chart_component.dart';
+import 'package:labbi_frontend/app/components/charts/chart_widget.dart';
+import 'package:labbi_frontend/app/components/charts/line_chart_component.dart';
 import 'package:labbi_frontend/app/services/websocket_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -118,6 +121,7 @@ class _ListDashboardByOrgPageState extends State<ListDashboardByOrgPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Dashboards for Org ${widget.orgId}"),
+        automaticallyImplyLeading: false,
       ),
       body: dashboards.isEmpty
           ? Center(
@@ -157,8 +161,9 @@ class _ListDashboardByOrgPageState extends State<ListDashboardByOrgPage> {
                                     snapshot.data as String?;
                                 if (rawData != null) {
                                   final chartData = jsonDecode(rawData);
-                                  return Text(
-                                      "Chart Data: ${chartData['data']}, chartType: ${chartData['chartType']}");
+                                  return ChartWidget(chartName: chart.name, chartType: chart.chartType, chartData: chartData['data']);
+                                  // return Text(
+                                  //     "Chart Data: ${chartData['data']}, chartType: ${chartData['chartType']}");
                                 } else {
                                   return Text("No data available");
                                 }

@@ -9,6 +9,7 @@ class BarChartComponent extends StatefulWidget {
       {Key? key, required this.title, required this.chartRawData})
       : super(key: key);
 
+
   final String title;
   final Map<String, dynamic> chartRawData;
 
@@ -51,7 +52,8 @@ class _BarChartComponentState extends State<BarChartComponent> {
 
       final timestamp = valueList[0] as double;
       final formattedTimestamp = dateFormat.format(
-          DateTime.fromMillisecondsSinceEpoch((timestamp * 1000).toInt()));
+
+      DateTime.fromMillisecondsSinceEpoch((timestamp * 1000).toInt()));
 
       final value = double.tryParse(valueList[1].toString()) ?? 0.0;
       final scaledValue = value * 1000000; // Adjust scale as needed
@@ -124,8 +126,7 @@ class _BarChartComponentState extends State<BarChartComponent> {
                 child: SfCartesianChart(
                   title: ChartTitle(
                     text: 'Quantile Data',
-                    textStyle:
-                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   legend: Legend(
                     isVisible: true,

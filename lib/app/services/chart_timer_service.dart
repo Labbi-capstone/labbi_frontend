@@ -3,7 +3,7 @@ import 'dart:async';
 class ChartTimerService {
   Timer? _timer;
 
-  void startOrUpdateTimer(Function onTick, {int interval = 2000}) {
+  void startOrUpdateTimer(Function onTick, {int interval = 5000}) {
     // Cancel existing timer if it exists
     _timer?.cancel();
 
