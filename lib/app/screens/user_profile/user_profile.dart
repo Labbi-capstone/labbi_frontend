@@ -182,7 +182,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
           backgroundColor: Colors.white,
           child: ClipOval(
             child: Image(
-              image: const AssetImage("assets/images/test-profile-image.jpg"),
+              image: const AssetImage("assets/images/man.png"),
               height: (screenHeight / 10.3) * 2,
               width: (screenHeight / 10.3) * 2,
               fit: BoxFit.fill,

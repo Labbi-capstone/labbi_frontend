@@ -151,12 +151,8 @@ class UpdateProfileState extends ConsumerState<UpdateProfile> {
                         right: 0.02 * screenWidth,
                         left: 0.02 * screenWidth,
                         bottom: 0.03 * screenHeight),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0,
-                        backgroundColor: Colors.transparent,
-                      ),
-                      onPressed: () {
+                    child: InkWell(
+                      onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => const ChangePasswordPage()));
                       },
