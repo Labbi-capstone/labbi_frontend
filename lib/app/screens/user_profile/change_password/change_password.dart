@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:labbi_frontend/app/Theme/app_colors.dart';
+import 'package:labbi_frontend/app/components/text_fields/password_text_field.dart';
 
 class ChangePasswordPage extends ConsumerStatefulWidget {
   // Updated to ConsumerStatefulWidget
@@ -117,68 +118,23 @@ class _ChangePasswordPageState extends ConsumerState<ChangePasswordPage> {
                         ),
                       ),
                       // Current password input
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 0.07 * screenWidth,
-                            vertical: 0.02 * screenHeight),
-                        child: TextFormField(
-                          decoration: const InputDecoration(
-                            border: UnderlineInputBorder(),
-                            labelText: 'Current Password',
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your current password';
-                            }
-                            return null;
-                          },
-                          onTapOutside: (_) {
-                            FocusManager.instance.primaryFocus?.unfocus();
-                          },
-                        ),
-                      ),
+                      PasswordTextField(
+                          label: 'Current Password',
+                          errorMessage: 'Please enter your current password',
+                          screenHeight: screenHeight,
+                          screenWidth: screenWidth),
                       // New password
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 0.07 * screenWidth,
-                            vertical: 0.02 * screenHeight),
-                        child: TextFormField(
-                          decoration: const InputDecoration(
-                            border: UnderlineInputBorder(),
-                            labelText: 'New password',
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter the new password';
-                            }
-                            return null;
-                          },
-                          onTapOutside: (_) {
-                            FocusManager.instance.primaryFocus?.unfocus();
-                          },
-                        ),
-                      ),
+                      PasswordTextField(
+                          label: 'New Password',
+                          errorMessage: 'Please enter the new password',
+                          screenHeight: screenHeight,
+                          screenWidth: screenWidth),
                       // Confirm new password
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 0.07 * screenWidth,
-                            vertical: 0.02 * screenHeight),
-                        child: TextFormField(
-                          decoration: const InputDecoration(
-                            border: UnderlineInputBorder(),
-                            labelText: 'Confirm New password',
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter the new password again';
-                            }
-                            return null;
-                          },
-                          onTapOutside: (_) {
-                            FocusManager.instance.primaryFocus?.unfocus();
-                          },
-                        ),
-                      ),
+                      PasswordTextField(
+                          label: 'Confirm New Password',
+                          errorMessage: 'Please enter the new password again',
+                          screenHeight: screenHeight,
+                          screenWidth: screenWidth),
                       // Create Button
                       Padding(
                         padding: EdgeInsets.only(
