@@ -6,20 +6,33 @@ import 'package:labbi_frontend/app/providers.dart';
 import 'package:labbi_frontend/app/screens/chart_pages/edit_dashboard_info_page.dart';
 import 'package:labbi_frontend/app/Theme/app_colors.dart'; // Assuming your custom colors
 
-class ManageDashboardPage extends ConsumerWidget {
+class ManageDashboardPage extends ConsumerStatefulWidget {
   const ManageDashboardPage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  _ManageDashboardPageState createState() => _ManageDashboardPageState();
+}
+
+class _ManageDashboardPageState extends ConsumerState<ManageDashboardPage> {
+  @override
+  void initState() {
+    super.initState();
+    // Fetch dashboards when the widget is initialized
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(dashboardControllerProvider.notifier).fetchAllDashboards();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final dashboardState = ref.watch(dashboardControllerProvider);
 
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back,
-              color: Colors.white), // White back arrow
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            Navigator.pop(context); // Navigate back
+            Navigator.pop(context);
           },
         ),
         title: const Text(
@@ -60,7 +73,7 @@ class ManageDashboardPage extends ConsumerWidget {
       elevation: 4,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: const BorderSide(color: Colors.black, width: 2), // Black border
+        side: const BorderSide(color: Colors.black, width: 2),
       ),
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
       child: Padding(
@@ -159,6 +172,10 @@ class ManageDashboardPage extends ConsumerWidget {
       await ref
           .read(dashboardControllerProvider.notifier)
           .deleteDashboard(dashboard.id);
+
+      // Refetch the updated dashboards after deletion
+      ref.read(dashboardControllerProvider.notifier).fetchAllDashboards();
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Row(

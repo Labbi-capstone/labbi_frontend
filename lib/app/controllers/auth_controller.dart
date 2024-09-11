@@ -84,10 +84,10 @@ class AuthController extends StateNotifier<AuthState> {
             case 'admin':
               Navigator.pushReplacementNamed(context, Routes.listOfOrg);
             case 'developer':
-              Navigator.pushReplacementNamed(context, Routes.notificationPage);
+              Navigator.pushReplacementNamed(context, Routes.listOfOrg);
               break;
             case 'user':
-              Navigator.pushReplacementNamed(context, Routes.notificationPage);
+              Navigator.pushReplacementNamed(context, Routes.listOfOrg);
               break;
             default:
               Navigator.pushReplacementNamed(context, Routes.dashboard);
