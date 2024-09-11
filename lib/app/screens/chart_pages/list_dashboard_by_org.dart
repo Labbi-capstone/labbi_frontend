@@ -46,14 +46,31 @@ class _ListDashboardByOrgPageState extends State<ListDashboardByOrgPage> {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         List<dynamic> dashboardsJson = data['dashboards'];
-        dashboards = dashboardsJson.map((d) => Dashboard.fromJson(d)).toList();
 
-        // Fetch charts for each dashboard
-        for (var dashboard in dashboards) {
-          fetchChartsForDashboard(dashboard.id);
+        setState(() {
+          dashboards = dashboardsJson.isNotEmpty
+              ? dashboardsJson.map((d) => Dashboard.fromJson(d)).toList()
+              : [];
+        });
+
+        // If there are dashboards, fetch charts for each dashboard
+        if (dashboards.isNotEmpty) {
+          for (var dashboard in dashboards) {
+            await fetchChartsForDashboard(dashboard.id);
+          }
         }
+      } else {
+        setState(() {
+          dashboards =
+              []; // Handle error by setting dashboards to an empty list
+        });
+        print("Error fetching dashboards: ${response.statusCode}");
       }
     } catch (e) {
+      setState(() {
+        dashboards =
+            []; // Handle exception by setting dashboards to an empty list
+      });
       print("Error fetching dashboards: $e");
     }
   }
@@ -103,7 +120,12 @@ class _ListDashboardByOrgPageState extends State<ListDashboardByOrgPage> {
         title: Text("Dashboards for Org ${widget.orgId}"),
       ),
       body: dashboards.isEmpty
-          ? Center(child: CircularProgressIndicator())
+          ? Center(
+              child: Text(
+                "No dashboards available for this organization.",
+                style: TextStyle(fontSize: 16),
+              ),
+            )
           : ListView.builder(
               itemCount: dashboards.length,
               itemBuilder: (context, index) {
