@@ -23,7 +23,8 @@ class MenuItemModel {
 
 final List<MenuItemModel> userMenuItems = [
   MenuItemModel(
-    icon: Icons.home_outlined,
+    icon: Icons
+        .people_outline, // Better suited for organization/user-related tasks
     label: 'Your organizations',
     route: const ListOrgPage(),
   ),
@@ -31,27 +32,28 @@ final List<MenuItemModel> userMenuItems = [
 
 final List<MenuItemModel> adminMenuItems = [
   MenuItemModel(
-    icon: Icons.work_outline,
+    icon: Icons.business, // Represents organization management
     label: 'Organization management',
     route: const ListOrgPage(),
   ),
-   MenuItemModel(
-    icon: Icons.dashboard_outlined,
+  MenuItemModel(
+    icon: Icons.supervisor_account, // Represents user management
     label: 'User management',
     route: const ListAllUserPage(),
   ),
   MenuItemModel(
-    icon: Icons.dashboard_outlined,
-    label: 'Dashboards management', 
+    icon: Icons.dashboard, // Represents dashboard management
+    label: 'Dashboards management',
     route: const ListAllDashboardPage(),
   ),
   MenuItemModel(
-    icon: Icons.dashboard_outlined,
+    icon: Icons.bar_chart, // Represents chart management
     label: 'Charts management',
     route: const ListAllChartsPage(),
   ),
   MenuItemModel(
-    icon: Icons.dashboard_outlined,
+    icon: Icons
+        .router, // More representative of endpoints, servers, or data sources
     label: 'Prometheus Endpoint management',
     route: const ListAllPrometheusEndpointsPage(),
   ),
@@ -59,22 +61,22 @@ final List<MenuItemModel> adminMenuItems = [
 
 final List<MenuItemModel> developerMenuItems = [
   MenuItemModel(
-    icon: Icons.work_outline,
-    label: 'Organization management',
+    icon: Icons.business, // Represents development and building tasks
+    label: 'Organizations',
     route: const ListOrgPage(),
   ),
-   MenuItemModel(
-    icon: Icons.dashboard_outlined,
+  MenuItemModel(
+    icon: Icons.dashboard, // Customized dashboard icon for developers
     label: 'Dashboards management',
     route: const ListAllDashboardPage(),
   ),
   MenuItemModel(
-    icon: Icons.dashboard_outlined,
+    icon: Icons.bar_chart, // Represents data insights or charts
     label: 'Charts management',
     route: const ListAllChartsPage(),
   ),
   MenuItemModel(
-    icon: Icons.dashboard_outlined,
+    icon: Icons.router, // Represents external services or APIs (endpoints)
     label: 'Prometheus Endpoint management',
     route: const ListAllPrometheusEndpointsPage(),
   ),
@@ -82,17 +84,18 @@ final List<MenuItemModel> developerMenuItems = [
 
 final List<MenuItemModel> orgAdminMenuItems = [
   MenuItemModel(
-    icon: Icons.home_outlined,
+    icon: Icons.dashboard, // Represents the home or dashboard
     label: 'Dashboard',
     route: const NotificationPage(),
   ),
   MenuItemModel(
-    icon: Icons.notifications_active_outlined,
+    icon: Icons.notifications, // Represents notifications
     label: 'Notification',
     route: const NotificationPage(),
   ),
   MenuItemModel(
-    icon: Icons.work_outline,
+    icon: Icons
+        .business_center, // Represents organization details or business center
     label: 'Organization',
     route: const AdminOrgHomePage(orgId: ''),
   ),
