@@ -104,25 +104,23 @@ class DashboardController extends StateNotifier<DashboardState> {
 
   // Fetch all dashboards
   Future<void> fetchAllDashboards() async {
-    state = state.copyWith(
-        isLoading: true); // Set loading to true before the request
+    state = state.copyWith(isLoading: true);
     try {
-      final url = Uri.parse('http://localhost:3000/api/dashboards');
+      final apiUrl = dotenv.env['API_URL_LOCAL']; // Replace with your API URL
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
 
-      // No need for token and role, removed related logic
-
+      final url = Uri.parse('$apiUrl/dashboards');
       final response = await http.get(url, headers: {
         "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
       });
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        // Ensure 'data' is in the correct format and contains a list
-        final List<dynamic> dashboardsJson = data;
-
-        final List<Dashboard> dashboards = dashboardsJson.map((dashboardJson) {
-          return Dashboard.fromJson(dashboardJson);
-        }).toList();
+        List<dynamic> dashboardsJson = data;
+        final dashboards =
+            dashboardsJson.map((d) => Dashboard.fromJson(d)).toList();
 
         state = state.copyWith(dashboards: dashboards, isLoading: false);
       } else {
@@ -130,7 +128,7 @@ class DashboardController extends StateNotifier<DashboardState> {
       }
     } catch (e) {
       state = state.copyWith(errorMessage: e.toString(), isLoading: false);
-      debugPrint("Error fetching dashboards: ${e.toString()}");
+      debugPrint("Error fetching dashboards: $e");
     }
   }
 

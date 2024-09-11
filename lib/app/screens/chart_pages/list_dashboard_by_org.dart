@@ -1,19 +1,16 @@
-import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:labbi_frontend/app/components/charts/bar_chart_component.dart';
-import 'package:labbi_frontend/app/components/charts/line_chart_component.dart';
-import 'package:labbi_frontend/app/controllers/dashboard_controller.dart';
-import 'package:labbi_frontend/app/controllers/chart_controller.dart';
-import 'package:labbi_frontend/app/models/chart.dart';
 import 'package:labbi_frontend/app/services/websocket_service.dart';
-import 'package:labbi_frontend/app/providers.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'package:labbi_frontend/app/models/chart.dart';
+import 'package:labbi_frontend/app/models/dashboard.dart';
+import 'package:labbi_frontend/app/services/chart_timer_service.dart';
 
-class ListDashboardByOrgPage extends ConsumerStatefulWidget {
+class ListDashboardByOrgPage extends StatefulWidget {
   final String orgId;
-
   const ListDashboardByOrgPage({Key? key, required this.orgId})
       : super(key: key);
 
@@ -21,236 +18,140 @@ class ListDashboardByOrgPage extends ConsumerStatefulWidget {
   _ListDashboardByOrgPageState createState() => _ListDashboardByOrgPageState();
 }
 
-class _ListDashboardByOrgPageState extends ConsumerState<ListDashboardByOrgPage>
-    with WidgetsBindingObserver {
-  late WebSocketService socketService;
-  StreamSubscription? _webSocketSubscription;
-  Map<String, List<Chart>> cachedCharts = {};
-  Set<String> loadingCharts = {};
-  Map<String, Map<String, dynamic>> allChartData = {};
-  bool isWebSocketConnected = false;
+class _ListDashboardByOrgPageState extends State<ListDashboardByOrgPage> {
+  final WebSocketService _webSocketService = WebSocketService();
+
+  final ChartTimerService _chartTimerService = ChartTimerService();
+  List<Dashboard> dashboards = [];
+  Map<String, List<Chart>> chartsByDashboard = {};
 
   @override
   void initState() {
     super.initState();
-    final webSocketChannel = ref.read(webSocketChannelProvider);
-    socketService = WebSocketService(webSocketChannel);
-
-    WidgetsBinding.instance.addObserver(this); // Observe lifecycle changes
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref
-          .read(dashboardControllerProvider.notifier)
-          .fetchDashboardsByOrg(widget.orgId);
-    });
-
-    _initializeWebSocket(); // Initialize WebSocket connection
+    fetchDashboards();
   }
 
-  void _initializeWebSocket() {
-    if (!isWebSocketConnected) {
-      socketService.listenForMessages().then((stream) {
-        _webSocketSubscription = stream.listen((message) {
-          _handleWebSocketMessage(message);
-        });
-        setState(() {
-          isWebSocketConnected = true;
-        });
-        debugPrint(
-            "[MY_APP] WebSocket initialized, starting to listen for messages...");
-      });
-    }
-  }
-
-  void _handleWebSocketMessage(String message) {
+  Future<void> fetchDashboards() async {
     try {
-      final parsedMessage = jsonDecode(message);
-      debugPrint("Received message from WebSocket: $message");
+      final apiUrl = dotenv.env['API_URL_LOCAL']; // Replace with your API URL
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
 
-      if (parsedMessage is Map<String, dynamic>) {
-        final chartId = parsedMessage['chartId'] as String;
-        final data = parsedMessage['data'] != null
-            ? Map<String, dynamic>.from(parsedMessage['data'] as Map)
-            : <String, dynamic>{};
+      final url = Uri.parse('$apiUrl/dashboards/${widget.orgId}/dashboards');
+      final response = await http.get(url, headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      });
 
-        setState(() {
-          allChartData[chartId] = data;
-        });
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        List<dynamic> dashboardsJson = data['dashboards'];
+        dashboards = dashboardsJson.map((d) => Dashboard.fromJson(d)).toList();
+
+        // Fetch charts for each dashboard
+        for (var dashboard in dashboards) {
+          fetchChartsForDashboard(dashboard.id);
+        }
       }
     } catch (e) {
-      debugPrint("Error handling WebSocket message: $e");
+      print("Error fetching dashboards: $e");
     }
   }
 
-  void _fetchChartsForDashboard(String dashboardId) async {
-    if (!loadingCharts.contains(dashboardId)) {
-      setState(() {
-        loadingCharts.add(dashboardId);
-      });
+  Future<void> fetchChartsForDashboard(String dashboardId) async {
+    try {
+      final apiUrl = dotenv.env['API_URL_LOCAL'];
+      final response =
+          await http.get(Uri.parse('$apiUrl/charts/dashboard/$dashboardId'));
 
-      try {
-        await ref
-            .read(chartControllerProvider.notifier)
-            .fetchChartsForDashboard(dashboardId);
-        final fetchedCharts = ref.read(chartControllerProvider).charts;
+      if (response.statusCode == 200) {
+        List<dynamic> chartsJson = jsonDecode(response.body);
+        List<Chart> charts = chartsJson.map((c) => Chart.fromJson(c)).toList();
+
         setState(() {
-          cachedCharts[dashboardId] = fetchedCharts;
-          loadingCharts.remove(dashboardId);
+          chartsByDashboard[dashboardId] = charts;
         });
 
-        // Only send data once, when fetching the charts
-        for (var chart in fetchedCharts) {
-          if (isWebSocketConnected) {
-            socketService.sendData(
+        // Start WebSocket for each chart and real-time updates
+        for (var chart in charts) {
+          _webSocketService.connect(
+              chart.id, chart.prometheusEndpointId, chart.chartType);
+
+          // Start timer to request Prometheus data every 2 seconds
+          _chartTimerService.startOrUpdateTimer(() {
+            _webSocketService.connect(
                 chart.id, chart.prometheusEndpointId, chart.chartType);
-          } else {
-            debugPrint(
-                "[MY_APP] WebSocket is not connected. Cannot send data.");
-          }
+          });
         }
-      } catch (error) {
-        debugPrint("Error fetching charts for dashboard: $error");
-        setState(() {
-          loadingCharts.remove(dashboardId);
-        });
       }
-    }
-  }
-
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      debugPrint("[MY_APP] App resumed, reconnecting WebSocket.");
-      final newWebSocketChannel =
-          WebSocketChannel.connect(Uri.parse("YOUR_WEBSOCKET_URL"));
-      socketService
-          .reconnect(newWebSocketChannel); // Reconnect WebSocket on resume
-    } else if (state == AppLifecycleState.paused) {
-      debugPrint("[MY_APP] App paused, closing WebSocket connection.");
-      socketService.dispose(); // Close WebSocket on pause
-    }
-  }
-
-  void _closeWebSocket() {
-    if (isWebSocketConnected) {
-      _webSocketSubscription?.cancel();
-      socketService.dispose();
-      setState(() {
-        isWebSocketConnected = false;
-      });
-      debugPrint("[MY_APP] WebSocket connection closed.");
+    } catch (e) {
+      print("Error fetching charts for dashboard: $e");
     }
   }
 
   @override
   void dispose() {
-    debugPrint("[MY_APP] Disposing ListDashboardByOrgPage...");
-    _closeWebSocket();
-    WidgetsBinding.instance.removeObserver(this); // Remove lifecycle observer
+    _webSocketService.disconnect();
+    _chartTimerService.stopTimer();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final dashboardState = ref.watch(dashboardControllerProvider);
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Organizations and Dashboards'),
+        title: Text("Dashboards for Org ${widget.orgId}"),
       ),
-      body: dashboardState.isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : dashboardState.errorMessage != null
-              ? Center(child: Text('Error: ${dashboardState.errorMessage}'))
-              : SingleChildScrollView(
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: dashboardState.dashboards.length,
-                    itemBuilder: (context, index) {
-                      final dashboard = dashboardState.dashboards[index];
-                      return ExpansionTile(
-                        title: Text(dashboard.name),
-                        onExpansionChanged: (isExpanded) {
-                          if (isExpanded &&
-                              !cachedCharts.containsKey(dashboard.id)) {
-                            _fetchChartsForDashboard(dashboard.id);
-                          }
-                        },
-                        children: [
-                          loadingCharts.contains(dashboard.id)
-                              ? const Center(child: CircularProgressIndicator())
-                              : cachedCharts.containsKey(dashboard.id)
-                                  ? _buildChartList(cachedCharts[dashboard.id]!)
-                                  : const ListTile(
-                                      title: Text('No charts found')),
-                        ],
-                      );
-                    },
-                  ),
-                ),
-    );
-  }
+      body: dashboards.isEmpty
+          ? Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              itemCount: dashboards.length,
+              itemBuilder: (context, index) {
+                final dashboard = dashboards[index];
+                final charts = chartsByDashboard[dashboard.id] ?? [];
 
-  Widget _buildChartList(List<Chart> charts) {
-    return charts.isEmpty
-        ? const ListTile(title: Text('No charts found'))
-        : ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: charts.length,
-            itemBuilder: (context, chartIndex) {
-              final chart = charts[chartIndex];
-              final chartDataForThisChart = allChartData[chart.id] ?? {};
-
-              return Card(
-                elevation: 2,
-                margin: const EdgeInsets.all(8),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        chart.name,
-                        style: const TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      dashboard.name,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),
-                      Text('Chart Type: ${chart.chartType}'),
-                      Text('Dashboard ID: ${chart.dashboardId}'),
-                      const SizedBox(height: 8),
-                      chartDataForThisChart.isEmpty
-                          ? const CircularProgressIndicator()
-                          : Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text('Chart Data:'),
-                                Container(
-                                  height: 500,
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey[300],
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: chart.chartType == 'line'
-                                      ? LineChartComponent(
-                                          title: chart.name,
-                                          chartRawData: chartDataForThisChart,
-                                        )
-                                      : chart.chartType == 'bar'
-                                          ? BarChartComponent(
-                                              title: chart.name,
-                                              chartRawData:
-                                                  chartDataForThisChart,
-                                            )
-                                          : const Center(
-                                              child: Text(
-                                                  'Chart type not supported')),
-                                ),
-                              ],
-                            ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          );
+                    ),
+                    Column(
+                      children: charts.map((chart) {
+                        return ListTile(
+                          title: Text(chart.name),
+                          subtitle: StreamBuilder(
+                            stream: _webSocketService
+                                .connect(chart.id, chart.prometheusEndpointId,
+                                    chart.chartType)
+                                .stream,
+                            builder: (context, AsyncSnapshot snapshot) {
+                              if (snapshot.hasData) {
+                                final String? rawData =
+                                    snapshot.data as String?;
+                                if (rawData != null) {
+                                  final chartData = jsonDecode(rawData);
+                                  return Text(
+                                      "Chart Data: ${chartData['data']}, chartType: ${chartData['chartType']}");
+                                } else {
+                                  return Text("No data available");
+                                }
+                              } else {
+                                return Text("Loading data...");
+                              }
+                            },
+                          ),
+                        );
+                      }).toList(),
+                    )
+                  ],
+                );
+              },
+            ),
+    );
   }
 }
