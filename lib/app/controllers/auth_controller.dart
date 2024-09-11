@@ -40,7 +40,7 @@ class AuthController extends StateNotifier<AuthState> {
 
     try {
       final apiUrl =
-          kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
+          kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_PHYSICAL'];
 
       final reqBody = {
         "email": emailController.text.trim(),
