@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:labbi_frontend/app/components/charts/chart_widget.dart';
@@ -32,7 +33,9 @@ class _ListDashboardByOrgPageState extends State<ListDashboardByOrgPage> {
 
   Future<void> fetchDashboards() async {
     try {
-      final apiUrl = dotenv.env['API_URL_LOCAL']; // Replace with your API URL
+       final apiUrl = kIsWeb
+          ? dotenv.env['API_URL_LOCAL']
+          : dotenv.env['API_URL_EMULATOR']; // Replace with your API URL
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
 
@@ -76,7 +79,8 @@ class _ListDashboardByOrgPageState extends State<ListDashboardByOrgPage> {
 
   Future<void> fetchChartsForDashboard(String dashboardId) async {
     try {
-      final apiUrl = dotenv.env['API_URL_LOCAL'];
+      final apiUrl =
+          kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
       final response =
           await http.get(Uri.parse('$apiUrl/charts/dashboard/$dashboardId'));
 
