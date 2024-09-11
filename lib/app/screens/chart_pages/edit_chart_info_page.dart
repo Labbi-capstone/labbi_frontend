@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:labbi_frontend/app/Theme/app_colors.dart';
 import 'package:labbi_frontend/app/controllers/chart_controller.dart';
 import 'package:labbi_frontend/app/controllers/dashboard_controller.dart';
 import 'package:labbi_frontend/app/controllers/prometheus_controller.dart';
@@ -53,10 +54,35 @@ class _EditChartInfoPageState extends ConsumerState<EditChartInfoPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Chart'),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                AppColors.primary,
+                AppColors.secondary,
+              ],
+              begin: FractionalOffset(0.0, 0.0),
+              end: FractionalOffset(1.0, 0.0),
+              stops: [0.0, 1.0],
+              tileMode: TileMode.clamp,
+            ),
+          ),
+        ),
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text('Edit Chart',style: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),),
+        centerTitle: true,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(24.0),
         child: Form(
           key: _formKey,
           child: Column(
@@ -64,7 +90,16 @@ class _EditChartInfoPageState extends ConsumerState<EditChartInfoPage> {
               // TextField for chart name
               TextFormField(
                 controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Chart Name'),
+                decoration: InputDecoration(labelText: 'Chart Name',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: AppColors.primary),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: AppColors.primary),
+                  ),
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a chart name';
@@ -72,23 +107,40 @@ class _EditChartInfoPageState extends ConsumerState<EditChartInfoPage> {
                   return null;
                 },
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
 
               // Search bar for Prometheus Endpoints
               _buildEndpointSearchBar(),
-              const SizedBox(height: 16),
-
               // Prometheus Endpoints list with radio buttons
-              Expanded(child: _buildEndpointList(prometheusState.endpoints)),
+              Expanded(child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white, 
+                  borderRadius: BorderRadius.circular(8), 
+                  border: Border.all(
+                    color: Colors.black,
+                  ),
+                ),
+                padding: const EdgeInsets.all(8.0),
+                child: _buildEndpointList(prometheusState.endpoints)),
+              ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
 
               // Search bar for Dashboards
               _buildDashboardSearchBar(),
-              const SizedBox(height: 16),
-
               // Dashboards list with radio buttons
-              Expanded(child: _buildDashboardList(dashboardState.dashboards)),
+              Expanded(child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white, 
+                  borderRadius: BorderRadius.circular(8), 
+                  border: Border.all(
+                    color: Colors.black,
+                  ),
+                ),
+                padding: const EdgeInsets.all(8.0),
+                child: _buildDashboardList(dashboardState.dashboards)
+                ),
+              ),
 
               const SizedBox(height: 16),
               ElevatedButton(
@@ -144,7 +196,18 @@ class _EditChartInfoPageState extends ConsumerState<EditChartInfoPage> {
                     }
                   }
                 },
-                child: const Text('Update Chart'),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.all(16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  backgroundColor: AppColors.primary),
+                child: const Text('Update Chart', 
+                style: TextStyle(
+                  fontSize: 24,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold),
+                ),
               ),
             ],
           ),
@@ -190,6 +253,7 @@ class _EditChartInfoPageState extends ConsumerState<EditChartInfoPage> {
                     _selectedPrometheusEndpoint = value;
                   });
                 },
+                activeColor: AppColors.primary,
               );
             },
           );
@@ -233,6 +297,7 @@ class _EditChartInfoPageState extends ConsumerState<EditChartInfoPage> {
                     debugPrint("Selected Dashboard ID: $_selectedDashboard");
                   });
                 },
+                activeColor: AppColors.primary,
               );
             },
           );

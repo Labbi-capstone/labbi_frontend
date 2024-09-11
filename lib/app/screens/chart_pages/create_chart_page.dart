@@ -247,10 +247,14 @@ class _CreateChartPageState extends ConsumerState<CreateChartPage> {
                 child: ElevatedButton(
                   onPressed: _submitForm,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:AppColors.secondary,
+                    padding: const EdgeInsets.all(16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    backgroundColor: AppColors.primary,
                   ),
                   child: const Text('Create Chart',
-                    style: TextStyle( color: Colors.white)
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color:Colors.white),
                   ),
                 ),
               ),
