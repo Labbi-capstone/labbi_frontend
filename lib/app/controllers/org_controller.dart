@@ -80,7 +80,6 @@ class OrgController extends StateNotifier<OrgState> {
           kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
-      print("Token: $token");
 
       if (token == null) {
         debugPrint('[MY_APP] User token not found.');

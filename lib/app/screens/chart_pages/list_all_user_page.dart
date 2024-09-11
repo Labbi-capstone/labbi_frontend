@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:labbi_frontend/app/components/buttons/menu_button.dart';
 import 'package:labbi_frontend/app/controllers/org_controller.dart';
 import 'package:labbi_frontend/app/models/user.dart';
 import 'package:labbi_frontend/app/controllers/user_controller.dart';
@@ -7,6 +8,7 @@ import 'package:labbi_frontend/app/screens/chart_pages/edit_user_info_page.dart'
 import '../../components/pagination.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart'; // Import MenuTaskbar
+import 'package:labbi_frontend/app/Theme/app_colors.dart';
 
 class ListAllUserPage extends ConsumerStatefulWidget {
   const ListAllUserPage({super.key});
@@ -22,7 +24,6 @@ class _ListAllUserPageState extends ConsumerState<ListAllUserPage> {
   @override
   void initState() {
     super.initState();
-    // Fetch the user data when the page is first built
     Future.microtask(() {
       ref.read(userControllerProvider.notifier).fetchAllUsers();
     });
@@ -64,22 +65,19 @@ class _ListAllUserPageState extends ConsumerState<ListAllUserPage> {
   }
 
   Future<void> _onUpdate(User user) async {
-    // Navigate to the EditUserInfoPage and wait for the result
     final updated = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => EditUserInfoPage(userId: user.id), // Pass user ID
+        builder: (context) => EditUserInfoPage(userId: user.id),
       ),
     );
 
-    // If the user was updated (returned true), fetch the updated user list
     if (updated == true) {
       ref.read(userControllerProvider.notifier).fetchAllUsers();
     }
   }
 
   void _onDelete(User user) async {
-    // Ask for confirmation before deleting the user
     final confirmation = await showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
@@ -90,11 +88,12 @@ class _ListAllUserPageState extends ConsumerState<ListAllUserPage> {
           actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Cancel'),
+              child:
+                  const Text('Cancel', style: TextStyle(color: Colors.black)),
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Delete'),
+              child: const Text('Delete', style: TextStyle(color: Colors.red)),
             ),
           ],
         );
@@ -103,29 +102,22 @@ class _ListAllUserPageState extends ConsumerState<ListAllUserPage> {
 
     if (confirmation == true) {
       try {
-        // Fetch the organization ID dynamically
         final orgController = ref.read(orgControllerProvider.notifier);
         final userController = ref.read(userControllerProvider.notifier);
 
-        // Fetch organizations for the user
         await orgController.fetchOrganizationsByUserId(user.id);
         final orgState = ref.read(orgControllerProvider);
 
-        // Check if the user is in any organizations
         if (orgState.organizationList.isEmpty) {
           throw Exception('No organization found for this user.');
         }
 
-        // Get the first organization ID where the user belongs (you can customize this if needed)
         final orgId = orgState.organizationList.first.id;
 
-        // Remove user from the organization
         await orgController.removeUserFromOrg(orgId, user.id);
 
-        // Then call the UserController to delete the user from the database
         await userController.deleteUser(user.id);
 
-        // Fetch the updated list of users after deletion
         userController.fetchAllUsers();
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -139,8 +131,6 @@ class _ListAllUserPageState extends ConsumerState<ListAllUserPage> {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     final userState = ref.watch(userControllerProvider);
@@ -150,74 +140,102 @@ class _ListAllUserPageState extends ConsumerState<ListAllUserPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('All Users'),
-        backgroundColor: Colors.white,
+        leading: Builder(
+          builder: (BuildContext context) {
+            return const MenuButton();
+          },
+        ),
+        title: const Text('All Users',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [AppColors.primary, AppColors.secondary],
+              begin: FractionalOffset(0.0, 0.0),
+              end: FractionalOffset(1.0, 0.0),
+              stops: [0.0, 1.0],
+              tileMode: TileMode.clamp,
+            ),
+          ),
+        ),
         elevation: 1,
-        automaticallyImplyLeading:
-            true, // Ensure that the drawer button appears
+        centerTitle: true,
       ),
-      drawer: const MenuTaskbar(), // Added MenuTaskbar as the drawer
+      drawer: const MenuTaskbar(),
       body: userState.users.isEmpty
           ? const Center(child: Text('No users found in the database.'))
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: _getPaginatedUsers(userState.users).length,
-                      itemBuilder: (context, index) {
-                        final user = _getPaginatedUsers(userState.users)[index];
-                        return Card(
-                          elevation: 2,
-                          margin: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: ListTile(
-                            leading: CircleAvatar(
-                              backgroundColor: Colors.grey[200],
-                              child:
-                                  const Icon(Icons.person, color: Colors.grey),
-                            ),
-                            title: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(user.fullName),
-                                Text(
-                                  user.email,
-                                  style: TextStyle(
-                                    color: Colors.grey[700],
-                                    fontSize: 14,
+          : Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [AppColors.primary, AppColors.secondary],
+                  begin: FractionalOffset(0.0, 0.0),
+                  end: FractionalOffset(1.0, 0.0),
+                  stops: [0.0, 1.0],
+                  tileMode: TileMode.clamp,
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: _getPaginatedUsers(userState.users).length,
+                        itemBuilder: (context, index) {
+                          final user =
+                              _getPaginatedUsers(userState.users)[index];
+                          return Card(
+                            elevation: 2,
+                            margin: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: ListTile(
+                              leading: CircleAvatar(
+                                backgroundColor: Colors.grey[200],
+                                child: const Icon(Icons.person,
+                                    color: Colors.grey),
+                              ),
+                              title: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(user.fullName),
+                                  Text(
+                                    user.email,
+                                    style: TextStyle(
+                                      color: Colors.grey[700],
+                                      fontSize: 14,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(Icons.edit,
+                                        color: Colors.green),
+                                    onPressed: () => _onUpdate(user),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.delete,
+                                        color: Colors.red),
+                                    onPressed: () => _onDelete(user),
+                                  ),
+                                ],
+                              ),
                             ),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.edit,
-                                      color: Colors.green),
-                                  onPressed: () => _onUpdate(user),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.delete,
-                                      color: Colors.red),
-                                  onPressed: () => _onDelete(user),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                  Pagination(
-                    currentPage: _currentPage,
-                    totalPages: (userState.users.length / _usersPerPage).ceil(),
-                    onPrev: _handlePrev,
-                    onNext: _handleNext,
-                    onPageSelected: _handlePageSelected,
-                  ),
-                ],
+                    Pagination(
+                      currentPage: _currentPage,
+                      totalPages:
+                          (userState.users.length / _usersPerPage).ceil(),
+                      onPrev: _handlePrev,
+                      onNext: _handleNext,
+                      onPageSelected: _handlePageSelected,
+                    ),
+                  ],
+                ),
               ),
             ),
     );
