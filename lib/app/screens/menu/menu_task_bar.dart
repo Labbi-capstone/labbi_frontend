@@ -104,7 +104,7 @@ Widget buildHeader(BuildContext context, double screenHeight,
                 ),
                 child: CircleAvatar(
                   radius: screenHeight * 0.065,
-                  backgroundImage: const AssetImage('assets/images/man.png'),
+                  backgroundImage: const AssetImage('assets/images/test-profile-image.jpg'),
                 ),
               ),
               Text(

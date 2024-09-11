@@ -287,26 +287,20 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   ),
                   // Use the reusable UserInfoRow widget
                   UserInfoRow(
-                    label: "Account's ID",
-                    value: "*Need update*",
+                    label: "User ID",
+                    value: userId,
                     screenHeight: screenHeight,
                     screenWidth: screenWidth,
                   ),
                   UserInfoRow(
-                    label: "Creation Date",
-                    value: "*Need update*",
+                    label: "Account's Role",
+                    value: userRole,
                     screenHeight: screenHeight,
                     screenWidth: screenWidth,
                   ),
                   UserInfoRow(
                     label: "Email",
                     value: userEmail,
-                    screenHeight: screenHeight,
-                    screenWidth: screenWidth,
-                  ),
-                  UserInfoRow(
-                    label: "Phone",
-                    value: "*Need update*",
                     screenHeight: screenHeight,
                     screenWidth: screenWidth,
                   ),
