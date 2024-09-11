@@ -12,6 +12,7 @@ import 'package:labbi_frontend/app/screens/chart_pages/list_all_dashboard.dart';
 import 'package:labbi_frontend/app/screens/dashboard_page/dashboard_page.dart';
 import 'package:labbi_frontend/app/screens/chart_pages/list_all_charts_page.dart';
 import 'package:labbi_frontend/app/screens/user_org/user_org_device_detail_page.dart';
+import 'package:labbi_frontend/app/screens/user_profile/change_password/change_password_successfully.dart';
 import 'package:labbi_frontend/app/screens/user_profile/user_profile.dart';
 import 'package:labbi_frontend/app/screens/user_profile/user_edit/edit_user_profile_page.dart';
 import 'package:labbi_frontend/app/screens/notification/notification_page.dart';
@@ -57,7 +58,7 @@ class MyApp extends StatelessWidget {
     
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: Routes.changePassword,
+      initialRoute: Routes.changePasswordSuccessfully,
       routes: {
         Routes.login: (context) => const LoginPage(),
         Routes.register: (context) => const RegisterPage(),
@@ -65,6 +66,7 @@ class MyApp extends StatelessWidget {
         Routes.userProfilePage: (context) => const UserProfilePage(),
         Routes.editUserProfilePage: (context) => const EditUserProfilePage(),
         Routes.changePassword: (context) => const ChangePasswordPage(),
+        Routes.changePasswordSuccessfully: (context) => const ChangePasswordSuccessfullyPage(),
         Routes.notificationPage: (context) => const NotificationPage(),
         Routes.menuTaskbar: (context) => const MenuTaskbar(),
         Routes.adminOrgHomePage: (context) => const AdminOrgHomePage(orgId: ''),

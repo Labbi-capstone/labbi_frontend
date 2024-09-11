@@ -207,7 +207,7 @@ class _ChangePasswordPageState extends ConsumerState<ChangePasswordPage> {
                             ),
                             onPressed: () {},
                             child: Text(
-                              'Update Password',
+                              'Update',
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 0.025 * screenHeight,
