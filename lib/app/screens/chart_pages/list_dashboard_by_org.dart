@@ -1,15 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:labbi_frontend/app/components/charts/bar_chart_component.dart';
 import 'package:labbi_frontend/app/components/charts/chart_widget.dart';
-import 'package:labbi_frontend/app/components/charts/line_chart_component.dart';
-import 'package:labbi_frontend/app/services/websocket_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:labbi_frontend/app/models/chart.dart';
 import 'package:labbi_frontend/app/models/dashboard.dart';
+import 'package:labbi_frontend/app/services/websocket_service.dart';
 import 'package:labbi_frontend/app/services/chart_timer_service.dart';
 
 class ListDashboardByOrgPage extends StatefulWidget {
@@ -23,7 +20,6 @@ class ListDashboardByOrgPage extends StatefulWidget {
 
 class _ListDashboardByOrgPageState extends State<ListDashboardByOrgPage> {
   final WebSocketService _webSocketService = WebSocketService();
-
   final ChartTimerService _chartTimerService = ChartTimerService();
   List<Dashboard> dashboards = [];
   Map<String, List<Chart>> chartsByDashboard = {};
@@ -119,66 +115,89 @@ class _ListDashboardByOrgPageState extends State<ListDashboardByOrgPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Dashboards for Org ${widget.orgId}"),
-        automaticallyImplyLeading: false,
-      ),
-      body: dashboards.isEmpty
-          ? Center(
-              child: Text(
-                "No dashboards available for this organization.",
-                style: TextStyle(fontSize: 16),
-              ),
-            )
-          : ListView.builder(
-              itemCount: dashboards.length,
-              itemBuilder: (context, index) {
-                final dashboard = dashboards[index];
-                final charts = chartsByDashboard[dashboard.id] ?? [];
+      backgroundColor: Colors
+          .transparent, // Set the background of the Scaffold to transparent
+      body: Container(
+        color:
+            Colors.transparent, // Make the container's background transparent
+        child: dashboards.isEmpty
+            ? const Center(
+                child: Text(
+                  "No dashboards available for this organization.",
+                  style: TextStyle(fontSize: 16),
+                ),
+              )
+            : ListView.builder(
+                itemCount: dashboards.length,
+                itemBuilder: (context, index) {
+                  final dashboard = dashboards[index];
+                  final charts = chartsByDashboard[dashboard.id] ?? [];
 
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      dashboard.name,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                  return Container(
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.white, // White background for dashboard
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 3,
+                          blurRadius: 5,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            dashboard.name,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Column(
+                            children: charts.map((chart) {
+                              return StreamBuilder(
+                                stream: _webSocketService
+                                    .connect(
+                                        chart.id,
+                                        chart.prometheusEndpointId,
+                                        chart.chartType)
+                                    .stream,
+                                builder: (context, AsyncSnapshot snapshot) {
+                                  if (snapshot.hasData) {
+                                    final String? rawData =
+                                        snapshot.data as String?;
+                                    if (rawData != null) {
+                                      final chartData = jsonDecode(rawData);
+                                      return ChartWidget(
+                                        chartName: chart.name,
+                                        chartType: chart.chartType,
+                                        chartData: chartData['data'],
+                                      );
+                                    } else {
+                                      return const Text("No data available");
+                                    }
+                                  } else {
+                                    return const Text("Loading data...");
+                                  }
+                                },
+                              );
+                            }).toList(),
+                          ),
+                        ],
                       ),
                     ),
-                    Column(
-                      children: charts.map((chart) {
-                        return ListTile(
-                          title: Text(chart.name),
-                          subtitle: StreamBuilder(
-                            stream: _webSocketService
-                                .connect(chart.id, chart.prometheusEndpointId,
-                                    chart.chartType)
-                                .stream,
-                            builder: (context, AsyncSnapshot snapshot) {
-                              if (snapshot.hasData) {
-                                final String? rawData =
-                                    snapshot.data as String?;
-                                if (rawData != null) {
-                                  final chartData = jsonDecode(rawData);
-                                  return ChartWidget(chartName: chart.name, chartType: chart.chartType, chartData: chartData['data']);
-                                  // return Text(
-                                  //     "Chart Data: ${chartData['data']}, chartType: ${chartData['chartType']}");
-                                } else {
-                                  return Text("No data available");
-                                }
-                              } else {
-                                return Text("Loading data...");
-                              }
-                            },
-                          ),
-                        );
-                      }).toList(),
-                    )
-                  ],
-                );
-              },
-            ),
+                  );
+                },
+              ),
+      ),
     );
   }
 }

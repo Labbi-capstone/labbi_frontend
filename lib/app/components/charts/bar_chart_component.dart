@@ -9,7 +9,6 @@ class BarChartComponent extends StatefulWidget {
       {Key? key, required this.title, required this.chartRawData})
       : super(key: key);
 
-
   final String title;
   final Map<String, dynamic> chartRawData;
 
@@ -52,8 +51,7 @@ class _BarChartComponentState extends State<BarChartComponent> {
 
       final timestamp = valueList[0] as double;
       final formattedTimestamp = dateFormat.format(
-
-      DateTime.fromMillisecondsSinceEpoch((timestamp * 1000).toInt()));
+          DateTime.fromMillisecondsSinceEpoch((timestamp * 1000).toInt()));
 
       final value = double.tryParse(valueList[1].toString()) ?? 0.0;
       final scaledValue = value * 1000000; // Adjust scale as needed
@@ -114,55 +112,51 @@ class _BarChartComponentState extends State<BarChartComponent> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-        ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                width: double.infinity,
-                height: 400,
-                child: SfCartesianChart(
-                  title: ChartTitle(
-                    text: 'Quantile Data',
-                    textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  legend: Legend(
-                    isVisible: true,
-                    position: LegendPosition.bottom,
-                    isResponsive: true,
-                  ),
-                  series: series,
-                  primaryXAxis: CategoryAxis(
-                    title: AxisTitle(text: 'Time'),
-                    majorGridLines: MajorGridLines(width: 0.5),
-                    majorTickLines: MajorTickLines(width: 0.5),
-                    labelStyle: TextStyle(fontSize: 10),
-                    labelRotation: 45, // Rotate labels for better readability
-                  ),
-                  primaryYAxis: NumericAxis(
-                    title: AxisTitle(text: 'Value (scaled by 1,000,000,000)'),
-                    majorGridLines: MajorGridLines(width: 0.5),
-                    majorTickLines: MajorTickLines(width: 0.5),
-                    labelFormat: '{value}',
-                  ),
-                  tooltipBehavior: TooltipBehavior(
-                    enable: true,
-                    canShowMarker: true,
-                    format: 'point.x: {point.x}\npoint.y: {point.y}',
-                  ),
+        body: Column(
+          children: [
+            Container(
+              width: double.infinity,
+              height: 400,
+              child: SfCartesianChart(
+                title: ChartTitle(
+                  text: 'Quantile Data',
+                  textStyle:
+                      TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                legend: Legend(
+                  isVisible: true,
+                  position: LegendPosition.bottom,
+                  isResponsive: true,
+                ),
+                series: series,
+                primaryXAxis: CategoryAxis(
+                  title: AxisTitle(text: 'Time'),
+                  majorGridLines: MajorGridLines(width: 0.5),
+                  majorTickLines: MajorTickLines(width: 0.5),
+                  labelStyle: TextStyle(fontSize: 10),
+                  labelRotation: 45, // Rotate labels for better readability
+                ),
+                primaryYAxis: NumericAxis(
+                  title: AxisTitle(text: 'Value (scaled by 1,000,000,000)'),
+                  majorGridLines: MajorGridLines(width: 0.5),
+                  majorTickLines: MajorTickLines(width: 0.5),
+                  labelFormat: '{value}',
+                ),
+                tooltipBehavior: TooltipBehavior(
+                  enable: true,
+                  canShowMarker: true,
+                  format: 'point.x: {point.x}\npoint.y: {point.y}',
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  'Note: Values are multiplied by 1,000,000,000 for clarity.',
-                  style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
-                ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                'Note: Values are multiplied by 1,000,000,000 for clarity.',
+                style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

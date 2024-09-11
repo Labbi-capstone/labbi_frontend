@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:labbi_frontend/app/Theme/app_colors.dart';
 import 'package:labbi_frontend/app/screens/admin_system/user_list_in_org_page.dart';
-import 'package:labbi_frontend/app/screens/admin_org/admin_org_users.dart';
 import 'package:labbi_frontend/app/screens/chart_pages/list_dashboard_by_org.dart';
 
 class AdminOrgHomePage extends StatefulWidget {
@@ -19,14 +18,11 @@ class _AdminOrgHomePageState extends State<AdminOrgHomePage>
   @override
   void initState() {
     super.initState();
-    debugPrint(
-        "[MY_APP] Initializing AdminOrgHomePage with orgId: ${widget.orgId}");
     _tabController = TabController(length: 2, vsync: this);
   }
 
   @override
   void dispose() {
-    debugPrint("[MY_APP] Disposing AdminOrgHomePage...");
     _tabController.dispose();
     super.dispose();
   }
@@ -104,30 +100,7 @@ class _AdminOrgHomePageState extends State<AdminOrgHomePage>
                 tileMode: TileMode.clamp,
               ),
             ),
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: screenWidth * 0.05,
-                vertical: screenHeight * 0.02,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(height: screenHeight * 0.025),
-                  Text(
-                    'List of Dashboards in Organization',
-                    style: TextStyle(
-                      fontSize: screenHeight * 0.02,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const Divider(color: Colors.white),
-                  Expanded(
-                    child: ListDashboardByOrgPage(orgId: widget.orgId),
-                  ),
-                ],
-              ),
-            ),
+            child: ListDashboardByOrgPage(orgId: widget.orgId),
           ),
           // Users Tab
           Container(
@@ -145,30 +118,7 @@ class _AdminOrgHomePageState extends State<AdminOrgHomePage>
                 tileMode: TileMode.clamp,
               ),
             ),
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: screenWidth * 0.05,
-                vertical: screenHeight * 0.02,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(height: screenHeight * 0.025),
-                  Text(
-                    'List of Users in Organization',
-                    style: TextStyle(
-                      fontSize: screenHeight * 0.02,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const Divider(color: Colors.white),
-                  Expanded(
-                    child: UserListInOrgPage(orgId: widget.orgId),
-                  ),
-                ],
-              ),
-            ),
+            child: UserListInOrgPage(orgId: widget.orgId),
           ),
         ],
       ),

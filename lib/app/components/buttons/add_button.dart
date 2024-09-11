@@ -18,7 +18,7 @@ class AddButton extends StatelessWidget {
       alignment: Alignment.bottomRight,
       child: Padding(
         padding: EdgeInsets.only(
-          bottom: screenHeight * 0.02,
+          bottom: screenHeight * 0.08, // Increased the bottom padding
           right: screenWidth * 0.06,
         ),
         child: InkWell(

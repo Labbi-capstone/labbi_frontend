@@ -25,7 +25,7 @@ class Pagination extends StatelessWidget {
           child: Text(
             '$i',
             style: TextStyle(
-              color: i == currentPage ? Colors.white : Colors.grey,
+              color: i == currentPage ? Colors.blue : Colors.blue[200],
               fontWeight:
                   i == currentPage ? FontWeight.bold : FontWeight.normal,
             ),
@@ -46,7 +46,7 @@ class Pagination extends StatelessWidget {
           child: Text(
             'PREV',
             style: TextStyle(
-              color: currentPage > 1 ? Colors.white : Colors.grey,
+              color: currentPage > 1 ? Colors.blue : Colors.blue[200],
             ),
           ),
         ),
@@ -58,7 +58,7 @@ class Pagination extends StatelessWidget {
           child: Text(
             'NEXT',
             style: TextStyle(
-              color: currentPage < totalPages ? Colors.white : Colors.grey,
+              color: currentPage < totalPages ? Colors.blue : Colors.blue[200],
             ),
           ),
         ),
