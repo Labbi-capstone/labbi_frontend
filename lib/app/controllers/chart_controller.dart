@@ -16,7 +16,12 @@ class ChartController extends StateNotifier<ChartState> {
   ChartController(
       {required this.chartTimerService, required this.socketService})
       : super(ChartState());
-
+  Stream<dynamic> connectWebSocket(
+      String chartId, String prometheusEndpointId, String chartType) {
+    return socketService
+        .connect(chartId, prometheusEndpointId, chartType)
+        .stream;
+  }
   // Fetch all charts from the backend
   Future<void> fetchCharts() async {
     state = state.copyWith(isLoading: true);
@@ -101,29 +106,32 @@ class ChartController extends StateNotifier<ChartState> {
   }
 
   // Fetch charts by dashboard ID and update state
+ // Fetch charts by dashboard ID
+   // Fetch charts by dashboard ID
   Future<void> fetchChartsForDashboard(String dashboardId) async {
     state = state.copyWith(isLoading: true);
     try {
-      final apiUrl =
-          kIsWeb ? dotenv.env['API_URL_LOCAL'] : dotenv.env['API_URL_EMULATOR'];
+      final apiUrl = dotenv.env['API_URL_LOCAL'];
       final response =
-          await http.get(Uri.parse("$apiUrl/charts/dashboard/$dashboardId"));
+          await http.get(Uri.parse('$apiUrl/charts/dashboard/$dashboardId'));
 
       if (response.statusCode == 200) {
         List<dynamic> data = jsonDecode(response.body);
         List<Chart> charts = data.map((json) => Chart.fromJson(json)).toList();
 
-        // Update the state with the fetched charts
-        state = state.copyWith(charts: charts, isLoading: false);
+        final updatedChartsByDashboard =
+            Map<String, List<Chart>>.from(state.chartsByDashboard);
+        updatedChartsByDashboard[dashboardId] = charts;
 
-        // Start or update timers and request data for each chart
+        state = state.copyWith(
+            chartsByDashboard: updatedChartsByDashboard, isLoading: false);
+
+        // Start WebSocket connections for each chart
         for (var chart in charts) {
-          chartTimerService.startOrUpdateTimer(
-            socketService,
-            chart.id,
-            chart.prometheusEndpointId,
-            chart.chartType,
-          );
+          chartTimerService.startOrUpdateTimer(() {
+            connectWebSocket(
+                chart.id, chart.prometheusEndpointId, chart.chartType);
+          });
         }
       } else {
         throw Exception('Failed to get charts by dashboard');
@@ -132,6 +140,7 @@ class ChartController extends StateNotifier<ChartState> {
       state = state.copyWith(error: e.toString(), isLoading: false);
     }
   }
+  
 
   // Update a chart by ID
   Future<void> updateChart(String id, Chart chart) async {

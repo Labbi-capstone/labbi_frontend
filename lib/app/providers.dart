@@ -18,9 +18,8 @@ import 'state/chart_state.dart';
 final chartControllerProvider =
     StateNotifierProvider<ChartController, ChartState>(
   (ref) {
-    final chartTimerService = ChartTimerService();
+    final chartTimerService = ref.watch(chartTimerServiceProvider);
     final socketService = ref.watch(webSocketServiceProvider);
-
     return ChartController(
       chartTimerService: chartTimerService,
       socketService: socketService,
@@ -28,12 +27,14 @@ final chartControllerProvider =
   },
 );
 
+// Provider for ChartTimerService
+final chartTimerServiceProvider = Provider<ChartTimerService>((ref) {
+  return ChartTimerService();
+});
 
 // Provider for WebSocketService
 final webSocketServiceProvider = Provider<WebSocketService>((ref) {
-  final webSocketChannel = ref.watch(
-      webSocketChannelProvider); // Assuming WebSocketChannel comes from another provider
-  return WebSocketService(webSocketChannel);
+  return WebSocketService(); // Remove webSocketChannel argument
 });
 
 // Provider for WebSocketChannel
@@ -75,11 +76,13 @@ final userControllerProvider = StateNotifierProvider<UserController, UserState>(
   (ref) => UserController(ref), // Correct instantiation with ref
 );
 
+// Provider for DashboardController
 final dashboardControllerProvider =
     StateNotifierProvider<DashboardController, DashboardState>(
   (ref) => DashboardController(),
 );
 
+// Provider for PrometheusController
 final prometheusControllerProvider =
     StateNotifierProvider<PrometheusController, PrometheusState>(
   (ref) => PrometheusController(ref),
