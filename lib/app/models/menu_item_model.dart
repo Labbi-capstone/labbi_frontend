@@ -24,48 +24,17 @@ class MenuItemModel {
 final List<MenuItemModel> userMenuItems = [
   MenuItemModel(
     icon: Icons.home_outlined,
-    label: 'Dashboard',
-    route: const NotificationPage(),
-  ),
-  MenuItemModel(
-    icon: Icons.notifications_active_outlined,
-    label: 'Notification',
-    route: const NotificationPage(),
-  ),
-  MenuItemModel(
-    icon: Icons.work_outline,
-    label: 'Organization',
+    label: 'Your organizations',
     route: const ListOrgPage(),
   ),
 ];
 
 final List<MenuItemModel> adminMenuItems = [
-
-  // MenuItemModel(
-  //   icon: Icons.work_outline,
-  //   label: 'ChartPage',
-  //   route: const ChartPage(chartId: '66dfc0ccf0441b2130c396db', prometheusEndpointId: '66c65a1f48ce26e4b4cb8a01', chartType: 'line',),
-  // ),
   MenuItemModel(
     icon: Icons.work_outline,
-    label: 'Organization',
+    label: 'Organization management',
     route: const ListOrgPage(),
   ),
-  // MenuItemModel(
-  //   icon: Icons.home_outlined,
-  //   label: 'Dashboard',
-  //   route: const DashboardPage(),
-  // ),
-  // MenuItemModel(
-  //   icon: Icons.control_camera_outlined,
-  //   label: 'Control Panel',
-  //   route: const ControlPanelPage(),
-  // ),
-  // MenuItemModel(
-  //   icon: Icons.notifications_active_outlined,
-  //   label: 'Notification',
-  //   route: const NotificationPage(),
-  // ),
    MenuItemModel(
     icon: Icons.dashboard_outlined,
     label: 'User management',
@@ -90,23 +59,8 @@ final List<MenuItemModel> adminMenuItems = [
 
 final List<MenuItemModel> developerMenuItems = [
   MenuItemModel(
-    icon: Icons.home_outlined,
-    label: 'Dashboard',
-    route: const NotificationPage(),
-  ),
-  // MenuItemModel(
-  //   icon: Icons.dashboard_outlined,
-  //   label: 'Control Panel',
-  //   route: const ControlPanelPage(),
-  // ),
-  // MenuItemModel(
-  //   icon: Icons.notifications_active_outlined,
-  //   label: 'Notification',
-  //   route: const NotificationPage(),
-  // ),
-  MenuItemModel(
     icon: Icons.work_outline,
-    label: 'Organization',
+    label: 'Organization management',
     route: const ListOrgPage(),
   ),
    MenuItemModel(

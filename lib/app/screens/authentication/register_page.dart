@@ -47,12 +47,15 @@ class RegisterPage extends ConsumerWidget {
                   ),
                   const SizedBox(height: 50),
                   MyTextField(
-                    title: 'Fullname',
+                    title: 'Full name',
                     controller: authController.nameController,
-                    hintText: 'Fullname',
+                    hintText: 'Full name',
                     obscureText: false,
+                    titleStyle: const TextStyle(
+                        color: Colors.white), // Make label white
+                    hintStyle: const TextStyle(color: Colors.white),
                     errorText:
-                        authState.emptyFullName ? 'Please enter fullname' : '',
+                        authState.emptyFullName ? 'Please enter full name' : '',
                   ),
                   const SizedBox(height: 30),
                   MyTextField(
@@ -60,6 +63,9 @@ class RegisterPage extends ConsumerWidget {
                     controller: authController.emailController,
                     hintText: 'Email',
                     obscureText: false,
+                     titleStyle: const TextStyle(
+                        color: Colors.white), // Make label white
+                    hintStyle: const TextStyle(color: Colors.white),
                     errorText: authState.emptyEmail ? 'Please enter email' : '',
                   ),
                   const SizedBox(height: 30),
@@ -68,6 +74,9 @@ class RegisterPage extends ConsumerWidget {
                     controller: authController.passwordController,
                     hintText: 'Password',
                     obscureText: true, // Ensure password is hidden
+                     titleStyle: const TextStyle(
+                        color: Colors.white), // Make label white
+                    hintStyle: const TextStyle(color: Colors.white),
                     errorText:
                         authState.emptyPassword ? 'Please enter password' : '',
                   ),
@@ -77,6 +86,9 @@ class RegisterPage extends ConsumerWidget {
                     controller: authController.confirmedPasswordController,
                     hintText: 'Confirm Password',
                     obscureText: true,
+                     titleStyle: const TextStyle(
+                        color: Colors.white), // Make label white
+                    hintStyle: const TextStyle(color: Colors.white),
                     errorText: authState.emptyConfirmedPassword
                         ? 'Please enter confirmed password'
                         : authState.isNotMatch
@@ -95,29 +107,7 @@ class RegisterPage extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        const Text('Already have an account? ',
-                            style: TextStyle(color: Colors.white)),
-                        const SizedBox(width: 4),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pop(context); // Navigate back to login
-                          },
-                          child: const Text(
-                            'Sign in',
-                            style: TextStyle(
-                                color: Colors.blue,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
+                  
                   // Sign up button with context handling
                   MyButton(
                     onTap: authState.isLoading
@@ -207,40 +197,27 @@ class RegisterPage extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 30),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      MyButton(
-                          onTap: () {},
-                          child: Container(
-                            height: 0.085 * screenHeight,
-                            width: 0.75 * screenWidth,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.white),
-                              borderRadius: BorderRadius.circular(15),
-                              color: Colors.white,
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                Image.asset(
-                                  'assets/images/google-icon.png',
-                                  height: 50,
-                                ),
-                                const SizedBox(width: 10),
-                                const Text(
-                                  'Sign in with Google',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ))
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        const Text('Already have an account? ',
+                            style: TextStyle(color: Colors.white)),
+                        const SizedBox(width: 4),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pop(context); // Navigate back to login
+                          },
+                          child: const Text(
+                            'Sign in',
+                            style: TextStyle(
+                                color: Colors.blue,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 30),
                 ],

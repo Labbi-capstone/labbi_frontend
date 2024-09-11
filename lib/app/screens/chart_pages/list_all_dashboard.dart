@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:labbi_frontend/app/components/buttons/add_button.dart';
+import 'package:labbi_frontend/app/screens/chart_pages/create_dashboard_page.dart';
+import 'package:labbi_frontend/app/screens/chart_pages/manage_dashboard_page.dart'; // Import ManageDashboardPage
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:labbi_frontend/app/models/chart.dart';
@@ -28,7 +31,6 @@ class _ListAllDashboardPageState extends State<ListAllDashboardPage> {
     fetchAllDashboards();
   }
 
-  // Fetch all dashboards from the API
   Future<void> fetchAllDashboards() async {
     try {
       final apiUrl = dotenv.env['API_URL_LOCAL']; // Replace with your API URL
@@ -46,7 +48,6 @@ class _ListAllDashboardPageState extends State<ListAllDashboardPage> {
         List<dynamic> dashboardsJson = data;
         dashboards = dashboardsJson.map((d) => Dashboard.fromJson(d)).toList();
 
-        // Fetch charts for each dashboard
         for (var dashboard in dashboards) {
           fetchChartsForDashboard(dashboard.id);
         }
@@ -56,7 +57,6 @@ class _ListAllDashboardPageState extends State<ListAllDashboardPage> {
     }
   }
 
-  // Fetch charts for a specific dashboard
   Future<void> fetchChartsForDashboard(String dashboardId) async {
     try {
       final apiUrl = dotenv.env['API_URL_LOCAL'];
@@ -71,12 +71,10 @@ class _ListAllDashboardPageState extends State<ListAllDashboardPage> {
           chartsByDashboard[dashboardId] = charts;
         });
 
-        // Start WebSocket and real-time updates for each chart
         for (var chart in charts) {
           _webSocketService.connect(
               chart.id, chart.prometheusEndpointId, chart.chartType);
 
-          // Start a timer to request Prometheus data every 2 seconds
           _chartTimerService.startOrUpdateTimer(() {
             _webSocketService.connect(
                 chart.id, chart.prometheusEndpointId, chart.chartType);
@@ -97,60 +95,95 @@ class _ListAllDashboardPageState extends State<ListAllDashboardPage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("All Dashboards"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              // Navigate to ManageDashboardPage when icon is clicked
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ManageDashboardPage(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
-      body: dashboards.isEmpty
-          ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              itemCount: dashboards.length,
-              itemBuilder: (context, index) {
-                final dashboard = dashboards[index];
-                final charts = chartsByDashboard[dashboard.id] ?? [];
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: dashboards.isEmpty
+                ? const Center(child: CircularProgressIndicator())
+                : ListView.builder(
+                    itemCount: dashboards.length,
+                    itemBuilder: (context, index) {
+                      final dashboard = dashboards[index];
+                      final charts = chartsByDashboard[dashboard.id] ?? [];
 
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      dashboard.name,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Column(
-                      children: charts.map((chart) {
-                        return ListTile(
-                          title: Text(chart.name),
-                          subtitle: StreamBuilder(
-                            stream: _webSocketService
-                                .connect(chart.id, chart.prometheusEndpointId,
-                                    chart.chartType)
-                                .stream,
-                            builder: (context, AsyncSnapshot snapshot) {
-                              if (snapshot.hasData) {
-                                final String? rawData =
-                                    snapshot.data as String?;
-                                if (rawData != null) {
-                                  final chartData = jsonDecode(rawData);
-                                  return Text(
-                                      "Chart Data: ${chartData['data']}");
-                                } else {
-                                  return const Text("No data available");
-                                }
-                              } else {
-                                return const Text("Loading data...");
-                              }
-                            },
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            dashboard.name,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        );
-                      }).toList(),
-                    )
-                  ],
-                );
-              },
+                          Column(
+                            children: charts.map((chart) {
+                              return ListTile(
+                                title: Text(chart.name),
+                                subtitle: StreamBuilder(
+                                  stream: _webSocketService
+                                      .connect(
+                                          chart.id,
+                                          chart.prometheusEndpointId,
+                                          chart.chartType)
+                                      .stream,
+                                  builder: (context, AsyncSnapshot snapshot) {
+                                    if (snapshot.hasData) {
+                                      final String? rawData =
+                                          snapshot.data as String?;
+                                      if (rawData != null) {
+                                        final chartData = jsonDecode(rawData);
+                                        return Text(
+                                            "Chart Data: ${chartData['data']}");
+                                      } else {
+                                        return const Text("No data available");
+                                      }
+                                    } else {
+                                      return const Text("Loading data...");
+                                    }
+                                  },
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+          ),
+          // Positioned AddButton to ensure it's always visible
+          Positioned(
+            bottom: screenHeight * 0.02,
+            right: screenWidth * 0.06,
+            child: AddButton(
+              screenHeight: screenHeight,
+              screenWidth: screenWidth,
+              pageToNavigate: const CreateDashboardPage(),
             ),
+          ),
+        ],
+      ),
     );
   }
 }
