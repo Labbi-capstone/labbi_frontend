@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:labbi_frontend/app/components/charts/bar_chart_component.dart';
+import 'package:labbi_frontend/app/components/charts/chart_widget.dart';
 import 'package:labbi_frontend/app/components/charts/line_chart_component.dart';
 import 'package:labbi_frontend/app/services/websocket_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -103,6 +104,7 @@ class _ListDashboardByOrgPageState extends State<ListDashboardByOrgPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Dashboards for Org ${widget.orgId}"),
+        automaticallyImplyLeading: false,
       ),
       body: dashboards.isEmpty
           ? Center(child: CircularProgressIndicator())
@@ -137,7 +139,7 @@ class _ListDashboardByOrgPageState extends State<ListDashboardByOrgPage> {
                                     snapshot.data as String?;
                                 if (rawData != null) {
                                   final chartData = jsonDecode(rawData);
-                                  return _buildChart(chart, chartData['data']);
+                                  return ChartWidget(chartName: chart.name, chartType: chart.chartType, chartData: chartData['data']);
                                   // return Text(
                                   //     "Chart Data: ${chartData['data']}, chartType: ${chartData['chartType']}");
                                 } else {
@@ -157,49 +159,4 @@ class _ListDashboardByOrgPageState extends State<ListDashboardByOrgPage> {
             ),
     );
   }
-
-  Widget _buildChart(Chart chart, Map<String, dynamic> chartData) {
-    return Card(
-      elevation: 2,
-      margin: const EdgeInsets.all(8),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              chart.name,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            Text('Chart Type: ${chart.chartType}'),
-            Text('Dashboard ID: ${chart.dashboardId}'),
-            const SizedBox(height: 8),
-            chartData.isEmpty
-                ? const CircularProgressIndicator()
-                : Container(
-                    height: 500,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: chart.chartType == 'line'
-                        ? LineChartComponent(
-                            title: chart.name,
-                            chartRawData: chartData,
-                          )
-                        : chart.chartType == 'bar'
-                            ? BarChartComponent(
-                                title: chart.name,
-                                chartRawData: chartData,
-                              )
-                            : const Center(
-                                child: Text('Chart type not supported'),
-                              ),
-                  ),
-          ],
-        ),
-      ),
-    );
-  }
-
 }

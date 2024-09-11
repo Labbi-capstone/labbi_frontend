@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:labbi_frontend/app/components/charts/chart_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:labbi_frontend/app/models/chart.dart';
@@ -134,8 +135,9 @@ class _ListAllDashboardPageState extends State<ListAllDashboardPage> {
                                     snapshot.data as String?;
                                 if (rawData != null) {
                                   final chartData = jsonDecode(rawData);
-                                  return Text(
-                                      "Chart Data: ${chartData['data']}");
+                                  return ChartWidget(chartName: chart.name, chartType: chart.chartType, chartData: chartData['data']);
+                                  // return Text(
+                                  //     "Chart Data: ${chartData['data']}");
                                 } else {
                                   return const Text("No data available");
                                 }
