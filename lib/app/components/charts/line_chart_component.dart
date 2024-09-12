@@ -161,7 +161,8 @@ class _LineChartComponentState extends State<LineChartComponent> {
                   isResponsive: true,
                 ),
                 zoomPanBehavior: ZoomPanBehavior(
-                  zoomMode: ZoomMode.xy, 
+                  enablePinching: true,
+                  zoomMode: ZoomMode.xy,
                   enablePanning: true,
                 ),
                 series: series,
@@ -174,13 +175,14 @@ class _LineChartComponentState extends State<LineChartComponent> {
                   labelStyle: const TextStyle(fontSize: 10),
                 ),
                 primaryYAxis: NumericAxis(
-                  title: AxisTitle(text: 'Value (scaled by 1,000,000,000)'),
+                  title: AxisTitle(text: 'Value'),
                   majorGridLines: const MajorGridLines(width: 0.5),
                   majorTickLines: const MajorTickLines(width: 0.5),
                   labelFormat: '{value}',
                   minimum: _yAxisMinimum,
                   maximum: _yAxisMaximum,
                   interval: _yAxisInterval, 
+                  labelStyle: const TextStyle(fontSize: 12),
                 ),
                 tooltipBehavior: TooltipBehavior(
                   enable: true,
