@@ -8,7 +8,7 @@ class WebSocketService {
 
   WebSocketChannel connect(
       String chartId, String prometheusEndpointId, String chartType) {
-    const url = 'ws://localhost:3000'; // Your WebSocket URL
+    const url = 'ws://10.247.195.154:3000'; // Your WebSocket URL
     _channel = WebSocketChannel.connect(Uri.parse(url));
 
     // Send initial message with chart info

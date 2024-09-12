@@ -73,3 +73,5 @@ app.*.symbols
 .key.properties
 *.jks
 *.keystore
+ios/Runner.xcodeproj/project.pbxproj
+ios/Runner/Info.plist

@@ -26,11 +26,16 @@ class _LineChartComponentState extends State<LineChartComponent> {
     Colors.purple,
   ]; // Add more colors if needed
 
+  double _yAxisMaximum = 1; // Initial maximum value
+  double _yAxisMinimum = 0; // Initial minimum value
+  double _yAxisInterval = 1; // Initial interval value
+
   @override
   void initState() {
     super.initState();
     metricData = _extractData(widget.chartRawData);
     series = _createSeries();
+    _calculateYAxisRange();
   }
 
   @override
@@ -41,6 +46,7 @@ class _LineChartComponentState extends State<LineChartComponent> {
         metricData =
             _extractData(widget.chartRawData, existingData: metricData);
         series = _createSeries();
+        _calculateYAxisRange();
       });
     }
   }
@@ -59,7 +65,7 @@ class _LineChartComponentState extends State<LineChartComponent> {
           DateTime.fromMillisecondsSinceEpoch((timestamp * 1000).toInt()));
 
       final value = double.tryParse(valueList[1].toString()) ?? 0.0;
-      final scaledValue = value * 100000000; // Adjust scale as needed
+      // final scaledValue = value * 100000000; // Adjust scale as needed
 
       final metricName = metric['__name__'] as String;
       final quantile = metric['quantile']?.toString() ?? '';
@@ -74,7 +80,7 @@ class _LineChartComponentState extends State<LineChartComponent> {
       // Add new data and ensure only the last 5 entries are kept
       updatedData[key]!.add(LineData(
         formattedTimestamp,
-        scaledValue,
+        value,
       ));
 
       if (updatedData[key]!.length > 5) {
@@ -108,6 +114,32 @@ class _LineChartComponentState extends State<LineChartComponent> {
     }).toList();
   }
 
+  void _calculateYAxisRange() {
+    double minValue = double.infinity;
+    double maxValue = double.negativeInfinity;
+
+    for (var entry in metricData.values) {
+      for (var data in entry) {
+        if (data.value < minValue) {
+          minValue = data.value;
+        }
+        if (data.value > maxValue) {
+          maxValue = data.value;
+        }
+      }
+    }
+
+    // Adjust minimum and maximum values with some margin
+    _yAxisMinimum = minValue < 0 ? minValue * 1.1 : 0;
+    _yAxisMaximum = maxValue * 1.1;
+
+    // Calculate a reasonable interval
+    final range = _yAxisMaximum - _yAxisMinimum;
+    _yAxisInterval = (range / 7).clamp(10, 50);
+
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -128,6 +160,11 @@ class _LineChartComponentState extends State<LineChartComponent> {
                   position: LegendPosition.bottom,
                   isResponsive: true,
                 ),
+                zoomPanBehavior: ZoomPanBehavior(
+                  enablePinching: true,
+                  zoomMode: ZoomMode.xy,
+                  enablePanning: true,
+                ),
                 series: series,
                 primaryXAxis: CategoryAxis(
                   title: AxisTitle(text: 'Time'),
@@ -138,13 +175,14 @@ class _LineChartComponentState extends State<LineChartComponent> {
                   labelStyle: const TextStyle(fontSize: 10),
                 ),
                 primaryYAxis: NumericAxis(
-                  title: AxisTitle(text: 'Value (scaled by 1,000,000,000)'),
+                  title: AxisTitle(text: 'Value'),
                   majorGridLines: const MajorGridLines(width: 0.5),
                   majorTickLines: const MajorTickLines(width: 0.5),
                   labelFormat: '{value}',
-                  minimum: 0,
-                  maximum: 700000,
-                  interval: 100000,
+                  minimum: _yAxisMinimum,
+                  maximum: _yAxisMaximum,
+                  interval: _yAxisInterval, 
+                  labelStyle: const TextStyle(fontSize: 12),
                 ),
                 tooltipBehavior: TooltipBehavior(
                   enable: true,

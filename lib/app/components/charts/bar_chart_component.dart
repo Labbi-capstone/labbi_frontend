@@ -54,7 +54,7 @@ class _BarChartComponentState extends State<BarChartComponent> {
           DateTime.fromMillisecondsSinceEpoch((timestamp * 1000).toInt()));
 
       final value = double.tryParse(valueList[1].toString()) ?? 0.0;
-      final scaledValue = value * 1000000; // Adjust scale as needed
+      // final scaledValue = value * 1000000; // Adjust scale as needed
 
       final metricName = metric['__name__'] as String;
 
@@ -65,7 +65,7 @@ class _BarChartComponentState extends State<BarChartComponent> {
       // Add new data and ensure only the latest 5 entries are kept
       updatedData[metricName]!.add(BarData(
         formattedTimestamp,
-        scaledValue,
+        value,
       ));
 
       if (updatedData[metricName]!.length > 1) {
