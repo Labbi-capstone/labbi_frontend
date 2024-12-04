@@ -88,13 +88,13 @@ class _UserProfilePageState extends State<UserProfilePage> {
         drawer: const MenuTaskbar(),
         body: SingleChildScrollView(
           child: Container(
-            height: null,
+            height: screenHeight,
             width: screenWidth,
             decoration: const BoxDecoration(
-                image: DecorationImage(
-                    image:
-                        AssetImage("assets/images/user-profile-background.jpg"),
-                    fit: BoxFit.fill)),
+                      image: DecorationImage(
+                          image: AssetImage(
+                              "assets/images/user-profile-background.jpg"),
+                          fit: BoxFit.fill)),
             child: Stack(
               clipBehavior: Clip.none,
               alignment: Alignment.topCenter,
@@ -182,7 +182,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
           backgroundColor: Colors.white,
           child: ClipOval(
             child: Image(
-              image: const AssetImage("assets/images/test-profile-image.jpg"),
+              image: const AssetImage("assets/images/man.png"),
               height: (screenHeight / 10.3) * 2,
               width: (screenHeight / 10.3) * 2,
               fit: BoxFit.fill,

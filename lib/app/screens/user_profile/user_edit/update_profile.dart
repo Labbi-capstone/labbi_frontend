@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:labbi_frontend/app/Theme/app_colors.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:labbi_frontend/app/controllers/user_controller.dart';
 import 'package:labbi_frontend/app/providers.dart';
 import 'package:labbi_frontend/app/utils/user_info_helper.dart';
 import 'package:labbi_frontend/app/components/text_fields/edit_text_field.dart';
+import 'package:labbi_frontend/app/screens/user_profile/change_password/change_password.dart';
 
 class UpdateProfile extends ConsumerStatefulWidget {
   const UpdateProfile({
@@ -132,14 +132,66 @@ class UpdateProfileState extends ConsumerState<UpdateProfile> {
                         fontWeight: FontWeight.bold),
                   ),
                   Padding(
-                      padding: EdgeInsets.only(
-                          top: 0.002 * screenHeight,
-                          bottom: 0.03 * screenHeight),
+                      padding: EdgeInsets.only(top: 0.002 * screenHeight),
                       child: Text(
                         userRole,
                         style: TextStyle(
                             fontSize: screenHeight / 45, color: Colors.grey),
                       )),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        vertical: 0.01 * screenHeight,
+                        horizontal: 0.08 * screenWidth),
+                    child: const Divider(
+                      thickness: 2,
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                        right: 0.02 * screenWidth,
+                        left: 0.02 * screenWidth,
+                        bottom: 0.03 * screenHeight),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const ChangePasswordPage()));
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Container(
+                            height: screenHeight / 40,
+                            width: screenHeight / 40,
+                            decoration: const BoxDecoration(
+                                image: DecorationImage(
+                                    image:
+                                        AssetImage('assets/images/lock.png'))),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 0.1 * screenWidth),
+                            child: Text(
+                              'Change Password',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 0.023 * screenHeight),
+                            ),
+                          ),
+                          Container(
+                            height: screenHeight / 40,
+                            width: screenHeight / 40,
+                            decoration: const BoxDecoration(
+                                image: DecorationImage(
+                                    image: AssetImage(
+                                        'assets/images/right-chevron.png'))),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
                 ],
               ),
             )),
@@ -164,8 +216,6 @@ class UpdateProfileState extends ConsumerState<UpdateProfile> {
                     userData: userName,
                     screenHeight: screenHeight,
                     screenWidth: screenWidth,
-                    // updateName: updateName,
-                    // updateEmail: updateEmail,
                     controller: userNameController,
                   ),
                   EditTextField(
@@ -173,8 +223,6 @@ class UpdateProfileState extends ConsumerState<UpdateProfile> {
                     userData: userEmail,
                     screenHeight: screenHeight,
                     screenWidth: screenWidth,
-                    // updateName: updateName,
-                    // updateEmail: updateEmail,
                     controller: emailController,
                   ),
                   EditTextField(
@@ -182,8 +230,6 @@ class UpdateProfileState extends ConsumerState<UpdateProfile> {
                     userData: "*To be updated*",
                     screenHeight: screenHeight,
                     screenWidth: screenWidth,
-                    // updateName: updateName,
-                    // updateEmail: updateEmail,
                     controller: phoneController,
                   ),
                   Padding(

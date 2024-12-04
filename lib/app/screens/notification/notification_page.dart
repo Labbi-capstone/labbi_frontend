@@ -3,6 +3,7 @@ import 'package:labbi_frontend/app/Theme/app_colors.dart';
 import 'package:labbi_frontend/app/models/notification_message.dart';
 import 'package:labbi_frontend/app/screens/menu/menu_task_bar.dart'; // Import MenuTaskbar
 import 'package:labbi_frontend/app/screens/notification/notification_container.dart';
+import 'package:labbi_frontend/app/components/buttons/menu_button.dart';
 
 class NotificationPage extends StatefulWidget {
   const NotificationPage({super.key});
@@ -40,6 +41,11 @@ class _NotificationPageState extends State<NotificationPage> {
           ),
         ),
         centerTitle: true,
+        leading: Builder(
+            builder: (BuildContext context) {
+              return const MenuButton();
+            },
+          ),
         title: Text(
           "Notification",
           style: TextStyle(
